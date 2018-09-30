@@ -1,29 +1,20 @@
 {
-  "name": "eventi",
-  "version": "0.0.1",
+  "name": "eventi-back-end",
+  "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "jest"
+    "start": "node ./bin/www"
   },
   "dependencies": {
-    "@babel/runtime": "^7.1.2",
-    "react": "16.5.0",
-    "react-native": "0.57.1",
-    "redux": "^4.0.0"
-  },
-  "devDependencies": {
-    "@types/react": "^16.4.14",
-    "@types/react-native": "^0.57.0",
-    "@types/react-test-renderer": "^16.0.2",
-    "babel-jest": "23.6.0",
-    "jest": "23.6.0",
-    "metro-react-native-babel-preset": "0.47.0",
-    "react-native-typescript-transformer": "^1.2.10",
-    "react-test-renderer": "16.5.0",
-    "typescript": "^3.1.1"
-  },
-  "jest": {
-    "preset": "react-native"
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3",
+    "http-errors": "~1.6.2",
+    "jade": "~1.11.0",
+    "morgan": "~1.9.0",
+    "mysql2": "^1.6.1",
+    "rfr": "^1.2.3",
+    "sequelize": "^4.39.0"
   }
 }
