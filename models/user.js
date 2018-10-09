@@ -15,6 +15,9 @@ const User = connection.define('users', {
     password: Sequelize.STRING
 });
 
-module.exports = {
-    User
+function defineModels(items) {
+    models = items;
+    User.belongsToMany(models.Group.Group, {through: 'UserGroup'}); // Defines many to many relationship with table in between (also in Group model)
 }
+
+module.exports = { User, defineModels }
