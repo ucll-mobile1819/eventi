@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const bcrypt = require("../auth/bcrypt");
 
 function createUser(firstname, lastname, birthday, username, password, passwordConf) {
     // TODO: CHECK PASSWD
@@ -7,13 +8,16 @@ function createUser(firstname, lastname, birthday, username, password, passwordC
         if (password !== passwordConf) {
             return reject(new Error("Passwords don't match."));
         }
-        
-        User.User.create({
-            firstname,
-            lastname,
-            birthday,
-            username,
-            password,
+
+        bcrypt.secureString(password)
+        .then((hash) => {
+            User.User.create({
+                firstname,
+                lastname,
+                birthday,
+                username,
+                password: hash,
+            })
         }).then((res) => {
             resolve();
         }).catch(() => {
