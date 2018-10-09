@@ -12,11 +12,11 @@ console.log('Server started on port ' + process.env.PORT);
 require('./models');
 
 var app = express();
+app.use(express.json());
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(express.urlencoded({extended: false}))
 
 app.use(require('./routes'));
 
