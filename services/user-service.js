@@ -4,6 +4,10 @@ function createUser(firstname, lastname, birthday, username, password, passwordC
     // TODO: CHECK PASSWD
 
     return new Promise((resolve, reject) =>{
+        if (password !== passwordConf) {
+            return reject(new Error("Passwords don't match."));
+        }
+        
         User.User.create({
             firstname,
             lastname,
