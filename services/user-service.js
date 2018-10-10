@@ -7,6 +7,7 @@ function createUser(firstname, lastname, birthday, username, password, passwordC
         if (password !== passwordConf) {
             return reject(new Error("Passwords don't match."));
         }
+        
 
         bcrypt.secureString(password)
         .then((hash) => {
@@ -14,7 +15,7 @@ function createUser(firstname, lastname, birthday, username, password, passwordC
                 firstname,
                 lastname,
                 birthday,
-                username,
+                username:username.toLowerCase(),
                 password: hash,
             })
         }).then((res) => {
@@ -27,6 +28,7 @@ function createUser(firstname, lastname, birthday, username, password, passwordC
 
 function loginUser(username, password) {
     return new Promise((resolve, reject) => {
+        username = username.toLowerCase();
         let tmpUser;
         User.User.findOne({ where: { username } })
         .then(user => {
