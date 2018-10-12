@@ -140,6 +140,8 @@ function getCreatedGroups(currentUser) {
 
 function generateInviteCode(currentUser, groupId) {
     return new Promise((resolve, reject) => {
+        if (!Number.isInteger(Number(groupId))) return reject(new Error('Group id must be an existing id.'));
+        groupId = Number(groupId);
         currentUser.getCreatedGroups()
         .then(groups => {
             let index = groups.map(el => el.id).indexOf(groupId);
@@ -153,10 +155,16 @@ function generateInviteCode(currentUser, groupId) {
 
 function joinGroup(currentUser, inviteCode) {
     return new Promise((resolve, reject) => {
+        let tmpGroup;
         Group.Group.findOne({ where: { invite_code: inviteCode } })
         .then(group => {
             if (!group) return Promise.reject(new Error('This invite code is invalid/expired.'));
-            return group.addUser(currentUser);
+            tmpGroup = group;
+            return group.getUsers();
+        })
+        .then(users => {
+            if (users.map(el => el.username).indexOf(currentUser.username) !== -1) return Promise.reject(new Error('You are already in this group.'));
+            return tmpGroup.addUser(currentUser);
         })
         .then(resolve)
         .catch(reject);

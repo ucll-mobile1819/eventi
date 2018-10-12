@@ -57,10 +57,9 @@ function removeUserFromGroup(groupId, user) {
 function createInviteCode(group) {
     return new Promise((resolve, reject) => {
         let tmpInviteCode;
-        Promise.all([ Group.findById(groupId), generateId('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', 8) ])
-        .then(results => {
-            let group = results[0];
-            tmpInviteCode = results[1];
+        generateId('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', 8)
+        .then(inviteCode => {
+            tmpInviteCode = inviteCode;
             if (!group) return Promise.reject(new Error('This group does not exist.'));
             group.invite_code = tmpInviteCode;
             return group.save();
