@@ -2,13 +2,12 @@ const express = require('express');
 const router = express.Router();
 const userService = require("../services/user-service");
 
-router.post('/login', (req, res) => {
+router.post('/login', (req, res, next) => {
     userService.loginUser(req.body.username, req.body.password)
     .then(result => {
         res.send(result);
-    }).catch(err => {
-        res.status(400).send({ error: err.message });
-    });
+    })
+    .catch(next);
 });
 
 module.exports = router;
