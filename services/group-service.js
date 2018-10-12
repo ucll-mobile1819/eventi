@@ -151,4 +151,16 @@ function generateInviteCode(currentUser, groupId) {
     });
 }
 
-module.exports = { createGroup, updateGroup, removeGroup, getGroup, removeUserFromGroup, getJoinedGroups, getCreatedGroups, getGroupMembers, generateInviteCode };
+function joinGroup(currentUser, inviteCode) {
+    return new Promise((resolve, reject) => {
+        Group.Group.findOne({ where: { invite_code: inviteCode } })
+        .then(group => {
+            if (!group) return Promise.reject(new Error('This invite code is invalid/expired.'));
+            return group.addUser(currentUser);
+        })
+        .then(resolve)
+        .catch(reject);
+    });
+}
+
+module.exports = { createGroup, updateGroup, removeGroup, getGroup, removeUserFromGroup, getJoinedGroups, getCreatedGroups, getGroupMembers, generateInviteCode, joinGroup };
