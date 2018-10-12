@@ -104,7 +104,7 @@ function removeUserFromGroup(currentUser, username, groupId) {
         Group.Group.findById(groupId)
         .then(group => {
             if (!group) return Promise.reject(new Error('This group does not exist.'));
-            group = tmpGroup;
+            tmpGroup = group;
             return group.getUsers({ where: { username } });
         })
         .then(users => {
@@ -122,7 +122,7 @@ function removeUserFromGroup(currentUser, username, groupId) {
                     .then(() => res());
                 });
             } else {
-                return group.removeUser(users[0]);
+                return tmpGroup.removeUser(tmpUser);
             }
         })
         .then(() => resolve())
