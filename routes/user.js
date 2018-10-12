@@ -14,7 +14,7 @@ router.post('/', (req, res) => {
     });
 });
 
-router.get('/:username', middleware.auth.loggedIn, (req, res) => {
+router.get('/:username', middleware.auth.loggedIn, (req, res, next) => {
     userService.getUser(req.user, req.params.username)
     .then(user => {
         res.send(essentialisizer.essentializyUser(user));
