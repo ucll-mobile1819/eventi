@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const bcrypt = require("../auth/bcrypt");
+const auth = require('../auth/auth');
 
 function createUser(firstname, lastname, birthday, username, password, passwordConf) {
     return new Promise((resolve, reject) =>{
@@ -7,13 +8,18 @@ function createUser(firstname, lastname, birthday, username, password, passwordC
             return reject(new Error("Passwords don't match."));
         }
 
+        if (!birthday) {
+            birthday = null;
+        }
+        
+
         bcrypt.secureString(password)
         .then((hash) => {
-            User.User.create({
+            return User.User.create({
                 firstname,
                 lastname,
                 birthday,
-                username,
+                username:username.toLowerCase(),
                 password: hash,
             })
         }).then((res) => {
@@ -24,4 +30,24 @@ function createUser(firstname, lastname, birthday, username, password, passwordC
     });
 }
 
-module.exports = {createUser};
+function loginUser(username, password) {
+    return new Promise((resolve, reject) => {
+        username = username.toLowerCase();
+        let tmpUser;
+        User.User.findOne({ where: { username } })
+        .then(user => {
+            if (!user) return reject(new Error('This user does not exist.'));
+            tmpUser = user;
+            return bcrypt.compareString(user.password, password);
+        }).then(res => {
+            if (!res) return reject(new Error('The password is incorrect.'));
+            resolve({
+                success: true,
+                user: { username: tmpUser.username, firstname: tmpUser.firstname, lastname: tmpUser.lastname, birthday: tmpUser.birthday },
+                token: `JWT ${auth.createToken(tmpUser)}`
+            });
+        })
+    });
+}
+
+module.exports = { createUser, loginUser };

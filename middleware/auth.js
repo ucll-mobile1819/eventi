@@ -1,12 +1,6 @@
-function loggedIn(req, res, next) {
-    // Example:
-    /*
-        if (magicalLoginCheckFunction()) {
-            return next(); // continue the middleware flow
-        } else {
-            return res.status(401).send(); // break the middleware flow
-        }
-    */
-}
+const passport = require('passport');
+const jwt = require('../auth/auth');
+
+const loggedIn = passport.authenticate('jwt', { session: false });
 
 module.exports = { loggedIn };
