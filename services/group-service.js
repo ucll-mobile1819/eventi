@@ -69,9 +69,10 @@ function getGroup(currentUser, groupId) {
     return new Promise((resolve, reject) => {
         currentUser.getGroups({ where: { id: groupId } })
         .then(groups => {
-            if (!groups || groups.length === 0) resolve(null);
+            if (!groups || groups.length === 0) return Promise.reject(new Error('You do not belong to this group.'));
             resolve(groups[0]);
         })
+        .catch(err => reject(err));
     });
 }
 
@@ -87,7 +88,7 @@ function getGroupMembers(currentUser, groupId) {
             users.forEach(user => {
                 if (user.username === currentUser.username) found = true;
             });
-            if (!found) return Promise.reject(new Error('You do not belong to this group.')); 
+            if (!found) return Promise.reject(new Error('You do not belong to this group.'));
             resolve(users);
         })
         .catch(err => {
