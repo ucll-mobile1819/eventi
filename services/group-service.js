@@ -138,4 +138,17 @@ function getCreatedGroups(currentUser) {
     return currentUser.getCreatedGroups();
 }
 
-module.exports = { createGroup, updateGroup, removeGroup, getGroup, removeUserFromGroup, getJoinedGroups, getCreatedGroups, getGroupMembers };
+function generateInviteCode(currentUser, groupId) {
+    return new Promise((resolve, reject) => {
+        currentUser.getCreatedGroups()
+        .then(groups => {
+            let index = groups.map(el => el.id).indexOf(groupId);
+            if(index === -1) return Promise.reject(new Error('Only the owner of the group can generate invite codes.'));
+            return Group.createInviteCode(groups[index]);
+        })
+        .then(resolve)
+        .catch(reject);
+    });
+}
+
+module.exports = { createGroup, updateGroup, removeGroup, getGroup, removeUserFromGroup, getJoinedGroups, getCreatedGroups, getGroupMembers, generateInviteCode };
