@@ -7,11 +7,15 @@ function createUser(firstname, lastname, birthday, username, password, passwordC
         if (password !== passwordConf) {
             return reject(new Error("Passwords don't match."));
         }
+
+        if (!birthday) {
+            birthday = null;
+        }
         
 
         bcrypt.secureString(password)
         .then((hash) => {
-            User.User.create({
+            return User.User.create({
                 firstname,
                 lastname,
                 birthday,
