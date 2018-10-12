@@ -17,7 +17,8 @@ const User = connection.define('users', {
 
 function defineModels(items) {
     models = items;
-    User.belongsToMany(models.Group.Group, {through: 'UserGroup'}); // Defines many to many relationship with table in between (also in Group model)
+    User.belongsToMany(models.Group.Group, { through: 'UserGroup' }); // Defines many to many relationship with table in between (also in Group model)
+    User.hasMany(models.Group.Group, { as: 'CreatedGroups', constraints: false, foreignKey: 'creator_username' }); // ex: user.getCreatedGroups()
 }
 
 module.exports = { User, defineModels }

@@ -16,7 +16,8 @@ const Group = connection.define('groups', {
 
 function defineModels(items) {
     models = items;
-    Group.belongsToMany(models.User.User, {through: 'UserGroup'}); // Defines many to many relationship with table in between (also in User model)
+    Group.belongsToMany(models.User.User, { through: 'UserGroup' }); // Defines many to many relationship with table in between (also in User model)
+    Group.belongsTo(models.User.User, { as: 'Creator', constraints: false, foreignKey: 'creator_username' }); // ex: group.getCreator()
 }
 
 function addUserToGroup(groupId, user) {
@@ -29,7 +30,7 @@ function addUserToGroup(groupId, user) {
         })
         .then(users => {
             if (users.length !== 0) return reject(new Error('This user is already a part of this group.'));
-            return group.addUser(user);
+            return tmpGroup.addUser(user);
         })
         .then(() => { resolve(); });
     });
@@ -45,7 +46,7 @@ function removeUserFromGroup(groupId, user) {
         })
         .then(users => {
             if (users.length === 0) return reject(new Error('This user is not part of this group.'));
-            return group.removeUser(user);
+            return tmpGroup.removeUser(user);
         })
         .then(() => { resolve(); });
     });
