@@ -19,9 +19,7 @@ router.get('/:username', middleware.auth.loggedIn, (req, res) => {
     .then(user => {
         res.send(essentialisizer.essentializyUser(user));
     })
-    .catch(error => {
-        res.status(400).send({ error: error.message });
-    });
+    .catch(next);
 });
 
 module.exports = router;
