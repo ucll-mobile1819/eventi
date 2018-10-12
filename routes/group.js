@@ -15,6 +15,17 @@ router.get('/', middleware.auth.loggedIn, (req, res) => {
     });
 });
 
+router.get('/created', middleware.auth.loggedIn, (req, res) => {
+    groupService.getCreatedGroups(req.user)
+    .then(groups => {
+        if (!groups) return res.send([]);
+        res.send(groups.map(group => essentialisizer.essentializyGroup(group)));
+    })
+    .catch(err => {
+        res.status(400).send({error: err.message});
+    });
+});
+
 router.get('/:id', middleware.auth.loggedIn, (req, res) => {
     groupService.getGroup(req.user, req.params.id)
     .then(group => {
@@ -30,17 +41,6 @@ router.get('/:id/members', middleware.auth.loggedIn, (req, res) => {
     groupService.getGroupMembers(req.user, req.params.id)
     .then(members => {
         res.send(members.map(member => essentialisizer.essentializyUser(member)));
-    })
-    .catch(err => {
-        res.status(400).send({error: err.message});
-    });
-});
-
-router.get('/created', middleware.auth.loggedIn, (req, res) => {
-    groupService.getCreatedGroups(req.user)
-    .then(groups => {
-        if (!groups) return res.send([]);
-        res.send(groups.map(group => essentialisizer.essentializyGroup(group)));
     })
     .catch(err => {
         res.status(400).send({error: err.message});
