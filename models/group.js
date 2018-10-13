@@ -53,4 +53,28 @@ function removeUserFromGroup(groupId, user) {
     });
 }
 
-module.exports = { Group, defineModels, addUserToGroup, removeUserFromGroup }
+function banUser(group, user) {
+    return new Promise((resolve, reject) => {
+        group.getBannedUsers()
+        .then(bannedUsers => {
+            if (bannedUsers.map(el => el.username).indexOf(user.username) !== -1) return Promise.reject(new Error('This user is already banned.'));
+            return Promise.all([ group.addBannedUser(user), group.removeUser(user) ]);
+        })
+        .then(resolve)
+        .catch(reject);
+    });
+}
+
+function unbanUser(group, user) {
+    return new Promise((resolve, reject) => {
+        group.getBannedUsers()
+        .then(bannedUsers => {
+            if (bannedUsers.map(el => el.username).indexOf(user.username) === -1) return Promise.reject(new Error('This user is not banned.'));
+            return group.removeBannedUser(user);
+        })
+        .then(resolve)
+        .catch(reject);
+    });
+}
+
+module.exports = { Group, defineModels, addUserToGroup, removeUserFromGroup, banUser, unbanUser };

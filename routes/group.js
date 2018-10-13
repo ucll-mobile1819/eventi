@@ -39,11 +39,29 @@ router.get('/:id/members', middleware.auth.loggedIn, (req, res, next) => {
     .catch(next);
 });
 
+router.get('/:id/banned-users', middleware.auth.loggedIn, (req, res, next) => {
+    groupService.getBannedUsers(req.user, req.params.id)
+    .then(bannedUsers => res.send(bannedUsers.map(el => essentialisizer.essentializyUser(el))))
+    .catch(next);
+});
+
 router.post('/', middleware.auth.loggedIn, (req, res, next) => {
     groupService.createGroup(req.user, req.body.name, req.body.description, req.body.color)
     .then(() => {
         res.send();
     })
+    .catch(next);
+});
+
+router.post('/:id/ban/:username', middleware.auth.loggedIn, (req, res, next) => {
+    groupService.banUser(req.user, req.params.id, req.params.username)
+    .then(() => res.send())
+    .catch(next);
+});
+
+router.post('/:id/unban/:username', middleware.auth.loggedIn, (req, res, next) => {
+    groupService.unbanUser(req.user, req.params.id, req.params.username)
+    .then(() => res.send())
     .catch(next);
 });
 
