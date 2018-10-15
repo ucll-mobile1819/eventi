@@ -18,6 +18,7 @@ function defineModels(items) {
     models = items;
     Group.belongsToMany(models.User.User, { through: 'UserGroup' }); // Defines many to many relationship with table in between (also in User model)
     Group.belongsTo(models.User.User, { as: 'Creator', constraints: false, foreignKey: 'creator_username' }); // ex: group.getCreator()
+    Group.hasMany(models.Event.Event, { as: 'Events' });
 }
 
 function addUserToGroup(groupId, user) {
