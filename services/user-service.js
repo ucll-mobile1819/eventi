@@ -23,7 +23,7 @@ function createUser(firstname, lastname, birthday, username, password, passwordC
                 password: hash,
             })
         }).then((res) => {
-            resolve();
+            resolve(res);
         }).catch(() => {
             reject(new Error("This user already exists."));
         })
