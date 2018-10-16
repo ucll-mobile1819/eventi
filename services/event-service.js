@@ -3,7 +3,7 @@ const Group = require('../models/group');
 const Sequelize = require('sequelize');
 const op = Sequelize.Op;
 
-function createEvent(currentUser, groupId, name,description,startDate,endDate,locationName,adress,zipcode,city,housenumber){
+function createEvent(currentUser, groupId, name,description,startDate,endDate,locationName,address,zipcode,city,housenumber){
     return new Promise((resolve, reject) =>{
         let tmpGroup;
         let tmpEvent;
@@ -27,7 +27,7 @@ function createEvent(currentUser, groupId, name,description,startDate,endDate,lo
                 location_name: locationName,
                 zipcode,
                 city,
-                adress,
+                address,
                 housenumber
             });
         }).then((event) => {
@@ -38,6 +38,56 @@ function createEvent(currentUser, groupId, name,description,startDate,endDate,lo
         .catch(() => {
             reject(new Error("Something went wrong with creating an event"));
         });
+    });
+}
+
+function updateEvent(currentUser, eventId, name, description, startDate, endDate, locationName, address, zipcode, city, housenumber) {
+    return new Promise((res, rej) => {
+        let tmpEvent;
+        Event.Event.findById(eventId)
+        .then(event => {
+            if (!event) return Promise.reject(new Error('This event does not exist.'));
+            tmpEvent = event;
+            return event.getGroup();
+        })
+        .then(group => Promise.all([ tmpEvent.getCreator(), group.getCreator() ]))
+        .then(creators => {
+            if (currentUser.username !== creators[0].username && currentUser.username !== creators[1].username)
+                return Promise.reject(new Error('Only the group creator and event creator can edit this event.'));
+            tmpEvent.name = name;
+            tmpEvent.description = description;
+            tmpEvent.start_date = startDate;
+            tmpEvent.end_date = endDate;
+            tmpEvent.location_name = locationName;
+            tmpEvent.address = address;
+            tmpEvent.zipcode = zipcode;
+            tmpEvent.city = city;
+            tmpEvent.housenumber = housenumber;
+            return tmpEvent.save();
+        })
+        .then(res)
+        .catch(rej);
+    });
+}
+
+function deleteEvent(currentUser, eventId) {
+    return new Promise((res, rej) => {
+        let tmpEvent;
+        Event.Event.findById(eventId)
+        .then(event => {
+            if (!event) return Promise.reject(new Error('This event does not exist.'));
+            tmpEvent = event;
+            return event.getGroup();
+        })
+        .then(group => Promise.all([ group.getCreator(), tmpEvent.getCreator() ]))
+        .then(creators => {
+            if (currentUser.username !== creators[0] && currentUser.username !== creators[1])
+                return Promise.reject(new Error('Only the group creator and event creator can delete this event.'));
+            // TODO: Remove users who voted / set a status (maybe, no, yes) for this event
+            return event.destroy();
+        })
+        .then(res)
+        .catch(rej);
     });
 }
 
@@ -54,7 +104,8 @@ function getAllEvents(currentUser) {
         .then(results => {
             results = [].concat.apply([], results);
             res(results);
-        });
+        })
+        .catch(rej);
     });
 }
 
@@ -76,4 +127,4 @@ function getEvent(currentUser, eventId) {
     });
 }
 
-module.exports = { createEvent, getAllEvents, getEvent };
+module.exports = { createEvent, getAllEvents, getEvent, updateEvent, deleteEvent };
