@@ -13,7 +13,10 @@ const Event = connection.define('events', { // Dates should all be UTC, conversi
     description: Sequelize.STRING,
     start_time: Sequelize.DATE,
     end_time: Sequelize.DATE,
-    location: Sequelize.STRING
+    adress: Sequelize.STRING,
+    city: Sequelize.STRING,
+    zipcode: Sequelize.STRING,
+    country: Sequelize.STRING
 });
 
 function defineModels(items) {
