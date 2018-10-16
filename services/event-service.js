@@ -2,16 +2,16 @@ const Event = require("../models/event");
 const auth = require('../auth/auth');
 const Sequelize = require('sequelize');
 const op = Sequelize.Op;
-function createEvent(name,description,startdate,enddate,locationname,adress,zipcode,city,housenumber){
+function createEvent(name,description,start_date,end_date,location_name,adress,zipcode,city,housenumber){
 
     return new Promise((resolve, reject) =>{
         
           Event.Event.create({
               name,
               description,
-              startdate,
-              enddate,
-              locationname,
+              start_date,
+              end_date,
+              location_name,
               zipcode,
               city,
               adress,

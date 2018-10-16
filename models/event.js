@@ -14,6 +14,7 @@ const Event = connection.define('events', { // Dates should all be UTC, conversi
     start_time: Sequelize.DATE,
     end_time: Sequelize.DATE,
     adress: Sequelize.STRING,
+    location_name: Sequelize.STRING,
     city: Sequelize.STRING,
     zipcode: Sequelize.STRING,
     country: Sequelize.STRING
