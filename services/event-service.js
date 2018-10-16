@@ -3,7 +3,7 @@ const Group = require('../models/group');
 const Sequelize = require('sequelize');
 const op = Sequelize.Op;
 
-function createEvent(currentUser, groupId, name, description, startTime, endTime, locationName, address, zipcode, city, housenumber, country) {
+function createEvent(currentUser, groupId, name, description, startTime, endTime, locationName, address, zipcode, city, country) {
     return new Promise((resolve, reject) =>{
         let tmpGroup;
         let tmpEvent;
@@ -28,7 +28,6 @@ function createEvent(currentUser, groupId, name, description, startTime, endTime
                 zipcode,
                 city,
                 address,
-                housenumber,
                 country
             });
         }).then((event) => {
@@ -36,13 +35,11 @@ function createEvent(currentUser, groupId, name, description, startTime, endTime
             return Promise.all([ tmpGroup.addEvent(event), event.setCreator(currentUser) ]);
         })
         .then(() => resolve(tmpEvent))
-        .catch(() => {
-            reject(new Error("Something went wrong with creating an event"));
-        });
+        .catch(reject);
     });
 }
 
-function updateEvent(currentUser, eventId, name, description, startTime, endTime, locationName, address, zipcode, city, housenumber, country) {
+function updateEvent(currentUser, eventId, name, description, startTime, endTime, locationName, address, zipcode, city, country) {
     return new Promise((res, rej) => {
         let tmpEvent;
         Event.Event.findById(eventId)
@@ -63,7 +60,6 @@ function updateEvent(currentUser, eventId, name, description, startTime, endTime
             tmpEvent.address = address;
             tmpEvent.zipcode = zipcode;
             tmpEvent.city = city;
-            tmpEvent.housenumber = housenumber;
             tmpEvent.country = country;
             return tmpEvent.save();
         })
@@ -83,10 +79,10 @@ function deleteEvent(currentUser, eventId) {
         })
         .then(group => Promise.all([ group.getCreator(), tmpEvent.getCreator() ]))
         .then(creators => {
-            if (currentUser.username !== creators[0] && currentUser.username !== creators[1])
+            if (currentUser.username !== creators[0].username && currentUser.username !== creators[1].username)
                 return Promise.reject(new Error('Only the group creator and event creator can delete this event.'));
             // TODO: Remove users who voted / set a status (maybe, no, yes) for this event
-            return event.destroy();
+            return tmpEvent.destroy();
         })
         .then(res)
         .catch(rej);

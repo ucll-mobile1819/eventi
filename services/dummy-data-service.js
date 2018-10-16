@@ -83,11 +83,11 @@ function generateDummyData() {
     })
     .then(() => {
         // CREATING EVENTS
-        let e1 = eventService.createEvent(alice, groupA.id, 'A', 'A Desc', new Date(2018, 11, 23, 20, 0, 0), new Date(2018, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', '123', 'Belgium');
-        let e2 = eventService.createEvent(alice, groupA.id, 'B', 'B Desc', new Date(2018, 11, 18, 20, 0, 0), new Date(2018, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', '123', 'Belgium');
-        let e3 = eventService.createEvent(bob, groupB.id, 'C', 'C Desc', new Date(2018, 11, 23, 20, 0, 0), new Date(2018, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', '123', 'Belgium');
-        let e4 = eventService.createEvent(bob, groupB.id, 'D', 'D Desc', new Date(2018, 7, 23, 20, 0, 0), new Date(2018, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', '123', 'Belgium');
-        let e5 = eventService.createEvent(bob, groupB.id, 'E', 'E Desc', new Date(2018, 7, 23, 20, 0, 0), new Date(2018, 7, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', '123', 'Belgium');
+        let e1 = eventService.createEvent(alice, groupA.id, 'A', 'A Desc', new Date(2018, 11, 23, 20, 0, 0), new Date(2018, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium');
+        let e2 = eventService.createEvent(alice, groupA.id, 'B', 'B Desc', new Date(2018, 11, 18, 20, 0, 0), new Date(2018, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium');
+        let e3 = eventService.createEvent(bob, groupB.id, 'C', 'C Desc', new Date(2018, 11, 23, 20, 0, 0), new Date(2018, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium');
+        let e4 = eventService.createEvent(bob, groupB.id, 'D', 'D Desc', new Date(2018, 7, 23, 20, 0, 0), new Date(2018, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium');
+        let e5 = eventService.createEvent(bob, groupB.id, 'E', 'E Desc', new Date(2018, 7, 23, 20, 0, 0), new Date(2018, 7, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium');
         return Promise.all([ e1, e2, e3, e4, e5 ]);
     })
     .then(events => {
