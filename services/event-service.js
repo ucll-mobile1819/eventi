@@ -3,7 +3,7 @@ const Group = require('../models/group');
 const Sequelize = require('sequelize');
 const op = Sequelize.Op;
 
-function createEvent(currentUser, groupId, name,description,startDate,endDate,locationName,address,zipcode,city,housenumber){
+function createEvent(currentUser, groupId, name, description, startTime, endTime, locationName, address, zipcode, city, housenumber, country) {
     return new Promise((resolve, reject) =>{
         let tmpGroup;
         let tmpEvent;
@@ -22,13 +22,14 @@ function createEvent(currentUser, groupId, name,description,startDate,endDate,lo
             return Event.Event.create({
                 name,
                 description,
-                start_date: startDate,
-                end_date: endDate,
+                start_time: startTime,
+                end_time: endTime,
                 location_name: locationName,
                 zipcode,
                 city,
                 address,
-                housenumber
+                housenumber,
+                country
             });
         }).then((event) => {
             tmpEvent = event;
@@ -41,7 +42,7 @@ function createEvent(currentUser, groupId, name,description,startDate,endDate,lo
     });
 }
 
-function updateEvent(currentUser, eventId, name, description, startDate, endDate, locationName, address, zipcode, city, housenumber) {
+function updateEvent(currentUser, eventId, name, description, startTime, endTime, locationName, address, zipcode, city, housenumber, country) {
     return new Promise((res, rej) => {
         let tmpEvent;
         Event.Event.findById(eventId)
@@ -56,13 +57,14 @@ function updateEvent(currentUser, eventId, name, description, startDate, endDate
                 return Promise.reject(new Error('Only the group creator and event creator can edit this event.'));
             tmpEvent.name = name;
             tmpEvent.description = description;
-            tmpEvent.start_date = startDate;
-            tmpEvent.end_date = endDate;
+            tmpEvent.start_time = startTime;
+            tmpEvent.end_time = endTime;
             tmpEvent.location_name = locationName;
             tmpEvent.address = address;
             tmpEvent.zipcode = zipcode;
             tmpEvent.city = city;
             tmpEvent.housenumber = housenumber;
+            tmpEvent.country = country;
             return tmpEvent.save();
         })
         .then(res)
@@ -97,7 +99,7 @@ function getAllEvents(currentUser) {
         .then(groups => {
             let promises = [];
             groups.forEach(group => promises.push(group.getEvents({
-                where: { end_date: { [op.gt]: Date.now } }
+                where: { end_time: { [op.gt]: new Date() } }
             })));
             return Promise.all(promises);
         })

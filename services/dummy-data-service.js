@@ -1,6 +1,7 @@
 const sequelize = require('sequelize');
 const userService = require('../services/user-service');
 const groupService = require('../services/group-service');
+const eventService = require('../services/event-service');
 
 function emptyDatabase(informationConnection, connection) {
     return new Promise((resolve, reject) => {
@@ -46,8 +47,14 @@ function generateDummyData() {
     let bob;
     let john;
 
-    let groupA;
-    let groupB;
+    let groupA; // Creator: alice
+    let groupB; // Creator: bob
+
+    let eventA1; // Creator: alice
+    let eventA2; // Creator: alice, TODO: should be changed to bob whenever invite codes has been merged
+    let eventB1; // Creator: Bob
+    let eventB2; // Creator: Bob
+    let eventB3; // Creator: Bob, TODO: should be changed to john whenever invite codes has been merged
 
     // GENERATING USERS
     let reqs = [];
@@ -73,9 +80,31 @@ function generateDummyData() {
     .then(() => {
         // MAKING USERS JOIN GROUPS (Waiting for merge request approval)
         return new Promise(a=>a());
-    }).then(() => {
+    })
+    .then(() => {
+        // CREATING EVENTS
+        let e1 = eventService.createEvent(alice, groupA.id, 'A', 'A Desc', new Date(2018, 11, 23, 20, 0, 0), new Date(2018, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', '123', 'Belgium');
+        let e2 = eventService.createEvent(alice, groupA.id, 'B', 'B Desc', new Date(2018, 11, 18, 20, 0, 0), new Date(2018, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', '123', 'Belgium');
+        let e3 = eventService.createEvent(bob, groupB.id, 'C', 'C Desc', new Date(2018, 11, 23, 20, 0, 0), new Date(2018, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', '123', 'Belgium');
+        let e4 = eventService.createEvent(bob, groupB.id, 'D', 'D Desc', new Date(2018, 7, 23, 20, 0, 0), new Date(2018, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', '123', 'Belgium');
+        let e5 = eventService.createEvent(bob, groupB.id, 'E', 'E Desc', new Date(2018, 7, 23, 20, 0, 0), new Date(2018, 7, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', '123', 'Belgium');
+        return Promise.all([ e1, e2, e3, e4, e5 ]);
+    })
+    .then(events => {
+        eventA1 = events[0];
+        eventA2 = events[1];
+        eventB1 = events[2];
+        eventB2 = events[3];
+        eventB3 = events[4];
+
+        // NEXT UP ?
+    })
+    .then(() => {
         // END OF DUMMY DATA CREATION
         console.log('\n\n\n\n\nUsers created:\nfirstname lastname - username - password \n\nAlice Henderson - alice - t1\nBob Sanders - bob - t2\nJohn Doe - john - t3');
+    }).catch(err => {
+        console.log('\x1b[31m%s\x1b[0m', 'Error creating dummy data:');
+        console.log(err);
     });
 }
 
