@@ -12,3 +12,8 @@ Run server:
 ```sh
 $ node bin/www
 ```
+
+Run server with dummy data creation (removes all data and generates dummy data):
+```sh
+$ DUMMY=CREATE node bin/www
+```
