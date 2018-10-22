@@ -10,9 +10,9 @@ function essentializyUser(user) {
     return { firstname: r.firstname, lastname: r.lastname, username: r.username, birthday: r.birthday };
 }
 
-function essentializyEvent(event) {
+function essentializyEvent(event, pollDates = undefined) {
     const r = clone(event);
-    return { id: r.id, name: r.name, description: r.description, start_time: r.start_time, end_time: r.end_time, address: r.address, location_name: r.location_name, city: r.city, zipcode: r.zipcode, country: r.country };
+    return { id: r.id, name: r.name, description: r.description, startTime: r.start_time, endTime: r.end_time, address: r.address, locationName: r.location_name, city: r.city, zipcode: r.zipcode, country: r.country, type: r.type, pollDates: pollDates };
 }
 
 module.exports = { essentializyGroup, essentializyUser, essentializyEvent };

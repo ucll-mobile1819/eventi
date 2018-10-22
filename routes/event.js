@@ -4,8 +4,9 @@ const eventService = require("../services/event-service");
 const middleware = require('../middleware');
 const essentialisizer = require('../util/essentialisizer');
 
+// ?type=[event|poll]
 router.get('/', middleware.auth.loggedIn, (req, res, next) =>{
-    eventService.getAllEvents(req.user)
+    eventService.getAllEvents(req.user, req.query.type)
     .then(events => {
         res.send(events.map(el => essentialisizer.essentializyEvent(el)));
     })
@@ -20,15 +21,22 @@ router.get('/:id', middleware.auth.loggedIn,  (req, res, next) =>{
     .catch(next);
 });
 
+// ?type=[event|poll]
 router.get('/group/:groupId', middleware.auth.loggedIn, (req, res, next) => {
-    eventService.getAllEventsInGroup(req.user, req.params.groupId)
+    eventService.getAllEventsInGroup(req.user, req.params.groupId, req.query.type)
     .then(events => res.send(events))
     .catch(next);
 });
 
 router.post('/', middleware.auth.loggedIn,  (req, res, next) => {
-    eventService.createEvent(req.user, req.body.groupId, req.body.name, req.body.description, req.body.startTime, req.body.endTime, req.body.locationName, req.body.zipcode, req.body.city, req.body.address, req.body.country)
-    .then(result => {
+    let promise;
+    let params = [req.user, req.body.groupId, req.body.name, req.body.description, req.body.startTime, req.body.endTime, req.body.locationName, req.body.zipcode, req.body.city, req.body.address, req.body.country];
+    if (req.body.type === 'poll') {
+        promise = eventService.createPoll(...params, req.body.datums);
+    } else {
+        promise = eventService.createEvent(...params);
+    }
+    promise.then(result => {
         res.send(essentialisizer.essentializyEvent(result));
     })
     .catch(next);

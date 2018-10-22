@@ -1,9 +1,10 @@
 const Event = require("../models/event");
 const Group = require('../models/group');
 const Sequelize = require('sequelize');
+const PollDate = require('../models/poll-date');
 const op = Sequelize.Op;
 
-function createEvent(currentUser, groupId, name, description, startTime, endTime, locationName, address, zipcode, city, country) {
+function createEvent(currentUser, groupId, name, description, startTime, endTime, locationName, address, zipcode, city, country, type = 'event') {
     return new Promise((resolve, reject) =>{
         let tmpGroup;
         let tmpEvent;
@@ -28,13 +29,34 @@ function createEvent(currentUser, groupId, name, description, startTime, endTime
                 zipcode,
                 city,
                 address,
-                country
+                country,
+                type
             });
         }).then((event) => {
             tmpEvent = event;
             return Promise.all([ tmpGroup.addEvent(event), event.setCreator(currentUser) ]);
         })
         .then(() => resolve(tmpEvent))
+        .catch(reject);
+    });
+}
+
+function createPoll(currentUser, groupId, name, description, startTime, endTime, locationName, address, zipcode, city, country, pollDates) {
+    return new Promise((resolve, reject) => {
+        let correct = true;
+        pollDates.forEach(item => {
+            if (!item || !item.startDate || !item.endDate) correct = false;
+        });
+        if (!correct) return Promise.reject(new Error('All pollDates must have a startDate and endDate attribute.'));
+        let tmpEvent;
+        createEvent(currentUser, groupId, name, description, startTime, endTime, locationName, address, zipcode, city, country, 'poll')
+        .then(event => {
+            tmpEvent = event;
+            let promises = pollDates.map(el => PollDate.PollDate.create({ start_date: el.startDate, end_date: el.endDate }));
+            return Promise.all(promises);
+        })
+        .then(pollDates => tmpEvent.setPollDates(pollDates))
+        .then(resolve)
         .catch(reject);
     });
 }
@@ -144,4 +166,4 @@ function getEvent(currentUser, eventId) {
     });
 }
 
-module.exports = { createEvent, getAllEvents, getAllEventsInGroup, getEvent, updateEvent, deleteEvent };
+module.exports = { createEvent, createPoll, getAllEvents, getAllEventsInGroup, getEvent, updateEvent, deleteEvent };
