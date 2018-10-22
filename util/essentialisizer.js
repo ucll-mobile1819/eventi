@@ -10,4 +10,9 @@ function essentializyUser(user) {
     return { firstname: r.firstname, lastname: r.lastname, username: r.username, birthday: r.birthday };
 }
 
-module.exports = { essentializyGroup, essentializyUser };
+function essentializyEvent(event) {
+    const r = clone(event);
+    return { id: r.id, name: r.name, description: r.description, start_time: r.start_time, end_time: r.end_time, address: r.address, location_name: r.location_name, city: r.city, zipcode: r.zipcode, country: r.country };
+}
+
+module.exports = { essentializyGroup, essentializyUser, essentializyEvent };
