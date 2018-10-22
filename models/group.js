@@ -1,5 +1,6 @@
 const connection = require('./sequelize-connection').connection;
 const Sequelize = require('sequelize');
+const generateId = require('nanoid/async/generate');
 
 let models = {};
 
@@ -11,7 +12,8 @@ const Group = connection.define('groups', {
     },
     name: Sequelize.STRING,
     description: Sequelize.STRING,
-    color: Sequelize.STRING
+    color: Sequelize.STRING,
+    invite_code: Sequelize.STRING
 });
 
 function defineModels(items) {
@@ -53,4 +55,19 @@ function removeUserFromGroup(groupId, user) {
     });
 }
 
-module.exports = { Group, defineModels, addUserToGroup, removeUserFromGroup }
+function createInviteCode(group) {
+    return new Promise((resolve, reject) => {
+        let tmpInviteCode;
+        generateId('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', 8)
+        .then(inviteCode => {
+            tmpInviteCode = inviteCode;
+            if (!group) return Promise.reject(new Error('This group does not exist.'));
+            group.invite_code = tmpInviteCode;
+            return group.save();
+        })
+        .then(() => resolve(tmpInviteCode))
+        .catch(reject);
+    });
+}
+
+module.exports = { Group, defineModels, addUserToGroup, removeUserFromGroup, createInviteCode }
