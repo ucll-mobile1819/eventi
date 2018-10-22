@@ -20,6 +20,12 @@ router.get('/:id', middleware.auth.loggedIn,  (req, res, next) =>{
     .catch(next);
 });
 
+router.get('/group/:groupId', middleware.auth.loggedIn, (req, res, next) => {
+    eventService.getAllEventsInGroup(req.user, req.params.groupId)
+    .then(events => res.send(events))
+    .catch(next);
+});
+
 router.post('/', middleware.auth.loggedIn,  (req, res, next) => {
     eventService.createEvent(req.user, req.body.groupId, req.body.name, req.body.description, req.body.startTime, req.body.endTime, req.body.locationName, req.body.zipcode, req.body.city, req.body.address, req.body.country)
     .then(result => {

@@ -107,6 +107,25 @@ function getAllEvents(currentUser) {
     });
 }
 
+function getAllEventsInGroup(currentUser, groupId) {
+    return new Promise((res, rej) => {
+        let tmpGroup;
+        Group.Group.findById(groupId)
+        .then(group => {
+            if (!group) return Promise.reject(new Error('This group does not exist.'));
+            tmpGroup = group;
+            return group.getUsers();
+        })
+        .then(users => {
+            if (users.map(el => el.username).indexOf(currentUser.username) === -1)
+                return Promise.reject(new Error('You are not a part of this group.'));
+            return tmpGroup.getEvents();
+        })
+        .then(res)
+        .catch(rej);
+    });
+}
+
 function getEvent(currentUser, eventId) {
     return new Promise((res, rej) => {
         let tmpEvent;
@@ -125,4 +144,4 @@ function getEvent(currentUser, eventId) {
     });
 }
 
-module.exports = { createEvent, getAllEvents, getEvent, updateEvent, deleteEvent };
+module.exports = { createEvent, getAllEvents, getAllEventsInGroup, getEvent, updateEvent, deleteEvent };
