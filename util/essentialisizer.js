@@ -12,6 +12,7 @@ function essentializyUser(user) {
 
 function essentializyEvent(event, pollDates = undefined) {
     const r = clone(event);
+    if (pollDates) pollDates = pollDates.map(el => ({ startTime: el.start_time, endTime: el.end_time }));
     return { id: r.id, name: r.name, description: r.description, startTime: r.start_time, endTime: r.end_time, address: r.address, locationName: r.location_name, city: r.city, zipcode: r.zipcode, country: r.country, type: r.type, pollDates: pollDates };
 }
 

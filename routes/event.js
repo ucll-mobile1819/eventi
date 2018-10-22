@@ -15,8 +15,15 @@ router.get('/', middleware.auth.loggedIn, (req, res, next) =>{
 
 router.get('/:id', middleware.auth.loggedIn,  (req, res, next) =>{
     eventService.getEvent(req.user, req.params.id)
-    .then(result => {
-        res.send(essentialisizer.essentializyEvent(result));
+    .then(event => {
+        if (event.type === 'poll') {
+            event.getPollDates()
+            .then(pollDates => {
+                res.send(essentialisizer.essentializyEvent(result, pollDates));
+            })
+        } else {
+            res.send(essentialisizer.essentializyEvent(result));
+        }
     })
     .catch(next);
 });

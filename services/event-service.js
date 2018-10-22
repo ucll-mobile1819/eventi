@@ -45,14 +45,14 @@ function createPoll(currentUser, groupId, name, description, startTime, endTime,
     return new Promise((resolve, reject) => {
         let correct = true;
         pollDates.forEach(item => {
-            if (!item || !item.startDate || !item.endDate) correct = false;
+            if (!item || !item.startTime || !item.endTime) correct = false;
         });
-        if (!correct) return Promise.reject(new Error('All pollDates must have a startDate and endDate attribute.'));
+        if (!correct) return Promise.reject(new Error('All pollDates must have a startTime and endTime attribute.'));
         let tmpEvent;
         createEvent(currentUser, groupId, name, description, startTime, endTime, locationName, address, zipcode, city, country, 'poll')
         .then(event => {
             tmpEvent = event;
-            let promises = pollDates.map(el => PollDate.PollDate.create({ start_date: el.startDate, end_date: el.endDate }));
+            let promises = pollDates.map(el => PollDate.PollDate.create({ start_time: el.startTime, end_time: el.endTime }));
             return Promise.all(promises);
         })
         .then(pollDates => tmpEvent.setPollDates(pollDates))
@@ -111,13 +111,17 @@ function deleteEvent(currentUser, eventId) {
     });
 }
 
-function getAllEvents(currentUser) {
+function getAllEvents(currentUser, type) {
     return new Promise((res, rej) => {
+        const typeQuery = (type === 'event' || type === 'poll' ? { type } : null );
         currentUser.getGroups()
         .then(groups => {
             let promises = [];
             groups.forEach(group => promises.push(group.getEvents({
-                where: { end_time: { [op.gt]: new Date() } }
+                where: { 
+                    end_time: { [op.gt]: new Date() },
+                    ...typeQuery
+                }
             })));
             return Promise.all(promises);
         })
@@ -129,8 +133,9 @@ function getAllEvents(currentUser) {
     });
 }
 
-function getAllEventsInGroup(currentUser, groupId) {
+function getAllEventsInGroup(currentUser, groupId, type) {
     return new Promise((res, rej) => {
+        const typeQuery = (type === 'event' || type === 'poll' ? { type } : null );
         let tmpGroup;
         Group.Group.findById(groupId)
         .then(group => {
@@ -141,7 +146,7 @@ function getAllEventsInGroup(currentUser, groupId) {
         .then(users => {
             if (users.map(el => el.username).indexOf(currentUser.username) === -1)
                 return Promise.reject(new Error('You are not a part of this group.'));
-            return tmpGroup.getEvents();
+            return tmpGroup.getEvents({ where: { ...typeQuery } });
         })
         .then(res)
         .catch(rej);

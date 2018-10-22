@@ -9,8 +9,8 @@ const PollDate = connection.define('poll_dates', {
         primaryKey: true,
         autoIncrement: true
     },
-    start_date: Sequelize.DATE,
-    end_date: Sequelize.DATE
+    start_time: Sequelize.DATE,
+    end_time: Sequelize.DATE
 });
 
 function defineModels(items) {
