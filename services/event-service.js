@@ -171,4 +171,31 @@ function getEvent(currentUser, eventId) {
     });
 }
 
-module.exports = { createEvent, createPoll, getAllEvents, getAllEventsInGroup, getEvent, updateEvent, deleteEvent };
+function endPoll(currentUser, eventId, pollDateId) { // TODO: remove user votes for poll dates
+    return new Promise((resolve, reject) => {
+        let tmpEvent;
+        Event.Event.findById(eventId)
+        .then(event => {
+            if (!event) return Promise.reject(new Error('This poll does not exist.'));
+            if (event.type !== 'poll') return Promise.reject(new Error('This event is not a poll.'));
+            tmpEvent = event;
+            return event.getCreator();
+        })
+        .then(creator => {
+            if (creator.username !== currentUser.username) return Promise.reject(new Error('Only the owner of the poll can end it.'));
+            return tmpEvent.getPollDates({ where: { id: pollDateId } });
+        })
+        .then(pollDates => {
+            if (pollDates.length === -1) return Promise.reject(new Error('The poll date does not exist / belong to the poll.'));
+            let pollDate = pollDates[0];
+            tmpEvent.start_time = pollDate.start_time;
+            tmpEvent.end_time = pollDate.end_time;
+            tmpEvent.type = 'event';
+            return Promise.all([ tmpEvent.save(), tmpEvent.setPollDates([]) ]);
+        })
+        .then(resolve)
+        .catch(reject);
+    });
+}
+
+module.exports = { createEvent, createPoll, getAllEvents, getAllEventsInGroup, getEvent, updateEvent, deleteEvent, endPoll };
