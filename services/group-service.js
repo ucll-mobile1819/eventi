@@ -142,7 +142,7 @@ function banUser(currentUser, groupId, username) {
     return new Promise((resolve, reject) => {
         let tmpGroup;
         let tmpUser;
-        if (currentUser.username === username) return Promise.reject(new Error('You can\'t ban yourself.'));
+        if (currentUser.username === username) return reject(new Error('You can\'t ban yourself.'));
         Promise.all([ User.User.findByPrimary(username), Group.Group.findById(groupId) ])
         .then(results => {
             tmpUser = results[0];
