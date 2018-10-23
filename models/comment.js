@@ -10,12 +10,19 @@ const Comment = connection.define('comments', {
         autoIncrement: true
     },
     content: Sequelize.STRING
-    // datetime is added by Sequelize?
 });
 
 function defineModels(items) {
     models = items;
-    Comment.belongsTo(models.Event.Event);
+    Comment.belongsTo(models.Event.Event, {
+        constraints: false,
+        foreignKey: 'event_id'
+    });
+    Comment.belongsTo(models.User.User, { 
+        as: 'Creator', 
+        constraints: false, 
+        foreignKey: 'comment_creator' 
+    });
 }
 
 module.exports = { Comment, defineModels };
