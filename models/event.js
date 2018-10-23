@@ -24,6 +24,7 @@ function defineModels(items) {
     models = items;
     Event.belongsTo(models.Group.Group);
     Event.belongsTo(models.User.User, { as: 'Creator', constraints: false, foreignKey: 'creator_username' });
+    Event.hasMany(models.Comment.Comment, { as: 'Comments' });
 }
 
 module.exports = { Event, defineModels };
