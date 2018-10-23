@@ -8,6 +8,7 @@
  */
 
 const sequelize = require('./sequelize-connection').connection;
+const dummyDataService = require('../services/dummy-data-service');
 const models = {};
 const modules = [];
 
@@ -15,18 +16,35 @@ sequelize.options.define.freezeTableName = true;
 sequelize.options.define.underscored = true;
 sequelize.options.define.underscoredAll = true;
 
-require('fs').readdirSync(__dirname).forEach(function(file) {
-    if (file === 'index.js') return;
-    if (file.split('.').length !== 2) return;
-    const mod = require('./' + file);
-    let modelName = file.split('.')[0];
-    modelName = modelName.split('-').map(n => n.charAt(0).toUpperCase() + n.substring(1)).join('');
-    models[modelName] = mod;
-    modules.push(mod);
-});
-modules.forEach(mod => { if (mod.defineModels) mod.defineModels(models); });
+const loadModels = () => {
+    return new Promise((resolve) => {
+        require('fs').readdirSync(__dirname).forEach(function(file) {
+            if (file === 'index.js') return;
+            if (file.split('.').length !== 2) return;
+            const mod = require('./' + file);
+            let modelName = file.split('.')[0];
+            modelName = modelName.split('-').map(n => n.charAt(0).toUpperCase() + n.substring(1)).join('');
+            models[modelName] = mod;
+            modules.push(mod);
+        });
+    
+        modules.forEach(mod => { if (mod.defineModels) mod.defineModels(models); });
+    
+        sequelize.sync().then(resolve);
+    });
+}
 
-sequelize.sync();
+if (process.env.DUMMY && process.env.DUMMY.toUpperCase().trim() === 'CREATE') {
+    dummyDataService.emptyDatabase(require('./sequelize-connection').informationConnection, sequelize)
+    .then(() => {
+        return loadModels();
+    })
+    .then(() => {
+        dummyDataService.generateDummyData();
+    });
+} else {
+    loadModels();
+}
 
 module.exports = {};
 
