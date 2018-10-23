@@ -61,11 +61,7 @@ router.put('/:id', middleware.auth.loggedIn, (req, res, next) => {
     .catch(next);
 });
 
-router.put('/:id/poll-dates', middleware.auth.loggedIn, (req, res, next) => {
-    // TODO:
-});
-
-router.delete('/:id', middleware.auth.loggedIn,  (req, res, next) => { // TODO: Also delete pollDates & user votes
+router.delete('/:id', middleware.auth.loggedIn,  (req, res, next) => { // TODO: Also delete user votes
     eventService.deleteEvent(req.user, req.params.id)
     .then(() => res.send())
     .catch(next);
