@@ -194,6 +194,30 @@ function getEvent(currentUser, eventId) {
     });
 }
 
+function getVotes(currentUser, eventId) {
+    return new Promise((resolve, reject) => {
+        let tmpEvent;
+        Event.Event.findById(eventId)
+        .then(event => {
+            if (!event) return Promise.reject(new Error('This event does not exist.'));
+            if (event.type !== 'poll') return Promise.reject(new Error('This event is not a poll.'));
+            tmpEvent = event;
+            return Promise.all([ event.getGroup(), event.getPollDates() ]);
+        })
+        .then(results => Promise.all([ results[0].getUsers(), results[1], ...results[1].map(el => el.getUsers()) ]))
+        .then(results => {
+            if (results[0].map(el => el.username).indexOf(currentUser.username) === -1)
+                return Promise.reject(new Error('You are not a part of this group.'));
+            let results = results[1].map(el => ({ id: el.id, startTime: el.start_time, endTime: el.end_time }));
+            results.slice(2).forEach((el, index) => {
+                results[index].votes = el.length;
+            });
+            resolve(results);
+        })
+        .catch(reject);
+    });
+}
+
 function endPoll(currentUser, eventId, pollDateId) {
     return new Promise((resolve, reject) => {
         let tmpEvent;
@@ -266,4 +290,4 @@ function votePoll(currentUser, eventId, pollDates) {
     });
 }
 
-module.exports = { createEvent, createPoll, getAllEvents, getAllEventsInGroup, getEvent, updateEvent, deleteEvent, endPoll, votePoll };
+module.exports = { createEvent, createPoll, getAllEvents, getAllEventsInGroup, getEvent, updateEvent, deleteEvent, endPoll, votePoll, getVotes };

@@ -28,6 +28,12 @@ router.get('/:id', middleware.auth.loggedIn,  (req, res, next) =>{
     .catch(next);
 });
 
+router.get('/:id/votes', middleware.auth.loggedIn, (req, res, next) => {
+    eventService.getVotes(req.user, req.params.id)
+    .then(votes => res.send(votes))
+    .catch(next);
+});
+
 // ?type=[event|poll]
 router.get('/group/:groupId', middleware.auth.loggedIn, (req, res, next) => {
     eventService.getAllEventsInGroup(req.user, req.params.groupId, req.query.type)
