@@ -4,6 +4,11 @@ const Sequelize = require('sequelize');
 let models = {};
 
 const Comment = connection.define('comments', {
+    id: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
     content: Sequelize.STRING
     // datetime is added by Sequelize?
 });
