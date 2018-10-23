@@ -16,6 +16,7 @@ const PollDate = connection.define('poll_dates', {
 function defineModels(items) {
     models = items;
     PollDate.belongsTo(models.Event.Event, { as: 'Event', constraints: false, foreignKey: 'event_id' });
+    PollDate.belongsToMany(models.User.User, { through: 'UserPollDate' });
 }
 
 module.exports = { PollDate, defineModels };

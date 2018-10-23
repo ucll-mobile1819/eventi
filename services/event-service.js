@@ -103,10 +103,10 @@ function deleteEvent(currentUser, eventId) {
         .then(creators => {
             if (currentUser.username !== creators[0].username && currentUser.username !== creators[1].username)
                 return Promise.reject(new Error('Only the group creator and event creator can delete this event.'));
-            // TODO: Remove users who voted / set a status (maybe, no, yes) for this event
+            // TODO: Remove users who set a status (maybe, no, yes) for this event
             if (tmpEvent.type === 'poll') {
                 return new Promise((resolve, reject) => {
-                    tmpEvent.setPollDates([])
+                    Promise.all([ tmpEvent.setPollDates([]), removePollDates(tmpEvent) ])
                     .then(() => tmpEvent.destroy())
                     .then(resolve)
                     .catch(reject);
@@ -117,6 +117,20 @@ function deleteEvent(currentUser, eventId) {
         })
         .then(res)
         .catch(rej);
+    });
+}
+
+function removePollDates(event) {
+    return new Promise((resolve, reject) => {
+        event.getPollDates(pollDates => {
+            let promises = pollDates.map(el => el.setUsers([]));
+            return Promise.all([pollDates, ...promises ]);
+        })
+        .then(results => {
+            return Promise.all(results[0].map(el => el.destroy()));
+        })
+        .then(() => resolve())
+        .catch(reject);
     });
 }
 
@@ -180,7 +194,7 @@ function getEvent(currentUser, eventId) {
     });
 }
 
-function endPoll(currentUser, eventId, pollDateId) { // TODO: remove user votes for poll dates
+function endPoll(currentUser, eventId, pollDateId) {
     return new Promise((resolve, reject) => {
         let tmpEvent;
         Event.Event.findById(eventId)
@@ -200,11 +214,56 @@ function endPoll(currentUser, eventId, pollDateId) { // TODO: remove user votes 
             tmpEvent.start_time = pollDate.start_time;
             tmpEvent.end_time = pollDate.end_time;
             tmpEvent.type = 'event';
-            return Promise.all([ tmpEvent.save(), tmpEvent.setPollDates([]) ]);
+            return Promise.all([ tmpEvent.save(), removePollDates(tmpEvent) ]);
         })
         .then(resolve)
         .catch(reject);
     });
 }
 
-module.exports = { createEvent, createPoll, getAllEvents, getAllEventsInGroup, getEvent, updateEvent, deleteEvent, endPoll };
+// Phew this was a difficult one
+function votePoll(currentUser, eventId, pollDates) {
+    return new Promise((resolve, reject) => {
+        Event.Event.findById(eventId)
+        .then(event => {
+            if (!event) return Promise.reject(new Error('This event does not exist.'));
+            return Promise.all([ event.getPollDates(), event.getGroup() ]);
+        })
+        .then(results => {
+            let ids = results[0].map(el => el.id);
+            let err = false;
+            pollDates.forEach(id => {
+                if (ids.indexOf(id) === -1) err = true;
+            });
+            if (err) return Promise.reject(new Error('One or more given poll dates do not belong to this event.'));
+            return Promise.all([ results[1].getUsers(), results[0] ]); // You can also add normal objects, such as results[0]
+        })
+        .then(results => {
+            if (results[0].map(el => el.username).indexOf(currentUser.username) === -1)
+                return Promise.reject(new Error('You have to be a part of the group to vote on this event.'));
+
+            let promises = [];
+            // Add/remove votes
+            results[1].forEach(item => {
+                let pos = pollDates.indexOf(item.id);
+                if (pos !== -1) {
+                    promises.push(new Promise((resolve, reject) => {
+                        item.getUsers({ where: { username: currentUser.username } })
+                        .then(users => {
+                            if (users.length !== 0) return resolve();
+                            item.addUser(currentUser).then(() => resolve()).catch(reject);
+                        })
+                        .catch(reject);
+                    }));
+                } else {
+                    promises.push(item.removeUser(currentUser));
+                }
+            });
+            return Promise.all(promises);
+        })
+        .then(() => resolve())
+        .catch(reject);
+    });
+}
+
+module.exports = { createEvent, createPoll, getAllEvents, getAllEventsInGroup, getEvent, updateEvent, deleteEvent, endPoll, votePoll };

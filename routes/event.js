@@ -55,18 +55,23 @@ router.post('/:id/end-poll', middleware.auth.loggedIn, (req, res, next) => {
     .catch(next);
 });
 
+// Body: datePolls: [id1, id2, ...]
+router.post('/:id/vote', middleware.auth.loggedIn, (req, res, next) => {
+    eventService.votePoll(req.user, req.params.id, req.body.datePolls)
+    .then(() => res.send())
+    .catch(next);
+});
+
 router.put('/:id', middleware.auth.loggedIn, (req, res, next) => {
     eventService.updateEvent(req.user, req.params.id, req.body.name, req.body.description, req.body.startTime, req.body.endTime, req.body.locationName, req.body.zipcode, req.body.city, req.body.address, req.body.country)
     .then(() => res.send())
     .catch(next);
 });
 
-router.delete('/:id', middleware.auth.loggedIn,  (req, res, next) => { // TODO: Also delete user votes
+router.delete('/:id', middleware.auth.loggedIn,  (req, res, next) => { 
     eventService.deleteEvent(req.user, req.params.id)
     .then(() => res.send())
     .catch(next);
 });
-
-// TODO: user votes
 
 module.exports = router;
