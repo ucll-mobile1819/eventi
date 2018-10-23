@@ -57,9 +57,18 @@ function removeGroup(currentUser, groupId) {
         })
         .then(creator => {
             if (creator.username !== currentUser.username) return Promise.reject(new Error('Only the creator of a group can remove it.'));
-            return Promise.all([ tmpGroup.setUsers([]), tmpGroup.setBannedUsers([]) ]);
+            return Promise.all([ tmpGroup.getEvents(), tmpGroup.setUsers([]), tmpGroup.setBannedUsers([]) ]);
         })
-        .then(() => tmpGroup.destroy())
+        .then(results => Promise.all([ tmpGroup.destroy(), ...results[0].map(el => el.destroy()) ]))
+        // Explanation of above line:
+        // The connection between the users in the group and the group itself (M-N) has already been deleted
+        // Now we still need to destroy the group itself and all of the events linked to that group (1-N)
+        // Promise.all([x1, x2, ...]) accepts multiple promises and waits until all of them are resolved until resolving himself
+        // First promise in the array is destroying the group itself: tmpGroup.destroy()
+        // results[0] is the first result of the previous Promise.all (= tmpGroup.getEvents()). We map this (= transform every element of the array into a new value)
+        // to a promise of destroying the object, which leaves us with [ tmpGroup.destroy(), [ event1.destroy(), event2.destroy(), event3.destroy(), ... ] ]
+        // By using the spread operator (= ...) in front of the array, we extract the array elements and place them as normal arguments
+        // => Promise.all([ tmpGroup.destroy(), event1.destroy(), event2.destroy(), event3.destroy(), ... ])
         .then(() => resolve())
         .catch(err => reject(err));
     });
@@ -116,11 +125,7 @@ function removeUserFromGroup(currentUser, username, groupId) {
             if (creator.username !== currentUser.username && username !== currentUser.username)
                 return Promise.reject(new Error('You are not allowed to remove that user from the group.'));
             if (creator.username === tmpUser.username) {
-                return new Promise((res, rej) => {
-                    Promise.all([ tmpGroup.setUsers([]), tmpGroup.setBannedUsers([]) ])
-                    .then(() => tmpGroup.destroy())
-                    .then(() => res());
-                });
+                return removeGroup(currentUser, groupId);
             } else {
                 return tmpGroup.removeUser(tmpUser);
             }
@@ -175,6 +180,21 @@ function unbanUser(currentUser, groupId, username) {
         .then(creator => {
             if (creator.username !== currentUser.username) return Promise.reject(new Error('Only the creator of the group can unban users.'));
             return Group.unbanUser(tmpGroup, tmpUser);
+        })            
+        .then(resolve)
+        .catch(reject);
+    });
+}
+
+function generateInviteCode(currentUser, groupId) {
+    return new Promise((resolve, reject) => {
+        if (!Number.isInteger(Number(groupId))) return reject(new Error('Group id must be an existing id.'));
+        groupId = Number(groupId);
+        currentUser.getCreatedGroups()
+        .then(groups => {
+            let index = groups.map(el => el.id).indexOf(groupId);
+            if(index === -1) return Promise.reject(new Error('Only the owner of the group can generate invite codes.'));
+            return Group.createInviteCode(groups[index]);
         })
         .then(resolve)
         .catch(reject);
@@ -199,4 +219,22 @@ function getBannedUsers(currentUser, groupId) {
     });
 }
 
-module.exports = { createGroup, updateGroup, removeGroup, getGroup, removeUserFromGroup, getJoinedGroups, getCreatedGroups, getGroupMembers, banUser, unbanUser, getBannedUsers };
+function joinGroup(currentUser, inviteCode) {
+    return new Promise((resolve, reject) => {
+        let tmpGroup;
+        Group.Group.findOne({ where: { invite_code: inviteCode } })
+        .then(group => {
+            if (!group) return Promise.reject(new Error('This invite code is invalid/expired.'));
+            tmpGroup = group;
+            return group.getUsers();
+        })
+        .then(users => {
+            if (users.map(el => el.username).indexOf(currentUser.username) !== -1) return Promise.reject(new Error('You are already in this group.'));
+            return tmpGroup.addUser(currentUser);
+        })
+        .then(resolve)
+        .catch(reject);
+    });
+}
+
+module.exports = { createGroup, updateGroup, removeGroup, getGroup, removeUserFromGroup, getJoinedGroups, getCreatedGroups, getGroupMembers, banUser, unbanUser, getBannedUsers, generateInviteCode, joinGroup };

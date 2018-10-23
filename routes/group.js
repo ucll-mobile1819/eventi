@@ -65,11 +65,23 @@ router.post('/:id/unban/:username', middleware.auth.loggedIn, (req, res, next) =
     .catch(next);
 });
 
+router.post('/join/:inviteCode', middleware.auth.loggedIn, (req, res, next) => {
+    groupService.joinGroup(req.user, req.params.inviteCode)
+    .then(() => res.send())
+    .catch(next);
+});
+
 router.put('/:id', middleware.auth.loggedIn, (req, res, next) => {
     groupService.updateGroup(req.user, req.params.id, req.body.name, req.body.description, req.body.color)
     .then(() => {
         res.send();
     })
+    .catch(next);
+});
+
+router.put('/:id/generate-invite-code', middleware.auth.loggedIn, (req, res, next) => {
+    groupService.generateInviteCode(req.user, req.params.id)
+    .then(inviteCode => res.send({ inviteCode }))
     .catch(next);
 });
 
