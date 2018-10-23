@@ -57,7 +57,7 @@ function removeGroup(currentUser, groupId) {
         })
         .then(creator => {
             if (creator.username !== currentUser.username) return Promise.reject(new Error('Only the creator of a group can remove it.'));
-            return Promise.all([ tmpGroup.getEvents(), tmpGroup.setUsers([]) ]);
+            return Promise.all([ tmpGroup.getEvents(), tmpGroup.setUsers([]), tmpGroup.setBannedUsers([]) ]);
         })
         .then(results => Promise.all([ tmpGroup.destroy(), ...results[0].map(el => el.destroy()) ]))
         // Explanation of above line:
@@ -143,6 +143,49 @@ function getCreatedGroups(currentUser) {
     return currentUser.getCreatedGroups();
 }
 
+function banUser(currentUser, groupId, username) {
+    return new Promise((resolve, reject) => {
+        let tmpGroup;
+        let tmpUser;
+        if (currentUser.username === username) return reject(new Error('You can\'t ban yourself.'));
+        Promise.all([ User.User.findByPrimary(username), Group.Group.findById(groupId) ])
+        .then(results => {
+            tmpUser = results[0];
+            tmpGroup = results[1];
+            if (!tmpGroup) return Promise.reject(new Error('This group does not exist'));
+            if (!tmpUser) return Promise.reject(new Error('This user does not exist'));
+            return tmpGroup.getCreator();
+        })
+        .then(creator => {
+            if (creator.username !== currentUser.username) return Promise.reject(new Error('Only the creator of the group can ban users.'));
+            return Group.banUser(tmpGroup, tmpUser);
+        })
+        .then(resolve)
+        .catch(reject);
+    });
+}
+
+function unbanUser(currentUser, groupId, username) {
+    return new Promise((resolve, reject) => {
+        let tmpGroup;
+        let tmpUser;
+        Promise.all([ User.User.findByPrimary(username), Group.Group.findById(groupId) ])
+        .then(results => {
+            tmpUser = results[0];
+            tmpGroup = results[1];
+            if (!tmpGroup) return Promise.reject(new Error('This group does not exist'));
+            if (!tmpUser) return Promise.reject(new Error('This user does not exist'));
+            return tmpGroup.getCreator();
+        })
+        .then(creator => {
+            if (creator.username !== currentUser.username) return Promise.reject(new Error('Only the creator of the group can unban users.'));
+            return Group.unbanUser(tmpGroup, tmpUser);
+        })            
+        .then(resolve)
+        .catch(reject);
+    });
+}
+
 function generateInviteCode(currentUser, groupId) {
     return new Promise((resolve, reject) => {
         if (!Number.isInteger(Number(groupId))) return reject(new Error('Group id must be an existing id.'));
@@ -152,6 +195,24 @@ function generateInviteCode(currentUser, groupId) {
             let index = groups.map(el => el.id).indexOf(groupId);
             if(index === -1) return Promise.reject(new Error('Only the owner of the group can generate invite codes.'));
             return Group.createInviteCode(groups[index]);
+        })
+        .then(resolve)
+        .catch(reject);
+    });
+}
+
+function getBannedUsers(currentUser, groupId) {
+    return new Promise((resolve, reject) => {
+        let tmpGroup;
+        Group.Group.findById(groupId)
+        .then(group => {
+            if (!group) return Promise.reject(new Error('That group does not exist.'));
+            tmpGroup = group;
+            return group.getCreator();
+        })
+        .then(creator => {
+            if (creator.username !== currentUser.username) return Promise.reject(new Error('Only the user of the group can see the banned users.'));
+            return tmpGroup.getBannedUsers();
         })
         .then(resolve)
         .catch(reject);
@@ -176,4 +237,4 @@ function joinGroup(currentUser, inviteCode) {
     });
 }
 
-module.exports = { createGroup, updateGroup, removeGroup, getGroup, removeUserFromGroup, getJoinedGroups, getCreatedGroups, getGroupMembers, generateInviteCode, joinGroup };
+module.exports = { createGroup, updateGroup, removeGroup, getGroup, removeUserFromGroup, getJoinedGroups, getCreatedGroups, getGroupMembers, banUser, unbanUser, getBannedUsers, generateInviteCode, joinGroup };
