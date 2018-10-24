@@ -55,6 +55,28 @@ function updateComment(currentUser, commentId, content) {
     });
 }
 
+function deleteComment(currentUser, commentId) {
+    return new Promise((resolve, reject) => {
+        let tmpComment;
+
+        Comment.Comment.findById(commentId)
+        .then(comment => {
+            if (!comment) return Promise.reject(new Error('This comment does not exist.'));
+            tmpComment = comment;
+            return comment.getCreator();
+        })
+        .then(user => {
+            if (user.username !== currentUser.username) return Promise.reject(new Error('Only the owner of the comment can delete the comment.'));
+            tmpComment.content = content;
+            return tmpComment.destroy();
+        })
+        .then(() => {
+            resolve();
+        })
+        .catch(error => reject(error));
+    });
+}
+
 // TODO getCommentsOfEvent()
 
-module.exports = { createComment, updateComment };
+module.exports = { createComment, updateComment, deleteComment };
