@@ -97,7 +97,7 @@ function getCommentsOfEvent(currentUser, eventId) {
             if (users.map(user => user.username).indexOf(currentUser.username) === -1) { // user !belongsTo group
                 return Promise.reject(new Error ('You do not belong to this group.'));
             }
-            tmpEvent.getComments();
+            return tmpEvent.getComments();
         })
         .then(resolve)
         .catch(reject);
