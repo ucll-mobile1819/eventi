@@ -14,7 +14,7 @@ function createComment(currentUser, eventId, content) {
                 return Promise.reject(new Error('This event does not exist.'));
             }
             tmpEvent = event;
-            return event.getGroup(); // ?
+            return event.getGroup();
         })
         .then(group => group.getUsers())
         .then(users => {
@@ -77,6 +77,31 @@ function deleteComment(currentUser, commentId) {
     });
 }
 
-// TODO getCommentsOfEvent()
+function getAllComments(currentUser) {
+    return currentUser.getComments();
+}
 
-module.exports = { createComment, updateComment, deleteComment };
+function getCommentsOfEvent(currentUser, eventId) {
+    return new Promise((resolve, reject) => {
+        let tmpEvent;
+
+        Event.Event.findById(eventId)
+        .then(event => {
+            if (!event) return Promise.reject(new Error('This event does not exist.'));
+
+            tmpEvent = event;
+            return event.getGroup();
+        })
+        .then(group => group.getUsers())
+        .then(users => {
+            if (users.map(user => user.username).indexOf(currentUser.username) === -1) { // user !belongsTo group
+                return Promise.reject(new Error ('You do not belong to this group.'));
+            }
+            tmpEvent.getComments();
+        })
+        .then(resolve)
+        .catch(reject);
+    });
+}
+
+module.exports = { createComment, updateComment, deleteComment, getAllComments, getCommentsOfEvent };
