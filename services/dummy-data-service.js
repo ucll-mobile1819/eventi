@@ -2,6 +2,7 @@ const sequelize = require('sequelize');
 const userService = require('../services/user-service');
 const groupService = require('../services/group-service');
 const eventService = require('../services/event-service');
+const commentService = require('../services/comment-service');
 
 function emptyDatabase(informationConnection, connection) {
     return new Promise((resolve, reject) => {
@@ -97,7 +98,13 @@ function generateDummyData() {
         eventB2 = events[3];
         eventB3 = events[4];
 
-        // NEXT UP ?
+        // ADDING COMMENTS OF GROUP CREATORS TO GROUPS
+        // (other users' comments can be added when inviting is done)
+
+        let commentAlice1 = commentService.createComment(alice, eventA1.id, "I'm definitely coming!");
+        let commentAlice2 = commentService.createComment(alice, eventA1.id, "And doing lots of shots, so i can end up in a bush");
+        let commentBob1 = commentService.createComment(bob, eventB1.id, "I can't come, sorry");
+        let commentBob2 = commentService.createComment(bob, eventB1.id, "I'll make up for it another time...");
     })
     .then(() => {
         // END OF DUMMY DATA CREATION
