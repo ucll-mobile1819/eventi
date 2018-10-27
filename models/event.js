@@ -29,7 +29,7 @@ function defineModels(items) {
     models = items;
     Event.belongsTo(models.Group.Group);
     Event.belongsTo(models.User.User, { as: 'Creator', constraints: false, foreignKey: 'creator_username' });
-    Event.hasMany(models.PollDate.PollDate, { as: 'Polls', constraints: false, foreignKey: 'event_id' });
+    Event.hasMany(models.PollDate.PollDate, { as: 'PollDates', constraints: false, foreignKey: 'event_id' });
 }
 
 module.exports = { Event, defineModels };
