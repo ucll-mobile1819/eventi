@@ -20,6 +20,7 @@ function defineModels(items) {
     models = items;
     Group.belongsToMany(models.User.User, { through: 'UserGroup' }); // Defines many to many relationship with table in between (also in User model)
     Group.belongsTo(models.User.User, { as: 'Creator', constraints: false, foreignKey: 'creator_username' }); // ex: group.getCreator()
+    Group.belongsToMany(models.User.User, { through: 'UserBans', as: 'BannedUsers' });
     Group.hasMany(models.Event.Event, { as: 'Events' });
 }
 
@@ -55,6 +56,18 @@ function removeUserFromGroup(groupId, user) {
     });
 }
 
+function banUser(group, user) {
+    return new Promise((resolve, reject) => {
+        group.getBannedUsers()
+        .then(bannedUsers => {
+            if (bannedUsers.map(el => el.username).indexOf(user.username) !== -1) return Promise.reject(new Error('This user is already banned.'));
+            return Promise.all([ group.addBannedUser(user), group.removeUser(user) ]);
+        })
+        .then(resolve)
+        .catch(reject);
+    });
+}
+
 function createInviteCode(group) {
     return new Promise((resolve, reject) => {
         let tmpInviteCode;
@@ -70,4 +83,16 @@ function createInviteCode(group) {
     });
 }
 
-module.exports = { Group, defineModels, addUserToGroup, removeUserFromGroup, createInviteCode }
+function unbanUser(group, user) {
+    return new Promise((resolve, reject) => {
+        group.getBannedUsers()
+        .then(bannedUsers => {
+            if (bannedUsers.map(el => el.username).indexOf(user.username) === -1) return Promise.reject(new Error('This user is not banned.'));
+            return group.removeBannedUser(user);
+        })
+        .then(resolve)
+        .catch(reject);
+    });
+}
+
+module.exports = { Group, defineModels, addUserToGroup, removeUserFromGroup, banUser, unbanUser, createInviteCode };
