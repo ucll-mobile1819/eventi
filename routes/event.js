@@ -2,29 +2,17 @@ const express = require('express');
 const router = express.Router();
 const eventService = require("../services/event-service");
 const middleware = require('../middleware');
-const essentialisizer = require('../util/essentialisizer');
 
 // ?type=[event|poll]
 router.get('/', middleware.auth.loggedIn, (req, res, next) =>{
     eventService.getAllEvents(req.user, req.query.type)
-    .then(events => {
-        res.send(events.map(el => essentialisizer.essentializyEvent(el)));
-    })
+    .then(events => res.send(events))
     .catch(next);
 });
 
 router.get('/:id', middleware.auth.loggedIn,  (req, res, next) =>{
     eventService.getEvent(req.user, req.params.id)
-    .then(event => {
-        if (event.type === 'poll') {
-            event.getPollDates()
-            .then(pollDates => {
-                res.send(essentialisizer.essentializyEvent(result, pollDates));
-            })
-        } else {
-            res.send(essentialisizer.essentializyEvent(result));
-        }
-    })
+    .then(event => res.send(event))
     .catch(next);
 });
 
@@ -41,17 +29,16 @@ router.get('/group/:groupId', middleware.auth.loggedIn, (req, res, next) => {
     .catch(next);
 });
 
+// Requires 'type' (and if poll: 'pollDates' => [{startTime:x, endTime:y}])
 router.post('/', middleware.auth.loggedIn,  (req, res, next) => {
     let promise;
     let params = [req.user, req.body.groupId, req.body.name, req.body.description, req.body.startTime, req.body.endTime, req.body.locationName, req.body.zipcode, req.body.city, req.body.address, req.body.country];
     if (req.body.type === 'poll') {
-        promise = eventService.createPoll(...params, req.body.datums);
+        promise = eventService.createPoll(...params, req.body.pollDates);
     } else {
         promise = eventService.createEvent(...params);
     }
-    promise.then(result => {
-        res.send(essentialisizer.essentializyEvent(result));
-    })
+    promise.then(result => res.send(result))
     .catch(next);
 });
 
@@ -61,9 +48,9 @@ router.post('/:id/end-poll', middleware.auth.loggedIn, (req, res, next) => {
     .catch(next);
 });
 
-// Body: datePolls: [id1, id2, ...]
+// Body: pollDateIds: [id1, id2, ...]
 router.post('/:id/vote', middleware.auth.loggedIn, (req, res, next) => {
-    eventService.votePoll(req.user, req.params.id, req.body.datePolls)
+    eventService.votePoll(req.user, req.params.id, req.body.pollDateIds)
     .then(() => res.send())
     .catch(next);
 });

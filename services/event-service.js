@@ -2,9 +2,10 @@ const Event = require("../models/event");
 const Group = require('../models/group');
 const Sequelize = require('sequelize');
 const PollDate = require('../models/poll-date');
+const essentialisizer = require('../util/essentialisizer');
 const op = Sequelize.Op;
 
-function createEvent(currentUser, groupId, name, description, startTime, endTime, locationName, address, zipcode, city, country, type = 'event') {
+function createEvent(currentUser, groupId, name, description, startTime, endTime, locationName, address, zipcode, city, country, type = 'event', essentializyResponse = true) {
     return new Promise((resolve, reject) =>{
         let tmpGroup;
         let tmpEvent;
@@ -34,9 +35,10 @@ function createEvent(currentUser, groupId, name, description, startTime, endTime
             });
         }).then((event) => {
             tmpEvent = event;
-            return Promise.all([ tmpGroup.addEvent(event), event.setCreator(currentUser) ]);
+            return Promise.all([ tmpEvent.setGroup(tmpGroup), event.setCreator(currentUser) ]);
         })
-        .then(() => resolve(tmpEvent))
+        .then(() => (essentializyResponse ? essentialisizer.essentializyEvent(tmpEvent) : tmpEvent))
+        .then(resolve)
         .catch(reject);
     });
 }
@@ -49,13 +51,14 @@ function createPoll(currentUser, groupId, name, description, startTime, endTime,
         });
         if (!correct) return Promise.reject(new Error('All pollDates must have a startTime and endTime attribute.'));
         let tmpEvent;
-        createEvent(currentUser, groupId, name, description, startTime, endTime, locationName, address, zipcode, city, country, 'poll')
+        createEvent(currentUser, groupId, name, description, startTime, endTime, locationName, address, zipcode, city, country, 'poll', false)
         .then(event => {
             tmpEvent = event;
             let promises = pollDates.map(el => PollDate.PollDate.create({ start_time: el.startTime, end_time: el.endTime }));
             return Promise.all(promises);
         })
         .then(pollDates => tmpEvent.setPollDates(pollDates))
+        .then(() => essentialisizer.essentializyEvent(tmpEvent))
         .then(resolve)
         .catch(reject);
     });
@@ -85,7 +88,7 @@ function updateEvent(currentUser, eventId, name, description, startTime, endTime
             tmpEvent.country = country;
             return tmpEvent.save();
         })
-        .then(res)
+        .then(() => res())
         .catch(rej);
     });
 }
@@ -106,7 +109,7 @@ function deleteEvent(currentUser, eventId) {
             // TODO: Remove users who set a status (maybe, no, yes) for this event
             if (tmpEvent.type === 'poll') {
                 return new Promise((resolve, reject) => {
-                    Promise.all([ tmpEvent.setPollDates([]), removePollDates(tmpEvent) ])
+                    removePollDates(tmpEvent)
                     .then(() => tmpEvent.destroy())
                     .then(resolve)
                     .catch(reject);
@@ -115,14 +118,15 @@ function deleteEvent(currentUser, eventId) {
                 return tmpEvent.destroy();
             }
         })
-        .then(res)
+        .then(() => res())
         .catch(rej);
     });
 }
 
 function removePollDates(event) {
     return new Promise((resolve, reject) => {
-        event.getPollDates(pollDates => {
+        event.getPollDates()
+        .then(pollDates => {
             let promises = pollDates.map(el => el.setUsers([]));
             return Promise.all([pollDates, ...promises ]);
         })
@@ -150,8 +154,9 @@ function getAllEvents(currentUser, type) {
         })
         .then(results => {
             results = [].concat.apply([], results);
-            res(results);
+            return Promise.all(results.map(el => essentialisizer.essentializyEvent(el)));
         })
+        .then(res)
         .catch(rej);
     });
 }
@@ -171,12 +176,13 @@ function getAllEventsInGroup(currentUser, groupId, type) {
                 return Promise.reject(new Error('You are not a part of this group.'));
             return tmpGroup.getEvents({ where: { ...typeQuery } });
         })
+        .then(events => Promise.all(events.map(el => essentialisizer.essentializyEvent(el))))
         .then(res)
         .catch(rej);
     });
 }
 
-function getEvent(currentUser, eventId) {
+function getEvent(currentUser, eventId, essentializyResponse = true) {
     return new Promise((res, rej) => {
         let tmpEvent;
         Event.Event.findById(eventId)
@@ -188,31 +194,30 @@ function getEvent(currentUser, eventId) {
         .then(group => group.getUsers({ where: { username: currentUser.username } }))
         .then(users => {
             if (users.length === 0) return Promise.reject(new Error('You do not belong to the group of this event.'));
-            res(tmpEvent);
+            return essentializyResponse ? essentialisizer.essentializyEvent(tmpEvent) : tmpEvent;
         })
+        .then(res)
         .catch(rej);
     });
 }
 
 function getVotes(currentUser, eventId) {
     return new Promise((resolve, reject) => {
-        let tmpEvent;
-        Event.Event.findById(eventId)
+        getEvent(currentUser, eventId, false)
         .then(event => {
-            if (!event) return Promise.reject(new Error('This event does not exist.'));
             if (event.type !== 'poll') return Promise.reject(new Error('This event is not a poll.'));
-            tmpEvent = event;
-            return Promise.all([ event.getGroup(), event.getPollDates() ]);
+            return event.getPollDates();
         })
-        .then(results => Promise.all([ results[0].getUsers(), results[1], ...results[1].map(el => el.getUsers()) ]))
+        .then(pollDates => Promise.all([ pollDates, ...pollDates.map(el => el.getUsers()) ])) // ... spreads an array to a bunch of individual elements (pulls them out of the array)
+        // Fun fact: Next line does the exact same as the line underneath, explanation: https://davidwalsh.name/spread-operator
+        // .then(([ pollDates, ...pollDateUsers ]) => Promise.all([ pollDateUsers, ...pollDates.map(el => essentialisizer.essentializyPollDate(el)) ]))
+        .then(results =>  Promise.all([ results.slice(1), ...results[0].map(el => essentialisizer.essentializyPollDate(el)) ]))
         .then(results => {
-            if (results[0].map(el => el.username).indexOf(currentUser.username) === -1)
-                return Promise.reject(new Error('You are not a part of this group.'));
-            let results = results[1].map(el => ({ id: el.id, startTime: el.start_time, endTime: el.end_time }));
-            results.slice(2).forEach((el, index) => {
-                results[index].votes = el.length;
+            let res = results.slice(1);
+            results[0].forEach((el, index) => {
+                res[index].votes = el.length;
             });
-            resolve(results);
+            resolve(res);
         })
         .catch(reject);
     });
@@ -233,14 +238,14 @@ function endPoll(currentUser, eventId, pollDateId) {
             return tmpEvent.getPollDates({ where: { id: pollDateId } });
         })
         .then(pollDates => {
-            if (pollDates.length === -1) return Promise.reject(new Error('The poll date does not exist / belong to the poll.'));
+            if (pollDates.length === 0) return Promise.reject(new Error('The poll date does not exist / belong to the poll.'));
             let pollDate = pollDates[0];
             tmpEvent.start_time = pollDate.start_time;
             tmpEvent.end_time = pollDate.end_time;
             tmpEvent.type = 'event';
             return Promise.all([ tmpEvent.save(), removePollDates(tmpEvent) ]);
         })
-        .then(resolve)
+        .then(() => resolve())
         .catch(reject);
     });
 }
@@ -251,6 +256,7 @@ function votePoll(currentUser, eventId, pollDates) {
         Event.Event.findById(eventId)
         .then(event => {
             if (!event) return Promise.reject(new Error('This event does not exist.'));
+            if (event.type !== 'poll') return Promise.reject(new Error('This event is not a poll.'));
             return Promise.all([ event.getPollDates(), event.getGroup() ]);
         })
         .then(results => {

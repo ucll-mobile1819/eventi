@@ -61,7 +61,7 @@ function banUser(group, user) {
         group.getBannedUsers()
         .then(bannedUsers => {
             if (bannedUsers.map(el => el.username).indexOf(user.username) !== -1) return Promise.reject(new Error('This user is already banned.'));
-            return Promise.all([ group.addBannedUser(user), group.removeUser(user) ]);
+            return group.addBannedUser(user);
         })
         .then(resolve)
         .catch(reject);

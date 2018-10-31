@@ -54,16 +54,16 @@ function generateDummyData() {
     let inviteCodeB;
 
     let eventA1; // Creator: alice
-    let eventA2; // Creator: bob
+    let eventA2; // Creator: Bob
     let eventB1; // Creator: Bob
     let eventB2; // Creator: Bob
     let eventB3; // Creator: John
 
     // GENERATING USERS
     let reqs = [];
-    reqs.push(userService.createUser('Alice', 'Henderson', new Date(1963, 05, 23), 'alice', 't1', 't1'));
-    reqs.push(userService.createUser('Bob', 'Sanders', new Date(1965, 07, 01), 'bob', 't2', 't2'));
-    reqs.push(userService.createUser('John', 'Doe', new Date(1963, 05, 23), 'john', 't3', 't3'));
+    reqs.push(userService.createUser('Alice', 'Henderson', new Date(1963, 05, 23), 'alice', 't1', 't1', false));
+    reqs.push(userService.createUser('Bob', 'Sanders', new Date(1965, 07, 01), 'bob', 't2', 't2', false));
+    reqs.push(userService.createUser('John', 'Doe', new Date(1963, 05, 23), 'john', 't3', 't3', false));
     Promise.all(reqs)
     .then(results => {
         [ alice, bob, john ] = [ results[0], results[1], results[2] ];
@@ -110,7 +110,11 @@ function generateDummyData() {
         eventB2 = events[3];
         eventB3 = events[4];
 
-        // NEXT UP ?
+        // VOTE ON EVENT
+        let promises = [];
+        promises.push(eventService.votePoll(bob, eventB1.id, [ 1, 3 ]));
+        promises.push(eventService.votePoll(john, eventB1.id, [ 3 ]));
+        return Promise.all(promises);
     })
     .then(() => {
         // END OF DUMMY DATA CREATION
