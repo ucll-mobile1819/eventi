@@ -45,6 +45,7 @@ function updateComment(currentUser, commentId, content) {
         })
         .then(user => {
             if (user.username !== currentUser.username) return Promise.reject(new Error('Only the owner of the comment can edit the comment.'));
+            tmpComment.content = content;
             return tmpComment.save();
         })
         .then(() => {
