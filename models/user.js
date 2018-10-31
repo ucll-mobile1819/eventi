@@ -22,6 +22,11 @@ function defineModels(items) {
     User.belongsToMany(models.PollDate.PollDate, { through: 'UserPollDate' });
     User.belongsToMany(models.Group.Group, { through: 'UserBans', as: 'BannedGroups' });
     User.hasMany(models.Event.Event, { as: 'Events', constraints: false, foreignKey: 'creator_username' });
+    User.hasMany(models.Comment.Comment, {
+        as: 'Comments',
+        constraints: false,
+        foreignKey: 'comment_creator'
+    });
 }
 
 module.exports = { User, defineModels }

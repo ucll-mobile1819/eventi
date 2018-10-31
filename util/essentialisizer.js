@@ -45,4 +45,16 @@ function essentializyPollDate(pollDate) {
     });
 }
 
-module.exports = { essentializyGroup, essentializyUser, essentializyEvent, essentializyPollDate };
+function essentializyComment(comment) {
+    return new Promise((resolve, reject) => {
+        const r = clone(comment);
+        comment.getCreator()
+        .then(creator => essentializyUser(creator))
+        .then(creator => {
+            resolve({ id: r.id, content: r.content, creator });
+        })
+        .catch(reject);
+    });
+}
+
+module.exports = { essentializyGroup, essentializyUser, essentializyEvent, essentializyPollDate, essentializyComment };

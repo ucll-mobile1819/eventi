@@ -2,6 +2,7 @@ const sequelize = require('sequelize');
 const userService = require('../services/user-service');
 const groupService = require('../services/group-service');
 const eventService = require('../services/event-service');
+const commentService = require('../services/comment-service');
 
 function emptyDatabase(informationConnection, connection) {
     return new Promise((resolve, reject) => {
@@ -114,6 +115,13 @@ function generateDummyData() {
         let promises = [];
         promises.push(eventService.votePoll(bob, eventB1.id, [ 1, 3 ]));
         promises.push(eventService.votePoll(john, eventB1.id, [ 3 ]));
+
+        // ADDING COMMENTS TO EVENTS
+        promises.push(commentService.createComment(alice, eventA1.id, "I'm definitely coming!"));
+        promises.push(commentService.createComment(alice, eventA1.id, "And doing lots of shots, so i can end up in a bush"));
+        promises.push(commentService.createComment(bob, eventB1.id, "I can't come, sorry"));
+        promises.push(commentService.createComment(bob, eventB1.id, "I'll make up for it another time..."));
+        promises.push(commentService.createComment(john, eventB1.id, "Sad :c"));
         return Promise.all(promises);
     })
     .then(() => {
