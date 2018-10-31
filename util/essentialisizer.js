@@ -15,4 +15,10 @@ function essentializyEvent(event) {
     return { id: r.id, name: r.name, description: r.description, start_time: r.start_time, end_time: r.end_time, address: r.address, location_name: r.location_name, city: r.city, zipcode: r.zipcode, country: r.country };
 }
 
-module.exports = { essentializyGroup, essentializyUser, essentializyEvent };
+function essentializyComment(comment_creator, comment) {
+    const creator = clone(comment_creator);
+    const r = clone(comment);
+    return { id: r.id, content: r.content, creator: creator.username };
+}
+
+module.exports = { essentializyGroup, essentializyUser, essentializyEvent, essentializyComment };
