@@ -2,35 +2,56 @@ const express = require('express');
 const router = express.Router();
 const eventService = require("../services/event-service");
 const middleware = require('../middleware');
-const essentialisizer = require('../util/essentialisizer');
 
+// ?type=[event|poll]
 router.get('/', middleware.auth.loggedIn, (req, res, next) =>{
-    eventService.getAllEvents(req.user)
-    .then(events => {
-        res.send(events.map(el => essentialisizer.essentializyEvent(el)));
-    })
+    eventService.getAllEvents(req.user, req.query.type)
+    .then(events => res.send(events))
     .catch(next);
 });
 
 router.get('/:id', middleware.auth.loggedIn,  (req, res, next) =>{
     eventService.getEvent(req.user, req.params.id)
-    .then(result => {
-        res.send(essentialisizer.essentializyEvent(result));
-    })
+    .then(event => res.send(event))
     .catch(next);
 });
 
+router.get('/:id/votes', middleware.auth.loggedIn, (req, res, next) => {
+    eventService.getVotes(req.user, req.params.id)
+    .then(votes => res.send(votes))
+    .catch(next);
+});
+
+// ?type=[event|poll]
 router.get('/group/:groupId', middleware.auth.loggedIn, (req, res, next) => {
-    eventService.getAllEventsInGroup(req.user, req.params.groupId)
+    eventService.getAllEventsInGroup(req.user, req.params.groupId, req.query.type)
     .then(events => res.send(events))
     .catch(next);
 });
 
+// Requires 'type' (and if poll: 'pollDates' => [{startTime:x, endTime:y}])
 router.post('/', middleware.auth.loggedIn,  (req, res, next) => {
-    eventService.createEvent(req.user, req.body.groupId, req.body.name, req.body.description, req.body.startTime, req.body.endTime, req.body.locationName, req.body.zipcode, req.body.city, req.body.address, req.body.country)
-    .then(result => {
-        res.send(essentialisizer.essentializyEvent(result));
-    })
+    let promise;
+    let params = [req.user, req.body.groupId, req.body.name, req.body.description, req.body.startTime, req.body.endTime, req.body.locationName, req.body.zipcode, req.body.city, req.body.address, req.body.country];
+    if (req.body.type === 'poll') {
+        promise = eventService.createPoll(...params, req.body.pollDates);
+    } else {
+        promise = eventService.createEvent(...params);
+    }
+    promise.then(result => res.send(result))
+    .catch(next);
+});
+
+router.post('/:id/end-poll', middleware.auth.loggedIn, (req, res, next) => {
+    eventService.endPoll(req.user, req.params.id, req.body.pollDateId)
+    .then(() => res.send())
+    .catch(next);
+});
+
+// Body: pollDateIds: [id1, id2, ...]
+router.post('/:id/vote', middleware.auth.loggedIn, (req, res, next) => {
+    eventService.votePoll(req.user, req.params.id, req.body.pollDateIds)
+    .then(() => res.send())
     .catch(next);
 });
 
@@ -40,7 +61,7 @@ router.put('/:id', middleware.auth.loggedIn, (req, res, next) => {
     .catch(next);
 });
 
-router.delete('/:id', middleware.auth.loggedIn,  (req, res, next) => {
+router.delete('/:id', middleware.auth.loggedIn,  (req, res, next) => { 
     eventService.deleteEvent(req.user, req.params.id)
     .then(() => res.send())
     .catch(next);

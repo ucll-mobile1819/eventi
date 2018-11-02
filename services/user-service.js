@@ -1,8 +1,9 @@
 const User = require("../models/user");
 const bcrypt = require("../auth/bcrypt");
 const auth = require('../auth/auth');
+const essentialisizer = require('../util/essentialisizer');
 
-function createUser(firstname, lastname, birthday, username, password, passwordConf) {
+function createUser(firstname, lastname, birthday, username, password, passwordConf, essentializyResponse = true) {
     return new Promise((resolve, reject) =>{
         if (password !== passwordConf) {
             return reject(new Error("Passwords don't match."));
@@ -11,7 +12,6 @@ function createUser(firstname, lastname, birthday, username, password, passwordC
         if (!birthday) {
             birthday = null;
         }
-        
 
         bcrypt.secureString(password)
         .then((hash) => {
@@ -21,10 +21,11 @@ function createUser(firstname, lastname, birthday, username, password, passwordC
                 birthday,
                 username:username.toLowerCase(),
                 password: hash,
-            })
-        }).then((res) => {
-            resolve(res);
-        }).catch(() => {
+            });
+        })
+        .then(user => (essentializyResponse ? essentialisizer.essentializyUser(user) : user))
+        .then(resolve)
+        .catch(() => {
             reject(new Error("This user already exists."));
         })
     });
@@ -41,12 +42,16 @@ function loginUser(username, password) {
             return bcrypt.compareString(user.password, password);
         }).then(res => {
             if (!res) return reject(new Error('The password is incorrect.'));
+            return essentialisizer.essentializyUser(tmpUser);
+        })
+        .then(user => {
             resolve({
                 success: true,
-                user: { username: tmpUser.username, firstname: tmpUser.firstname, lastname: tmpUser.lastname, birthday: tmpUser.birthday },
+                user,
                 token: `JWT ${auth.createToken(tmpUser)}`
             });
         })
+        .catch(reject);
     });
 }
 
@@ -65,11 +70,12 @@ function getUser(currentUser, username) {
             // .map transforms every element { id: x, name: y, ... } to x
 
             if (result.length !== new Set(result).size) { // Transforming an array to a set removes all doubles, meaning they're in a joined group if the sizes are not the same
-                resolve(tmpUser);
+                return essentialisizer.essentializyUser(tmpUser);
             } else {
                 return Promise.reject(new Error('You\'re not allowed to get info about that user.'));
             }
         })
+        .then(resolve)
         .catch(reject); // == `.catch(error => reject(error));` == `.catch(error => { reject(error); });`
     });
 }

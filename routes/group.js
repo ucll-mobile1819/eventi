@@ -2,13 +2,12 @@ const express = require('express');
 const router = express.Router();
 const groupService = require('../services/group-service');
 const middleware = require('../middleware');
-const essentialisizer = require('../util/essentialisizer');
 
 router.get('/', middleware.auth.loggedIn, (req, res, next) => {
     groupService.getJoinedGroups(req.user)
     .then(groups => {
         if (!groups) res.send([]);
-        res.send(groups.map(group => essentialisizer.essentializyGroup(group)));
+        res.send(groups);
     })
     .catch(next);
 });
@@ -17,7 +16,7 @@ router.get('/created', middleware.auth.loggedIn, (req, res, next) => {
     groupService.getCreatedGroups(req.user)
     .then(groups => {
         if (!groups) return res.send([]);
-        res.send(groups.map(group => essentialisizer.essentializyGroup(group)));
+        res.send(groups);
     })
     .catch(next);
 });
@@ -26,7 +25,7 @@ router.get('/:id', middleware.auth.loggedIn, (req, res, next) => {
     groupService.getGroup(req.user, req.params.id)
     .then(group => {
         if (!group) return res.status(404).send();
-        return res.send(essentialisizer.essentializyGroup(group));
+        return res.send(group);
     })
     .catch(next);
 });
@@ -34,14 +33,14 @@ router.get('/:id', middleware.auth.loggedIn, (req, res, next) => {
 router.get('/:id/members', middleware.auth.loggedIn, (req, res, next) => {
     groupService.getGroupMembers(req.user, req.params.id)
     .then(members => {
-        res.send(members.map(member => essentialisizer.essentializyUser(member)));
+        res.send(members);
     })
     .catch(next);
 });
 
 router.get('/:id/banned-users', middleware.auth.loggedIn, (req, res, next) => {
     groupService.getBannedUsers(req.user, req.params.id)
-    .then(bannedUsers => res.send(bannedUsers.map(el => essentialisizer.essentializyUser(el))))
+    .then(bannedUsers => res.send(bannedUsers))
     .catch(next);
 });
 
@@ -90,7 +89,9 @@ router.delete('/:id', middleware.auth.loggedIn, (req, res, next) => {
     .then(() => {
         res.send();
     })
-    .catch(next);
+    .catch(err => {
+        next(err);
+    });
 });
 
 router.delete('/:groupId/:username', middleware.auth.loggedIn, (req, res, next) => {

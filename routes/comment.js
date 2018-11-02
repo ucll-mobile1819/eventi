@@ -17,7 +17,7 @@ router.get('/event/:eventId', middleware.auth.loggedIn, (req, res, next) => {
 router.post('/', middleware.auth.loggedIn, (req, res, next) => {
     commentService.createComment(req.user, req.body.eventId, req.body.content)
     .then(result => {
-        res.send(essentialisizer.essentializyComment(req.user, result)); // is essentializy necessary?
+        res.send(result);
     })
     .catch(next);
 })

@@ -51,17 +51,20 @@ function generateDummyData() {
     let groupA; // Creator: alice
     let groupB; // Creator: bob
 
+    let inviteCodeA;
+    let inviteCodeB;
+
     let eventA1; // Creator: alice
-    let eventA2; // Creator: alice, TODO: should be changed to bob whenever invite codes has been merged
+    let eventA2; // Creator: Bob
     let eventB1; // Creator: Bob
     let eventB2; // Creator: Bob
-    let eventB3; // Creator: Bob, TODO: should be changed to john whenever invite codes has been merged
+    let eventB3; // Creator: John
 
     // GENERATING USERS
     let reqs = [];
-    reqs.push(userService.createUser('Alice', 'Henderson', new Date(1963, 05, 23), 'alice', 't1', 't1'));
-    reqs.push(userService.createUser('Bob', 'Sanders', new Date(1965, 07, 01), 'bob', 't2', 't2'));
-    reqs.push(userService.createUser('John', 'Doe', new Date(1963, 05, 23), 'john', 't3', 't3'));
+    reqs.push(userService.createUser('Alice', 'Henderson', new Date(1963, 05, 23), 'alice', 't1', 't1', false));
+    reqs.push(userService.createUser('Bob', 'Sanders', new Date(1965, 07, 01), 'bob', 't2', 't2', false));
+    reqs.push(userService.createUser('John', 'Doe', new Date(1963, 05, 23), 'john', 't3', 't3', false));
     Promise.all(reqs)
     .then(results => {
         [ alice, bob, john ] = [ results[0], results[1], results[2] ];
@@ -75,20 +78,30 @@ function generateDummyData() {
     .then(results => {
         [ groupA, groupB ] = [ results[0], results[1] ];
 
-        // GENERATING INVITE CODES (Waiting for merge request approval)
-        return new Promise(a=>a());
+        // GENERATING INVITE CODES
+        return Promise.all([ groupService.generateInviteCode(alice, groupA.id), groupService.generateInviteCode(bob, groupB.id) ]);
     })
-    .then(() => {
+    .then(results => {
+        inviteCodeA = results[0];
+        inviteCodeB = results[1];
+
         // MAKING USERS JOIN GROUPS (Waiting for merge request approval)
-        return new Promise(a=>a());
+        return Promise.all([ groupService.joinGroup(bob, inviteCodeA), groupService.joinGroup(john, inviteCodeB) ]);
     })
     .then(() => {
         // CREATING EVENTS
         let e1 = eventService.createEvent(alice, groupA.id, 'A', 'A Desc', new Date(2018, 11, 23, 20, 0, 0), new Date(2018, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium');
-        let e2 = eventService.createEvent(alice, groupA.id, 'B', 'B Desc', new Date(2018, 11, 18, 20, 0, 0), new Date(2018, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium');
-        let e3 = eventService.createEvent(bob, groupB.id, 'C', 'C Desc', new Date(2018, 11, 23, 20, 0, 0), new Date(2018, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium');
+        let e2 = eventService.createEvent(bob, groupA.id, 'B', 'B Desc', new Date(2018, 11, 18, 20, 0, 0), new Date(2018, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium');
+        let pollDates = [ 
+            { startTime: new Date(2018, 10, 23, 13, 00, 00), endTime: new Date(2018, 10, 23, 15, 00, 00) },
+            { startTime: new Date(2018, 10, 23, 15, 00, 00), endTime: new Date(2018, 10, 23, 17, 00, 00) },
+            { startTime: new Date(2018, 10, 23, 17, 00, 00), endTime: new Date(2018, 10, 23, 19, 00, 00) },
+            { startTime: new Date(2018, 10, 23, 10, 30, 00), endTime: new Date(2018, 10, 23, 12, 30, 00) },
+            { startTime: new Date(2018, 10, 23, 13, 30, 00), endTime: new Date(2018, 10, 23, 15, 30, 00) }
+        ];
+        let e3 = eventService.createPoll(bob, groupB.id, 'C', 'C Desc', new Date(2018, 11, 23, 20, 0, 0), new Date(2018, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium', pollDates)
         let e4 = eventService.createEvent(bob, groupB.id, 'D', 'D Desc', new Date(2018, 7, 23, 20, 0, 0), new Date(2018, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium');
-        let e5 = eventService.createEvent(bob, groupB.id, 'E', 'E Desc', new Date(2018, 7, 23, 20, 0, 0), new Date(2018, 7, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium');
+        let e5 = eventService.createEvent(john, groupB.id, 'E', 'E Desc', new Date(2018, 7, 23, 20, 0, 0), new Date(2018, 7, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium');
         return Promise.all([ e1, e2, e3, e4, e5 ]);
     })
     .then(events => {
@@ -98,13 +111,18 @@ function generateDummyData() {
         eventB2 = events[3];
         eventB3 = events[4];
 
-        // ADDING COMMENTS OF GROUP CREATORS TO GROUPS
-        // (other users' comments can be added when inviting is done)
+        // VOTE ON EVENT
+        let promises = [];
+        promises.push(eventService.votePoll(bob, eventB1.id, [ 1, 3 ]));
+        promises.push(eventService.votePoll(john, eventB1.id, [ 3 ]));
 
-        commentService.createComment(alice, eventA1.id, "I'm definitely coming!");
-        commentService.createComment(alice, eventA1.id, "And doing lots of shots, so i can end up in a bush");
-        commentService.createComment(bob, eventB1.id, "I can't come, sorry");
-        commentService.createComment(bob, eventB1.id, "I'll make up for it another time...");
+        // ADDING COMMENTS TO EVENTS
+        promises.push(commentService.createComment(alice, eventA1.id, "I'm definitely coming!"));
+        promises.push(commentService.createComment(alice, eventA1.id, "And doing lots of shots, so i can end up in a bush"));
+        promises.push(commentService.createComment(bob, eventB1.id, "I can't come, sorry"));
+        promises.push(commentService.createComment(bob, eventB1.id, "I'll make up for it another time..."));
+        promises.push(commentService.createComment(john, eventB1.id, "Sad :c"));
+        return Promise.all(promises);
     })
     .then(() => {
         // END OF DUMMY DATA CREATION

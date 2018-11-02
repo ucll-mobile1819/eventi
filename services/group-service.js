@@ -1,5 +1,7 @@
 const User = require('../models/user');
 const Group = require('../models/group');
+const eventService = require('../services/event-service');
+const essentialisizer = require('../util/essentialisizer');
 
 function createGroup(currentUser, name, description, color) {
     return new Promise((resolve, reject) => {
@@ -13,10 +15,10 @@ function createGroup(currentUser, name, description, color) {
             tmpGroup = group;
             return group.setCreator(currentUser);
         })
-        .then(() => {
-            return tmpGroup.addUser(currentUser);
-        })
-        .then(() => resolve(tmpGroup));
+        .then(() => tmpGroup.addUser(currentUser))
+        .then(() => essentialisizer.essentializyGroup(tmpGroup))
+        .then(resolve)
+        .catch(reject);
     });
 }
 
@@ -59,16 +61,8 @@ function removeGroup(currentUser, groupId) {
             if (creator.username !== currentUser.username) return Promise.reject(new Error('Only the creator of a group can remove it.'));
             return Promise.all([ tmpGroup.getEvents(), tmpGroup.setUsers([]), tmpGroup.setBannedUsers([]) ]);
         })
-        .then(results => Promise.all([ tmpGroup.destroy(), ...results[0].map(el => el.destroy()) ]))
-        // Explanation of above line:
-        // The connection between the users in the group and the group itself (M-N) has already been deleted
-        // Now we still need to destroy the group itself and all of the events linked to that group (1-N)
-        // Promise.all([x1, x2, ...]) accepts multiple promises and waits until all of them are resolved until resolving himself
-        // First promise in the array is destroying the group itself: tmpGroup.destroy()
-        // results[0] is the first result of the previous Promise.all (= tmpGroup.getEvents()). We map this (= transform every element of the array into a new value)
-        // to a promise of destroying the object, which leaves us with [ tmpGroup.destroy(), [ event1.destroy(), event2.destroy(), event3.destroy(), ... ] ]
-        // By using the spread operator (= ...) in front of the array, we extract the array elements and place them as normal arguments
-        // => Promise.all([ tmpGroup.destroy(), event1.destroy(), event2.destroy(), event3.destroy(), ... ])
+        .then(results => Promise.all(results[0].map(el => eventService.deleteEvent(currentUser, el.id))))
+        .then(() => tmpGroup.destroy())
         .then(() => resolve())
         .catch(err => reject(err));
     });
@@ -79,8 +73,9 @@ function getGroup(currentUser, groupId) {
         currentUser.getGroups({ where: { id: groupId } })
         .then(groups => {
             if (!groups || groups.length === 0) return Promise.reject(new Error('You do not belong to this group.'));
-            resolve(groups[0]);
+            return essentialisizer.essentializyGroup(groups[0]);
         })
+        .then(resolve)
         .catch(err => reject(err));
     });
 }
@@ -98,8 +93,9 @@ function getGroupMembers(currentUser, groupId) {
                 if (user.username === currentUser.username) found = true;
             });
             if (!found) return Promise.reject(new Error('You do not belong to this group.'));
-            resolve(users);
+            return Promise.all(users.map(el => essentialisizer.essentializyUser(el)));
         })
+        .then(resolve)
         .catch(err => {
             reject(err);
         });
@@ -113,6 +109,7 @@ function removeUserFromGroup(currentUser, username, groupId) {
         Group.Group.findById(groupId)
         .then(group => {
             if (!group) return Promise.reject(new Error('This group does not exist.'));
+            groupId = parseInt(groupId);
             tmpGroup = group;
             return group.getUsers({ where: { username } });
         })
@@ -127,20 +124,63 @@ function removeUserFromGroup(currentUser, username, groupId) {
             if (creator.username === tmpUser.username) {
                 return removeGroup(currentUser, groupId);
             } else {
-                return tmpGroup.removeUser(tmpUser);
+                // Removing user poll votes & user events
+                let removeUserPollVotes = new Promise((resolve, reject) => {
+                    tmpGroup.getEvents()
+                    .then(events => {
+                        return Promise.all(events.map(el => el.getPollDates()));
+                    })
+                    .then(pollDates => Promise.all([].concat.apply([], pollDates).map(el => {
+                        return el.removeUser(tmpUser);
+                    })))
+                    .then(resolve)
+                    .catch(reject);
+                });
+                let removeUserEvents = new Promise((resolve, reject) => {
+                    let tmpEvents;
+                    tmpUser.getEvents()
+                    .then(events => {
+                        tmpEvents = events;
+                        return Promise.all(events.map(el => el.getGroup()));
+                    })
+                    .then(groups => {
+                        let eventsToDelete = [];
+                        groups.forEach((el, index) => {
+                            if (el.id === groupId) {
+                                eventsToDelete.push(tmpEvents[index]);
+                            }
+                        });
+                        return Promise.all(eventsToDelete.map(el => eventService.deleteEvent(currentUser, el.id)));
+                    })
+                    .then(() => resolve())
+                    .catch(reject);
+                });
+                Promise.all([ removeUserPollVotes, removeUserEvents ])
+                .then(() => tmpGroup.removeUser(tmpUser))
+                .then(() => resolve())
+                .catch(reject);
             }
         })
-        .then(() => resolve())
         .catch(err => reject(err));
     });
 }
 
 function getJoinedGroups(currentUser) {
-    return currentUser.getGroups();
+    return new Promise((resolve, reject) => {
+        currentUser.getGroups()
+        .then(groups => Promise.all(groups.map(el => essentialisizer.essentializyGroup(el))))
+        .then(resolve)
+        .catch(reject);
+    });
 }
 
 function getCreatedGroups(currentUser) {
-    return currentUser.getCreatedGroups();
+    return new Promise((resolve, reject) => {
+        currentUser.getCreatedGroups()
+        .then(groups => Promise.all(groups.map(el => essentialisizer.essentializyGroup(el))))
+        .then(resolve)
+        .catch(reject);
+    });
 }
 
 function banUser(currentUser, groupId, username) {
@@ -160,7 +200,8 @@ function banUser(currentUser, groupId, username) {
             if (creator.username !== currentUser.username) return Promise.reject(new Error('Only the creator of the group can ban users.'));
             return Group.banUser(tmpGroup, tmpUser);
         })
-        .then(resolve)
+        .then(() => removeUserFromGroup(currentUser, username, groupId))
+        .then(() => resolve())
         .catch(reject);
     });
 }
@@ -181,7 +222,7 @@ function unbanUser(currentUser, groupId, username) {
             if (creator.username !== currentUser.username) return Promise.reject(new Error('Only the creator of the group can unban users.'));
             return Group.unbanUser(tmpGroup, tmpUser);
         })            
-        .then(resolve)
+        .then(() => resolve())
         .catch(reject);
     });
 }
@@ -214,6 +255,7 @@ function getBannedUsers(currentUser, groupId) {
             if (creator.username !== currentUser.username) return Promise.reject(new Error('Only the user of the group can see the banned users.'));
             return tmpGroup.getBannedUsers();
         })
+        .then(users => Promise.all(users.map(el => essentialisizer.essentializyUser(el))))
         .then(resolve)
         .catch(reject);
     });
@@ -226,13 +268,14 @@ function joinGroup(currentUser, inviteCode) {
         .then(group => {
             if (!group) return Promise.reject(new Error('This invite code is invalid/expired.'));
             tmpGroup = group;
-            return group.getUsers();
+            return Promise.all([ group.getUsers(), group.getBannedUsers() ]);
         })
-        .then(users => {
-            if (users.map(el => el.username).indexOf(currentUser.username) !== -1) return Promise.reject(new Error('You are already in this group.'));
+        .then(results => {
+            if (results[1].map(el => el.username).indexOf(currentUser.username) !== -1) return Promise.reject(new Error('You are banned from this group.'));
+            if (results[0].map(el => el.username).indexOf(currentUser.username) !== -1) return Promise.reject(new Error('You are already in this group.'));
             return tmpGroup.addUser(currentUser);
         })
-        .then(resolve)
+        .then(() => resolve())
         .catch(reject);
     });
 }

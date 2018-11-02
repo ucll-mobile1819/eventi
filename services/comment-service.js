@@ -1,7 +1,6 @@
 const Event = require("../models/event");
 const Comment = require("../models/comment");
-
-const Sequelize = require('sequelize');
+const essentialisizer = require('../util/essentialisizer');
 
 function createComment(currentUser, eventId, content) {
     return new Promise((resolve, reject) => {
@@ -28,7 +27,8 @@ function createComment(currentUser, eventId, content) {
             tmpComment = comment;
             return Promise.all([tmpEvent.addComment(comment), comment.setCreator(currentUser)]); // add comment to event & add comment to creator
         })
-        .then(() => resolve(tmpComment))
+        .then(() => essentialisizer.essentializyComment(tmpComment))
+        .then(resolve)
         .catch(reject);
     });
 }
@@ -77,7 +77,12 @@ function deleteComment(currentUser, commentId) {
 }
 
 function getAllComments(currentUser) {
-    return currentUser.getComments();
+    return new Promise((resolve, reject) => {
+        currentUser.getComments()
+        .then(comments => Promise.all(comments.map(el => essentialisizer.essentializyComment(el))))
+        .then(resolve)
+        .catch(reject);
+    });
 }
 
 function getCommentsOfEvent(currentUser, eventId) {
@@ -98,6 +103,7 @@ function getCommentsOfEvent(currentUser, eventId) {
             }
             return tmpEvent.getComments();
         })
+        .then(comments => Promise.all(comments.map(el => essentialisizer.essentializyComment(el))))
         .then(resolve)
         .catch(reject);
     });
