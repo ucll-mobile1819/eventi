@@ -19,4 +19,10 @@ router.get('/:username', middleware.auth.loggedIn, (req, res, next) => {
     .catch(next);
 });
 
+router.put('/', middleware.auth.loggedIn, (req, res, next) => {
+    userService.updateUser(req.user, req.body.firstname, req.body.lastname, req.body.birthday, req.body.password)
+    .then(() => res.send())
+    .catch(next);
+});
+
 module.exports = router;
