@@ -56,8 +56,10 @@ function loginUser(username, password) {
 }
 
 function getUser(currentUser, username) {
+    if (currentUser.username === username) {
+        return essentialisizer.essentializyUser(currentUser);
+    }
     return new Promise((resolve, reject) => {
-        if (currentUser.username === username) return resolve(currentUser);
         let tmpUser;
         User.User.findByPrimary(username)
         .then(user => {
@@ -80,4 +82,19 @@ function getUser(currentUser, username) {
     });
 }
 
-module.exports = { createUser, loginUser, getUser };
+function updateUser(currentUser, firstname, lastname, birthday, password) {
+    return new Promise((resolve, reject) => {
+        bcrypt.secureString(password)
+        .then(passwd => {
+            if (!!firstname) currentUser.firstname = firstname;
+            if (!!lastname) currentUser.lastname = lastname;
+            if (!!birthday) currentUser.birthday = birthday;
+            if (!!password) currentUser.password = passwd;
+            return currentUser.save();
+        })
+        .then(() => resolve())
+        .catch(reject);
+    });
+}
+
+module.exports = { createUser, loginUser, getUser, updateUser };
