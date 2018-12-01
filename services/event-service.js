@@ -102,11 +102,10 @@ function deleteEvent(currentUser, eventId) {
             tmpEvent = event;
             return event.getGroup();
         })
-        .then(group => Promise.all([ group.getCreator(), tmpEvent.getCreator() ]))
+        .then(group => Promise.all([ group.getCreator(), tmpEvent.getCreator(), tmpEvent.setUserAttendances([]) ]))
         .then(creators => {
             if (currentUser.username !== creators[0].username && currentUser.username !== creators[1].username)
                 return Promise.reject(new Error('Only the group creator and event creator can delete this event.'));
-            // TODO: Remove users who set a status (maybe, no, yes) for this event
             if (tmpEvent.type === 'poll') {
                 return new Promise((resolve, reject) => {
                     removePollDates(tmpEvent)
