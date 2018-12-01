@@ -1,4 +1,5 @@
 const clone = obj => JSON.parse(JSON.stringify(obj)); // Also removes all functions
+const User = require('../models/user');
 
 function essentializyGroup(group) {
     return new Promise((resolve) => {
@@ -57,4 +58,16 @@ function essentializyComment(comment) {
     });
 }
 
-module.exports = { essentializyGroup, essentializyUser, essentializyEvent, essentializyPollDate, essentializyComment };
+function essentializyAttendance(attendance) {
+    return new Promise((resolve, reject) => {
+        const r = clone(attendance);
+        User.User.findById(r.user_username)
+        .then(user => essentializyUser(user))
+        .then(user => {
+            return resolve({ status: r.status, user });
+        })
+        .catch(reject);
+    });    
+}
+
+module.exports = { essentializyGroup, essentializyUser, essentializyEvent, essentializyPollDate, essentializyComment, essentializyAttendance };

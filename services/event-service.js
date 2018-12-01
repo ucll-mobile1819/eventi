@@ -296,4 +296,83 @@ function votePoll(currentUser, eventId, pollDates) {
     });
 }
 
-module.exports = { createEvent, createPoll, getAllEvents, getAllEventsInGroup, getEvent, updateEvent, deleteEvent, endPoll, votePoll, getVotes };
+function getEventAttendances(currentUser, eventId) {
+    return new Promise((resolve, reject) => {
+        let tmpEvent;
+        Event.Event.findById(eventId)
+        .then(event => {
+            if (!event) return Promise.reject(new Error('This event does not exist'));
+            tmpEvent = event;
+            return belongsToGroup(currentUser, event);
+        })
+        .then(belongsToGroup => {
+            if (!belongsToGroup) return Promise.reject('You do not belong to the group of this event.');
+            return tmpEvent.getUserAttendances();
+        })
+        .then(attendances => Promise.all(attendances.map(el => essentialisizer.essentializyAttendance(el.attendances))))
+        .then(resolve)
+        .catch(reject);
+    });
+}
+
+function getEventAttendance(currentUser, eventId) {
+    return new Promise((resolve, reject) => {
+        let tmpEvent;
+        Event.Event.findById(eventId)
+        .then(event => {
+            if (!event) return Promise.reject(new Error('This event does not exist'));
+            tmpEvent = event;
+            return belongsToGroup(currentUser, event);
+        })
+        .then(belongsToGroup => {
+            if (!belongsToGroup) return Promise.reject('You do not belong to the group of this event.');
+            return tmpEvent.getUserAttendances();
+        })
+        .then(attendances => {
+            let attendance = null;
+            attendances.forEach(a => {
+                if (a.attendances.user_username === currentUser.username) attendance = a.attendances;
+            });
+            return (attendance ? essentialisizer.essentializyAttendance(attendance) : null);
+        })
+        .then(resolve)
+        .catch(reject);
+    });
+}
+
+// State: going, not going or null/undefined
+function setEventAttendance(currentUser, eventId, state) {
+    return new Promise((resolve, reject) => {
+        let tmpEvent;
+        Event.Event.findById(eventId)
+        .then(event => {
+            if (!event) return Promise.reject(new Error('This event does not exist.'));
+            tmpEvent = event;
+            return belongsToGroup(currentUser, event);
+        })
+        .then(belongsToGroup => {
+            if (!belongsToGroup) return Promise.reject(new Error('You do not belong to the group of this event.'));
+            state = (!state ? '' : state.toString().toLowerCase().trim());
+            let status = (state !== 'going' && state !== 'not going' ? false : state);
+            if (status === false) {
+                return tmpEvent.removeUserAttendance(currentUser);
+            } else {
+                return tmpEvent.addUserAttendance(currentUser, { through: { status: (status === 'going' ? 'Going' : 'Not going') } });
+            }
+        })
+        .then(() => resolve())
+        .catch(reject);
+    });
+}
+
+function belongsToGroup(user, event) {
+    return new Promise((resolve, reject) => {
+       if (!event) return resolve(false);
+        event.getGroup()
+        .then(group => group.getUsers())
+        .then(users => resolve(users.map(el => el.username).indexOf(user.username) !== -1))
+        .catch(reject);
+    });
+}
+
+module.exports = { createEvent, createPoll, getAllEvents, getAllEventsInGroup, getEvent, updateEvent, deleteEvent, endPoll, votePoll, getVotes, setEventAttendance, getEventAttendances, getEventAttendance };

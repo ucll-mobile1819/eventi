@@ -18,15 +18,17 @@ sequelize.options.define.underscoredAll = true;
 
 const loadModels = () => {
     return new Promise((resolve) => {
-        require('fs').readdirSync(__dirname).forEach(function(file) {
+        const loadModel = function(file) {
             if (file === 'index.js') return;
             if (file.split('.').length !== 2) return;
-            const mod = require('./' + file);
+            const mod = require(( this.relation ? '../relation-attributes/' : './' ) + file);
             let modelName = file.split('.')[0];
             modelName = modelName.split('-').map(n => n.charAt(0).toUpperCase() + n.substring(1)).join('');
             models[modelName] = mod;
             modules.push(mod);
-        });
+        };
+        require('fs').readdirSync(__dirname).forEach(loadModel);
+        require('fs').readdirSync(__dirname.replace(/^(.*)(models)(.*)$/g, '$1relation-attributes$3')).forEach(loadModel.bind({ relation: true }));
     
         modules.forEach(mod => { if (mod.defineModels) mod.defineModels(models); });
     
