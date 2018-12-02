@@ -27,6 +27,7 @@ function defineModels(items) {
         constraints: false,
         foreignKey: 'comment_creator'
     });
+    User.belongsToMany(models.Event.Event, { as: 'EventAttendances', through: models.Attendance.Attendance });
 }
 
 module.exports = { User, defineModels }

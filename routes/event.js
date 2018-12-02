@@ -29,6 +29,18 @@ router.get('/group/:groupId', middleware.auth.loggedIn, (req, res, next) => {
     .catch(next);
 });
 
+router.get('/:id/attendance', middleware.auth.loggedIn, (req, res, next) => {
+    eventService.getEventAttendance(req.user, req.params.id)
+    .then(attendance => res.send(attendance))
+    .catch(next);
+});
+
+router.get('/:id/attendances', middleware.auth.loggedIn, (req, res, next) => {
+    eventService.getEventAttendances(req.user, req.params.id)
+    .then(attendances => res.send(attendances))
+    .catch(next);
+});
+
 // Requires 'type' (and if poll: 'pollDates' => [{startTime:x, endTime:y}])
 router.post('/', middleware.auth.loggedIn,  (req, res, next) => {
     let promise;
@@ -51,6 +63,13 @@ router.post('/:id/end-poll', middleware.auth.loggedIn, (req, res, next) => {
 // Body: pollDateIds: [id1, id2, ...]
 router.post('/:id/vote', middleware.auth.loggedIn, (req, res, next) => {
     eventService.votePoll(req.user, req.params.id, req.body.pollDateIds)
+    .then(() => res.send())
+    .catch(next);
+});
+
+// Body: state: null|'going'|'not going'
+router.post('/:id/attendance', middleware.auth.loggedIn, (req, res, next) => {
+    eventService.setEventAttendance(req.user, req.params.id, req.body.state)
     .then(() => res.send())
     .catch(next);
 });

@@ -85,7 +85,7 @@ function generateDummyData() {
         inviteCodeA = results[0];
         inviteCodeB = results[1];
 
-        // MAKING USERS JOIN GROUPS (Waiting for merge request approval)
+        // MAKING USERS JOIN GROUPS
         return Promise.all([ groupService.joinGroup(bob, inviteCodeA), groupService.joinGroup(john, inviteCodeB) ]);
     })
     .then(() => {
@@ -122,6 +122,16 @@ function generateDummyData() {
         promises.push(commentService.createComment(bob, eventB1.id, "I can't come, sorry"));
         promises.push(commentService.createComment(bob, eventB1.id, "I'll make up for it another time..."));
         promises.push(commentService.createComment(john, eventB1.id, "Sad :c"));
+
+        // ADDING EVENT ATTENDANCES
+        promises.push(eventService.setEventAttendance(alice, eventA1.id, 'Not going'));
+        promises.push(eventService.setEventAttendance(bob, eventA1.id, 'Going'));
+        promises.push(eventService.setEventAttendance(alice, eventA2.id, 'Going'));
+        promises.push(eventService.setEventAttendance(bob, eventA2.id, 'Going'));
+        promises.push(eventService.setEventAttendance(bob, eventB1.id, 'Going'));
+        promises.push(eventService.setEventAttendance(john, eventB1.id, null));
+        promises.push(eventService.setEventAttendance(john, eventB3.id, 'Going'));
+
         return Promise.all(promises);
     })
     .then(() => {
