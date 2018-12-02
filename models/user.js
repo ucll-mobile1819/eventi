@@ -9,7 +9,7 @@ const User = connection.define('users', {
     lastname: Sequelize.STRING,
     birthday: Sequelize.DATE,
     username: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(120),
         primaryKey: true,
     },
     password: Sequelize.STRING
