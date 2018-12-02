@@ -8,12 +8,23 @@ function createUser(firstname, lastname, birthday, username, password, passwordC
         if (password !== passwordConf) {
             return reject(new Error("Passwords don't match."));
         }
-
         if (!birthday) {
             birthday = null;
         }
+        if (!username || username.toString().length > 120 || username.toString().length === 0) {
+            return reject(new Error('Your username can not be empty or longer than 120 characters.'));
+        } else {
+            username = username.toString().trim().toLowerCase();
+            if (!(/^[a-zA-Z0-9]+$/.test(username))) {
+                return reject(new Error('Your username may not contain spaces or special characters.'));
+            } 
+        }
 
-        bcrypt.secureString(password)
+        User.User.findById(username)
+        .then(user => {
+            if (user) return Promise.reject(new Error('This user already exists.')); // ALSO CHECK FOR TOO LONG NAME
+        })
+        .then(() => bcrypt.secureString(password))
         .then((hash) => {
             return User.User.create({
                 firstname,
