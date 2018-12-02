@@ -102,13 +102,13 @@ function deleteEvent(currentUser, eventId) {
             tmpEvent = event;
             return event.getGroup();
         })
-        .then(group => Promise.all([ group.getCreator(), tmpEvent.getCreator(), tmpEvent.setUserAttendances([]) ]))
+        .then(group => Promise.all([ group.getCreator(), tmpEvent.getCreator(), tmpEvent.setUserAttendances([]), removeComments(tmpEvent) ]))
         .then(creators => {
             if (currentUser.username !== creators[0].username && currentUser.username !== creators[1].username)
                 return Promise.reject(new Error('Only the group creator and event creator can delete this event.'));
             if (tmpEvent.type === 'poll') {
                 return new Promise((resolve, reject) => {
-                    Promise.all([ removePollDates(tmpEvent), removeComments(tmpEvent) ])
+                    removePollDates(tmpEvent)
                     .then(() => tmpEvent.destroy())
                     .then(resolve)
                     .catch(reject);
