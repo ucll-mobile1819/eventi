@@ -35,7 +35,7 @@ function defineModels(items) {
         constraints: false,
         foreignKey: 'event_id',
     });
-    Event.belongsToMany(models.User.User, { as: 'UserAttendances', through: models.Attendance.Attendance, foreignKey: 'event_id' });
+    Event.belongsToMany(models.User.User, { as: 'UserAttendances', through: models.Attendance.Attendance });
 }
 
 module.exports = { Event, defineModels };

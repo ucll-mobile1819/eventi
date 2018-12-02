@@ -12,10 +12,6 @@ const dummyDataService = require('../services/dummy-data-service');
 const models = {};
 const modules = [];
 
-sequelize.options.define.freezeTableName = true;
-sequelize.options.define.underscored = true;
-sequelize.options.define.underscoredAll = true;
-
 const loadModels = () => {
     return new Promise((resolve) => {
         const loadModel = function(file) {

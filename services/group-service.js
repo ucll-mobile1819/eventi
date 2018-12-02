@@ -125,7 +125,7 @@ function removeUserFromGroup(currentUser, username, groupId) {
                 return removeGroup(currentUser, groupId);
             } else {
                 // Removing user poll votes & user events
-                let removeUserPollVotes = new Promise((resolve, reject) => {
+                let removeUserPollVotes = () => new Promise((resolve, reject) => {
                     tmpGroup.getEvents()
                     .then(events => {
                         return Promise.all(events.map(el => el.getPollDates()));
@@ -136,7 +136,7 @@ function removeUserFromGroup(currentUser, username, groupId) {
                     .then(resolve)
                     .catch(reject);
                 });
-                let removeUserEvents = new Promise((resolve, reject) => {
+                let removeUserEvents = () => new Promise((resolve, reject) => {
                     let tmpEvents;
                     tmpUser.getEvents()
                     .then(events => {
@@ -155,7 +155,25 @@ function removeUserFromGroup(currentUser, username, groupId) {
                     .then(() => resolve())
                     .catch(reject);
                 });
-                Promise.all([ removeUserPollVotes, removeUserEvents ])
+                let removeAttendances = () => new Promise((resolve, reject) => {
+                    tmpUser.getEventAttendances()
+                    .then(attendances => {
+                        let removals = [];
+                        attendances.forEach(attendance => {
+                            if (attendance.group_id === groupId) {
+                                removals.push(attendance.removeUserAttendance(tmpUser));
+                            }
+                        });
+                        return Promise.all(removals);
+                    })
+                    .then(() => resolve())
+                    .catch(reject);
+                });
+
+                // Removing user events must happen before removing user poll votes to avoid conflicts
+                // of removing poll votes of an event which has already been removed
+                removeUserEvents()
+                .then(() => Promise.all([ removeUserPollVotes(), removeAttendances() ]))
                 .then(() => tmpGroup.removeUser(tmpUser))
                 .then(() => resolve())
                 .catch(reject);
