@@ -108,7 +108,7 @@ function deleteEvent(currentUser, eventId) {
                 return Promise.reject(new Error('Only the group creator and event creator can delete this event.'));
             if (tmpEvent.type === 'poll') {
                 return new Promise((resolve, reject) => {
-                    removePollDates(tmpEvent)
+                    Promise.all([ removePollDates(tmpEvent), removeComments(tmpEvent) ])
                     .then(() => tmpEvent.destroy())
                     .then(resolve)
                     .catch(reject);
@@ -135,6 +135,15 @@ function removePollDates(event) {
         .then(() => resolve())
         .catch(reject);
     });
+}
+
+function removeComments(event) {
+    return new Promise((resolve, reject) => {
+        event.getComments()
+        .then(comments => Promise.all(comments.map(el => el.destroy())))
+        .then(() => resolve())
+        .catch(reject);
+    });    
 }
 
 function getAllEvents(currentUser, type) {
