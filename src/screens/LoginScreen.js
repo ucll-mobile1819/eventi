@@ -3,6 +3,12 @@ import { Button, View, Text, TextInput, Alert } from 'react-native';
 import { customStyles } from '../styles/customStyles';
 
 export class LoginScreen extends Component {
+    static navigationOptions = {
+        headerStyle: {
+            display: 'none'
+        }
+    };
+
     render() {
         return (
             <View style={{alignItems: 'center', flex: 1 }}>

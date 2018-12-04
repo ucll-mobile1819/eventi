@@ -11,7 +11,16 @@ const AppNavigator = createStackNavigator(
     Register: RegisterScreen
   },
   {
-    initialRouteName: "Login"
+    initialRouteName: 'Login',
+    defaultNavigationOptions: {
+      headerStyle: {
+        backgroundColor: '#32CD32',
+      },
+      headerTintColor: '#fff',
+      headerTitleStyle: {
+        fontWeight: 'bold',
+      }
+    },
   }
 );
 
