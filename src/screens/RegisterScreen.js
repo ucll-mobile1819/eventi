@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput } from 'react-native';
+import { View, Text, TextInput, Button, Alert } from 'react-native';
 import { customStyles } from '../styles/customStyles';
 
 export class RegisterScreen extends Component {
@@ -16,7 +16,7 @@ export class RegisterScreen extends Component {
                 <TextInput style={customStyles.inputField} placeholder="Username"/>
                 <TextInput style={customStyles.inputField} secureTextEntry={true} placeholder="Password" />
                 <TextInput style={customStyles.inputField} secureTextEntry={true} placeholder="Repeat password" />
-                <Text>Go back to login</Text>
+                <Button title='Register' onPress={() => Alert.alert('Register placeholder')} />
             </View>
         );
     }

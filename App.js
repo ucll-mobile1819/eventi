@@ -1,13 +1,18 @@
-import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
-import { LoginScreen } from './src/screens/LoginScreen'
+import React, { Component } from 'react';
+import { View } from 'react-native';
+import { createStackNavigator, createAppContainer } from "react-navigation";
 
-export default class App extends Component {
-  render() {
-    return (
-      <View>
-        <LoginScreen/>
-      </View>
-    );
+import { LoginScreen } from './src/screens/LoginScreen'
+import { RegisterScreen } from './src/screens/RegisterScreen'
+
+const AppNavigator = createStackNavigator(
+  {
+    Login: LoginScreen,
+    Register: RegisterScreen
+  },
+  {
+    initialRouteName: "Login"
   }
-};
+);
+
+export default createAppContainer(AppNavigator);
