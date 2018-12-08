@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { isAuthenticated, getJWTToken } from '../auth';
 
 export const constructApiUrl = endpoint => {
     endpoint = endpoint.trim();
@@ -11,11 +12,11 @@ export const isConnected = async () => {
 };
 
 export const getAuthorizationHeader = () => {
-    // if (!auth.isAuthenticated()) {
-    //     return null;
-    // }
-    // const token = auth.getJWTToken();
-    // return { 'Authorization': token };
+    if (!isAuthenticated()) {
+        return null;
+    }
+    const token = getJWTToken();
+    return { 'Authorization': token };
 };
 
 /**
@@ -29,7 +30,7 @@ export const getAuthorizationHeader = () => {
 export const sendAPIRequest = async ( endpoint, method, checkAuthorized = true, data ) => {
     let header;
     if (checkAuthorized) {
-        //header = getAuthorizationHeader();
+        header = getAuthorizationHeader();
         if (!header) {
             throw { status: 401 };
         }
