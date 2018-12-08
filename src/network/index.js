@@ -11,11 +11,9 @@ export const isConnected = async () => {
     return response.status >= 200 && response.status <= 299;
 };
 
-export const getAuthorizationHeader = () => {
-    if (!isAuthenticated()) {
-        return null;
-    }
-    const token = getJWTToken();
+export const getAuthorizationHeader = async () => {
+    const token = await getJWTToken();
+    if (!token) return null;
     return { 'Authorization': token };
 };
 
@@ -30,7 +28,7 @@ export const getAuthorizationHeader = () => {
 export const sendAPIRequest = async ( endpoint, method, checkAuthorized = true, data ) => {
     let header;
     if (checkAuthorized) {
-        header = getAuthorizationHeader();
+        header = await getAuthorizationHeader();
         if (!header) {
             throw { status: 401 };
         }
