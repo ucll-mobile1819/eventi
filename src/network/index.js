@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { isAuthenticated, getJWTToken } from '../auth';
+import { getJWTToken } from '../auth';
 
 export const constructApiUrl = endpoint => {
     endpoint = endpoint.trim();

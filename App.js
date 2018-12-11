@@ -1,27 +1,18 @@
-import React, { Component } from 'react';
-import { View } from 'react-native';
-import { createStackNavigator, createAppContainer } from "react-navigation";
+import React, {Component} from 'react';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import rootReducer from './src/reducers';
+import thunk from 'redux-thunk';
+import Navigator from './src/components/navigator';
 
-import { LoginScreen } from './src/screens/LoginScreen'
-import { RegisterScreen } from './src/screens/RegisterScreen'
+const store = createStore(rootReducer, applyMiddleware(thunk));
 
-const AppNavigator = createStackNavigator(
-  {
-    Login: LoginScreen,
-    Register: RegisterScreen
-  },
-  {
-    initialRouteName: 'Login',
-    defaultNavigationOptions: {
-      headerStyle: {
-        backgroundColor: '#32CD32',
-      },
-      headerTintColor: '#fff',
-      headerTitleStyle: {
-        fontWeight: 'bold',
-      }
-    },
-  }
-);
-
-export default createAppContainer(AppNavigator);
+export default class App extends Component {
+    render() {
+        return (
+            <Provider store={store}>
+                <Navigator />
+            </Provider>
+        );
+    }
+}
