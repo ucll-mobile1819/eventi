@@ -19,7 +19,7 @@ export const fetchFailure = error => {
         },
         ['400']: {
             title: 'Warning',
-            message: error.message === undefined ? error.response.data.error : error.message
+            message: error.message === undefined ? (error.response && error.response.data ? error.response.data.error : 'Unknown error') : error.message || 'Unknown error'
         },
         ['500']: {
             title: 'Server error',
@@ -32,7 +32,11 @@ export const fetchFailure = error => {
     };
 
     const generalizeStatusCode = code => {
-        if (code === 404 || code === 403 || code === 401) return code.toString();
+        console.log("Generalizing...");
+        if (code == 404 || code == 403 || code == 401) return code.toString();
+        console.log('------------------------------------');
+        console.log(code);
+        console.log('------------------------------------');
         if (code >= 400 && code <= 499) return '400';
         if (code >= 500 && code <= 599) return '500';
         return 'unknown';

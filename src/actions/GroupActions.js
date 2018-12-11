@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { fetchFailure } from '.';
 import * as groupAPI from '../network/group';
 
@@ -7,7 +6,7 @@ export const FETCH_GROUPS_SUCCESS = 'FETCH_GROUPS_SUCCESS';
 
 export const fetchGroups = () => dispatch => {
     dispatch(fetchGroupsBegin());
-    groupAPI.fetchGroups()
+    groupAPI.getGroups()
     .then(groups => dispatch(fetchGroupsSuccess(groups)))
     .catch(error => dispatch(fetchFailure(error)));
 };

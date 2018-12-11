@@ -3,15 +3,17 @@ import { View, Text, Button } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { fetchGroups } from '../actions/GroupActions';
+import { NavigationEvents } from 'react-navigation';
 
 class GroupsScreen extends React.Component {
-    componentDidMount() {
+    onNavFocus() {
         this.props.fetchGroups();
     }
 
     render() {
         return (
             <View>
+                <NavigationEvents onDidFocus={() => this.onNavFocus()} />
                 { this.props.loading && <Text>Loading...</Text> }
                 <Text>We have { this.props.groups.length } groups!</Text>
                 <Button
