@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, TextInput, Button, Alert } from 'react-native';
 import { customStyles } from '../styles/customStyles';
 
-export class RegisterScreen extends Component {
+export default class RegisterScreen extends Component {
     render() {
         return (
             <View style={{alignItems: 'center', flex: 1 }}>
