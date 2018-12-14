@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { getJWTToken } from '../auth';
+import { fetchFailure } from '../actions';
 
 export const constructApiUrl = endpoint => {
     endpoint = endpoint.trim();
