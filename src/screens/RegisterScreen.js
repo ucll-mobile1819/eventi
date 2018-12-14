@@ -1,13 +1,15 @@
-import React, { Component } from 'react';
-import { View, Text, TextInput, Button, Alert } from 'react-native';
-import { customStyles } from '../styles/customStyles';
+import React from 'react';
+import { View, Text, TextInput, Button } from 'react-native';
+import loginregisterStyles from '../styles/loginregister';
 import { NavigationEvents } from 'react-navigation';
 import DatePicker from 'react-native-datepicker';
 import { isAuthenticated } from '../auth';
 import { postUser } from '../network/user';
 import Snackbar from 'react-native-snackbar';
+import ValidationComponent from '../components/ValidationComponent';
+import { fetchFailure } from '../actions';
 
-export default class RegisterScreen extends Component {
+export default class RegisterScreen extends ValidationComponent {
     constructor(props) {
         super(props);
         this.state = this.getClearedState();
@@ -32,7 +34,8 @@ export default class RegisterScreen extends Component {
     }
 
     async register() {
-        // TODO: validation
+        if (!this.validateForm()) return;
+
         let response = await postUser(
             this.state.firstname,
             this.state.lastname,
@@ -57,32 +60,53 @@ export default class RegisterScreen extends Component {
         }
     }
 
+    validateForm() {
+        if (!this.validate({
+            firstname: { name: 'First name', required: true, minlength: 2, maxlength: 50 },
+            lastname: { name: 'Last name', required: true, minlength: 2, maxlength: 50 },
+            username: { name: 'Username', required: true, minlength: 3, maxlength: 15 },
+            password: { name: 'Password', required: true },
+            passwordConfirmation: { name: 'Password confirmation', required: true },
+        })) {
+            return false;
+        }
+        if (this.state.password !== this.state.passwordConfirmation) {
+            fetchFailure({ status: 400, error: 'The fields Password and Password confirmation must match.' });
+            return false;
+        }
+        return true;
+    }
+
     render() {
         return (
-            <View style={{alignItems: 'center', flex: 1 }}>
+            <View style={{ alignItems: 'center', flex: 1 }}>
                 <NavigationEvents onDidFocus={() => this.onNavFocus()} />
-                <Text style={customStyles.bigTitle}>Eventi</Text>
-                <Text style={customStyles.smallTitle}>Register a new account</Text>
+                <Text style={loginregisterStyles.bigTitle}>Eventi</Text>
+                <Text style={loginregisterStyles.smallTitle}>Register a new account</Text>
+                { this.isFieldInError('firstname') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('firstname')[0]}</Text> }
                 <TextInput
-                    style={customStyles.inputField}
+                    style={loginregisterStyles.inputField}
                     placeholder="First name"
                     onChangeText={firstname => this.setState({ firstname })}
                     value={this.state.firstname}
                 />
+                { this.isFieldInError('lastname') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('lastname')[0]}</Text> }
                 <TextInput
-                    style={customStyles.inputField}
+                    style={loginregisterStyles.inputField}
                     placeholder="Last name"
                     onChangeText={lastname => this.setState({ lastname })}
                     value={this.state.lastname}
                 />
+                { this.isFieldInError('username') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('username')[0]}</Text> }
                 <TextInput
-                    style={customStyles.inputField}
+                    style={loginregisterStyles.inputField}
                     placeholder="Username"
                     onChangeText={username => this.setState({ username })}
                     value={this.state.username}
                 />
+                { this.isFieldInError('birthday') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('birthday')[0]}</Text> }
                 <DatePicker
-                    style={customStyles.inputField}
+                    style={loginregisterStyles.inputField}
                     placeholder="Birthday"
                     format="DD-MM-YYYY"
                     minDate="01-01-1900"
@@ -93,15 +117,17 @@ export default class RegisterScreen extends Component {
                     customStyles={{ dateInput: { borderWidth: 0 } }}
                     date={this.state.birthday}
                 />
+                { this.isFieldInError('password') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('password')[0]}</Text> }
                 <TextInput
-                    style={customStyles.inputField}
+                    style={loginregisterStyles.inputField}
                     secureTextEntry={true}
                     placeholder="Password"
                     onChangeText={password => this.setState({ password })}
                     value={this.state.password}
                 />
+                { this.isFieldInError('passwordConfirmation') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('passwordConfirmation')[0]}</Text> }
                 <TextInput
-                    style={customStyles.inputField}
+                    style={loginregisterStyles.inputField}
                     secureTextEntry={true}
                     placeholder="Repeat password"
                     onChangeText={passwordConfirmation => this.setState({ passwordConfirmation })}

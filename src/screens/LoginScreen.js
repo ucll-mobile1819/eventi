@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button, View, Text, TextInput, Alert } from 'react-native';
-import { customStyles } from '../styles/customStyles';
+import loginregisterStyles from '../styles/loginregister';
 import { isAuthenticated, setJWTToken, login } from '../auth';
 import { NavigationEvents } from 'react-navigation';
 import { postLogin } from '../network/auth';
@@ -31,15 +31,15 @@ export default class LoginScreen extends Component {
         return (
             <View style={{alignItems: 'center', flex: 1 }}>
                 <NavigationEvents onDidFocus={() => this.onNavFocus()} />
-                <Text style={customStyles.bigTitle}>Eventi</Text>
+                <Text style={loginregisterStyles.bigTitle}>Eventi</Text>
                 <TextInput
-                    style={customStyles.inputField}
+                    style={loginregisterStyles.inputField}
                     placeholder="Username"
                     value={this.state.username}
                     onChangeText={username => this.setState({ username })}
                 />
                 <TextInput
-                    style={customStyles.inputField}
+                    style={loginregisterStyles.inputField}
                     secureTextEntry={true}
                     placeholder="Password"
                     value={this.state.password}
