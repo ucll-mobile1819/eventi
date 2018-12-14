@@ -33,13 +33,22 @@ export const sendAPIRequest = async ( endpoint, method, checkAuthorized = true, 
             throw { status: 401 };
         }
     }
+    header = header || {};
     try {
-        const response = await axios[method.toLowerCase()](constructApiUrl(endpoint), {
-            headers: checkAuthorized ? header : {},
-            data
+        let params = [ constructApiUrl(endpoint) ];
+        if (data instanceof Object && Object.keys(data).length > 0) params.push(data);
+        params.push({
+            headers: {
+                ...header,
+                'Content-Type': 'application/json',
+            }
         });
+        const response = await axios[method.toLowerCase()](...params);
         return response.data;
     } catch (error) {
+        console.log('--------- NETWORK ERROR ---------');
+        console.log(error);
+        console.log('---------------------------------');
         throw { status: error.response.status, message: error.response.data.error || error.response.data };
     }
 };
