@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, Alert } from 'react-native';
+import { View, Text, TextInput, Button } from 'react-native';
 import { customStyles } from '../styles/customStyles';
-import Button from '@material-ui/core/Button';
 import { isAuthenticated, login } from '../auth';
 import { NavigationEvents } from 'react-navigation';
 
@@ -16,14 +15,14 @@ export default class LoginScreen extends Component {
 
     async onNavFocus() {
         if (await isAuthenticated()) {
-            this.props.navigation.navigate('Groups'); // TODO: change to Home
+            this.props.navigation.navigate('Home');
         }
     }
 
     async login() {
         let response = await login(this.state.username, this.state.password);
         if (!response) return;
-        this.props.navigation.navigate('Groups');
+        this.props.navigation.navigate('Home');
     }
 
     render() {
