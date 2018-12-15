@@ -18,7 +18,8 @@ class GroupsScreen extends React.Component {
                 <Button
                     title='Add group'
                     onPress={() =>
-                    this.props.addGroup({})
+                    //this.props.addGroup({})
+                    this.props.navigation.navigate('Login')
                     }
                 />
             </AuthenticatedComponent>
