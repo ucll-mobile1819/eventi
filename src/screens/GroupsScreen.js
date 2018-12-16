@@ -15,7 +15,7 @@ class GroupsScreen extends React.Component {
             <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 { this.props.loading && <Text>Loading...</Text> }
                 <Text>We have { this.props.groups.length } groups!</Text>
-                <Button onPress={() => this.props.navigation.push('Group')} title='Group'/>
+                <Button onPress={() => this.props.navigation.push('Group', { id: 6 })} title='Group (id: 6)'/>
                 <Button onPress={() => this.props.navigation.push('CreateGroup')} title='CreateGroup'/>
             </AuthenticatedComponent>
         );

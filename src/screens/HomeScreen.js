@@ -9,7 +9,7 @@ class HomeScreen extends React.Component {
         return (
             <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad}>
                 <Text>HomeScreen</Text>
-                <Button onPress={() => this.props.navigation.navigate('Event')} title='Event'/>
+                <Button onPress={() => this.props.navigation.navigate('Event', { id: 5 })} title='Event (id: 5)'/>
             </AuthenticatedComponent>
         );
     }

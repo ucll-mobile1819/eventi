@@ -5,6 +5,10 @@ import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
 
 class ProfileScreen extends React.Component {
+    static navigationOptions = ({ navigation }) => ({
+        headerTitle: 'Some username',
+    });
+    
     render() {
         return (
             <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad}>

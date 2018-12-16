@@ -14,13 +14,12 @@ import EditEventScreen from '../screens/EditEventScreen';
 import CreateGroupScreen from '../screens/CreateGroupScreen';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import NavigatorStyles from "./NavigatorStyles";
 import CustomTabBarBottom from "./CustomTabBarBottom";
-import CustomHeader from "./CustomHeader";
+import DefaultHeader from "./DefaultHeader";
 
 let headerDefaultNavigationConfig = {
-    header: props => <CustomHeader {...props} />,
+    header: props => <DefaultHeader {...props} />,
     ...NavigatorStyles
 };
 
@@ -28,21 +27,17 @@ let HomeTab = StackNavigator({
     Home: {
         screen: HomeScreen,
         navigationOptions: {
-            headerLeft: null,
-            headerTitle: 'Home'
+            header: null
         }
     },
     EditEvent: {
         screen: EditEventScreen,
         navigationOptions: {
-            headerTitle: 'EditEvent', 
+            headerTitle: 'Edit event', 
         }
     },
     Event: {
         screen: EventScreen,
-        navigationOptions: {
-            headerTitle: 'Event',
-        }
     },
     AddEvent: {
         screen: AddEventScreen,
@@ -78,9 +73,6 @@ let GroupsTab = StackNavigator({
     },
     GroupSettings: {
         screen: GroupSettingsScreen,
-        navigationOptions: {
-            headerTitle: 'GroupSettings',
-        }
     },
 },{
     navigationOptions: {
@@ -93,7 +85,7 @@ let JoinGroupTab = StackNavigator({
         screen: JoinGroupScreen,
         navigationOptions: {
             headerLeft: null,
-            headerTitle: 'Join Group',
+            headerTitle: 'Join group',
         }
     }
 },{
@@ -107,7 +99,6 @@ let ProfileTab = StackNavigator({
         screen: ProfileScreen,
         navigationOptions: {
             headerLeft: null,
-            headerTitle: 'Profile'
         }
     }
 },{
