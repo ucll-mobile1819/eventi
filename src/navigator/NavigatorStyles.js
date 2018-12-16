@@ -9,6 +9,11 @@ export default {
       zIndex: 1,
       lineHeight: 23
     },
-    headerTintColor: "#fff"
-  };
+    colors: {
+        primaryTintColor: '#3f51b5',
+        lightTintColor: '#757de8',
+        darkTintColor: '#002984',
+        inactiveTintColor: '#858585',
+    }
+};
   

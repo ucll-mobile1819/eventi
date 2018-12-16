@@ -15,16 +15,13 @@ import CreateGroupScreen from '../screens/CreateGroupScreen';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import HeaderStyles from "./HeaderStyles";
+import NavigatorStyles from "./NavigatorStyles";
 import CustomTabBarBottom from "./CustomTabBarBottom";
 import CustomHeader from "./CustomHeader";
 
-const activeTintColor = "#6200EE";
-const inactiveTintColor = "#858585";
-
 let headerDefaultNavigationConfig = {
     header: props => <CustomHeader {...props} />,
-    ...HeaderStyles
+    ...NavigatorStyles
 };
 
 let HomeTab = StackNavigator({
@@ -149,8 +146,8 @@ let tabNavigator = TabNavigator({
         };
     },
     tabBarOptions: {
-        activeTintColor,
-        inactiveTintColor,
+        activeTintColor: NavigatorStyles.colors.darkTintColor,
+        inactiveTintColor: NavigatorStyles.colors.inactiveTintColor,
         style: {
           height: 60,
           paddingVertical: 5,
@@ -192,7 +189,7 @@ let Navigator = createStackNavigator({
 {
     initialRouteName: "TabNavigator",
     navigationOptions: {
-        ...HeaderStyles,
+        ...NavigatorStyles,
         animationEnabled: true
     },
 });

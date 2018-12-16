@@ -2,8 +2,9 @@ import React from "react";
 import {
   TabBarBottom
 } from "react-navigation";
-import { View, Text, TouchableWithoutFeedback } from "react-native";
+import { View, TouchableWithoutFeedback } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import NavigatorStyles from './NavigatorStyles';
 
 const CustomTabBarBottom = props => {
     return (
@@ -24,7 +25,7 @@ const CustomTabBarBottom = props => {
 
 const styles = {
   actionButton: {
-    backgroundColor: "#6200EE",
+    backgroundColor: NavigatorStyles.colors.darkTintColor,
     width: 50,
     height: 50,
     borderRadius: 50/2,
