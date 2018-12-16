@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, Button } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
@@ -9,6 +9,7 @@ class HomeScreen extends React.Component {
         return (
             <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad}>
                 <Text>HomeScreen</Text>
+                <Button onPress={() => this.props.navigation.navigate('Event')} title='Event'/>
             </AuthenticatedComponent>
         );
     }

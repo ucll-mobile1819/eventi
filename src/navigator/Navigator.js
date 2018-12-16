@@ -1,4 +1,4 @@
-import { createStackNavigator, TabNavigator, StackNavigator } from 'react-navigation';
+import { createStackNavigator, TabNavigator, StackNavigator, NavigationActions, StackActions } from 'react-navigation';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import HomeScreen from '../screens/HomeScreen';
@@ -35,7 +35,7 @@ let HomeTab = StackNavigator({
     EditEvent: {
         screen: EditEventScreen,
         navigationOptions: {
-            headerTitle: 'EditEvent',
+            headerTitle: 'EditEvent', 
         }
     },
     Event: {
@@ -64,10 +64,10 @@ let GroupsTab = StackNavigator({
             headerTitle: 'Groups'
         }
     },
-    CreateGroupScreen: {
+    CreateGroup: {
         screen: CreateGroupScreen,
         navigationOptions: {
-            headerTitle: 'CreateGroupScreen',
+            headerTitle: 'CreateGroup',
         }
     },
     Group: {
@@ -143,6 +143,14 @@ let tabNavigator = TabNavigator({
                 }
                 return icon;
             },
+            tabBarOnPress: ({ scene, jumpToIndex }) => {
+                jumpToIndex(scene.index);
+                const resetAction = StackActions.reset({
+                    index: 0,
+                    actions: [NavigationActions.navigate({ routeName: scene.route.routes[0].routeName })],
+                });
+                navigation.dispatch(resetAction);
+            }
         };
     },
     tabBarOptions: {
