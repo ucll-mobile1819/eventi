@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, Button } from 'react-native';
+import { Text } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { fetchGroups } from '../actions/GroupActions';
@@ -15,13 +15,6 @@ class GroupsScreen extends React.Component {
             <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 { this.props.loading && <Text>Loading...</Text> }
                 <Text>We have { this.props.groups.length } groups!</Text>
-                <Button
-                    title='Add group'
-                    onPress={() =>
-                    //this.props.addGroup({})
-                    this.props.navigation.navigate('Login')
-                    }
-                />
             </AuthenticatedComponent>
         );
     }
