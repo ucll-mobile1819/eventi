@@ -26,7 +26,7 @@ export default class RegisterScreen extends ValidationComponent {
         };
     }
 
-    async onNavFocus() {
+    async onNavWillFocus() {
         this.setState(this.getClearedState());
         if (await isAuthenticated()) {
             this.props.navigation.navigate('Groups'); // TODO: change to Home
@@ -80,7 +80,7 @@ export default class RegisterScreen extends ValidationComponent {
     render() {
         return (
             <View style={{ alignItems: 'center', flex: 1 }}>
-                <NavigationEvents onDidFocus={() => this.onNavFocus()} />
+                <NavigationEvents onWillFocus={() => this.onNavWillFocus()} />
                 <Text style={loginregisterStyles.bigTitle}>Eventi</Text>
                 <Text style={loginregisterStyles.smallTitle}>Register a new account</Text>
                 { this.isFieldInError('firstname') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('firstname')[0]}</Text> }
