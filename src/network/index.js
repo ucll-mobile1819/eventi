@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { getJWTToken } from '../auth';
+import { fetchFailure } from '../actions';
 
 export const constructApiUrl = endpoint => {
     endpoint = endpoint.trim();
@@ -50,5 +51,17 @@ export const sendAPIRequest = async ( endpoint, method, checkAuthorized = true, 
         console.log(error);
         console.log('---------------------------------');
         throw { status: error.response.status, message: error.response.data.error || error.response.data };
+    }
+};
+
+export const handleRequestErrors = async (request, handleErrors) => {
+    try {
+        return await request();
+    } catch (error) {
+        if (handleErrors) {
+            fetchFailure(error);
+            return false;
+        }
+        throw error;
     }
 };

@@ -2,7 +2,29 @@ import { Alert } from 'react-native';
 
 export const FETCH_FAILURE = 'FETCH_FAILURE';
 
-export const fetchFailure = error => {
+export const fetchFailure = err => {
+    console.log(err);
+    let error = {};
+    if (err.message) {
+        error.message = err.message;
+    } else if (err.response && err.response.data && err.response.data.error) {
+        error.message = err.response.data.error;
+    } else if (err.response && err.response.data) {
+        error.message = err.response.data;
+    } else if (err.error) {
+        error.message = err.error;
+    } else {
+        error.message = 'Unknown error';
+    }
+
+    if (err.status) {
+        error.status = err.status;
+    } else if (err.request.status) {
+        error.status = err.request.status;
+    } else {
+        error.status = 'unknown';
+    }
+
     const errorMessages = {
         ['401']: {
             title: 'Not authorized',
@@ -18,7 +40,7 @@ export const fetchFailure = error => {
         },
         ['400']: {
             title: 'That didn\'t work',
-            message: error.message === undefined ? (error.response && error.response.data ? error.response.data.error : 'Unknown error') : error.message || 'Unknown error'
+            message: error.message
         },
         ['500']: {
             title: 'Server error',
@@ -26,7 +48,7 @@ export const fetchFailure = error => {
         },
         ['unknown']: {
             title: 'Unknown error',
-            message: 'An unknown error occured. Please report this incident. Error code: ' + error.status === undefined ? error.request.status : error.status
+            message: 'An unknown error occured. Please report this incident. Error code: ' + error.status + '\nError message: ' + error.message
         }
     };
 
@@ -37,8 +59,8 @@ export const fetchFailure = error => {
         return 'unknown';
     };
     Alert.alert(
-        errorMessages[generalizeStatusCode(error.status || error.request.status)].title,
-        errorMessages[generalizeStatusCode(error.status || error.request.status)].message,
+        errorMessages[generalizeStatusCode(error.status)].title,
+        errorMessages[generalizeStatusCode(error.status)].message,
         [{ text: 'OK' }],
         { cancelable: false }
     );
