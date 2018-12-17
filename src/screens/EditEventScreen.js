@@ -5,16 +5,20 @@ import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
 
 class EditEventScreen extends React.Component {
-    static navigationOptions = ({ navigation }) => ({
-        headerTitle: navigation.state.params.id.toString(),
-        customHeaderBackgroundColor: '#f44242',
-        headerTintColor: 'white', // Back arrow color
-        headerTitleStyle: { color: 'white' }, // Title color
-    });
+    static navigationOptions = obj => obj.navigation.state.params;
+
+    onLoad() {
+        this.props.navigation.setParams({
+            title: this.props.navigation.state.params.id.toString(),
+            customHeaderBackgroundColor: '#f44242',
+            headerTintColor: 'white', // Back arrow color
+            headerTitleStyle: { color: 'white' }, // Title color
+        });
+    }
 
     render() {
         return (
-            <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad}>
+            <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 <Text>EditEventScreen</Text>
             </AuthenticatedComponent>
         );

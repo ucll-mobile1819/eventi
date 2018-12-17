@@ -13,7 +13,7 @@ export default class LoginScreen extends Component {
         };
     }
 
-    async onNavFocus() {
+    async onNavWillFocus() {
         if (await isAuthenticated()) {
             this.props.navigation.navigate('Home');
         }
@@ -28,7 +28,7 @@ export default class LoginScreen extends Component {
     render() {
         return (
             <View style={{alignItems: 'center', flex: 1 }}>
-                <NavigationEvents onDidFocus={() => this.onNavFocus()} />
+                <NavigationEvents onWillFocus={() => this.onNavWillFocus()} />
                 <Text style={customStyles.bigTitle}>Eventi</Text>
                 <TextInput
                     style={customStyles.inputField}

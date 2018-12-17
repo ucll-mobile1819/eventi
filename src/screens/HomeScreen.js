@@ -7,7 +7,7 @@ import AuthenticatedComponent from '../components/AuthenticatedComponent';
 class HomeScreen extends React.Component {
     render() {
         return (
-            <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad}>
+            <AuthenticatedComponent navigate={this.props.navigation.navigate}>
                 <Text>HomeScreen</Text>
                 <Button onPress={() => this.props.navigation.navigate('Event', { id: 5 })} title='Event (id: 5)'/>
             </AuthenticatedComponent>

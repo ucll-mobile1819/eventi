@@ -62,7 +62,7 @@ let GroupsTab = StackNavigator({
     CreateGroup: {
         screen: CreateGroupScreen,
         navigationOptions: {
-            headerTitle: 'CreateGroup',
+            headerTitle: 'Create group',
         }
     },
     Group: {

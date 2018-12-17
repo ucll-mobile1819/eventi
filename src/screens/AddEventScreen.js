@@ -7,7 +7,7 @@ import AuthenticatedComponent from '../components/AuthenticatedComponent';
 class AddEventScreen extends React.Component {
     render() {
         return (
-            <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad}>
+            <AuthenticatedComponent navigate={this.props.navigation.navigate}>
                 <Text>AddEventScreen</Text>
             </AuthenticatedComponent>
         );
