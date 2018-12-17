@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TextInput, Button } from 'react-native';
+import { KeyboardAwareScrollView } from  'react-native-keyboard-aware-scroll-view';
 import loginregisterStyles from '../styles/loginregister';
 import { NavigationEvents } from 'react-navigation';
 import DatePicker from 'react-native-datepicker';
@@ -79,7 +80,7 @@ export default class RegisterScreen extends ValidationComponent {
 
     render() {
         return (
-            <View style={{ alignItems: 'center', flex: 1 }}>
+            <KeyboardAwareScrollView resetScrollToCoords={{ x: 0, y: 0 }} style={{ flex: 1 }} contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }} >
                 <NavigationEvents onWillFocus={() => this.onNavWillFocus()} />
                 <Text style={loginregisterStyles.bigTitle}>Eventi</Text>
                 <Text style={loginregisterStyles.smallTitle}>Register a new account</Text>
@@ -134,7 +135,7 @@ export default class RegisterScreen extends ValidationComponent {
                     value={this.state.passwordConfirmation}
                 />
                 <Button title='Register' onPress={() => this.register()} />
-            </View>
+            </KeyboardAwareScrollView>
         );
     }
 }
