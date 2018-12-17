@@ -28,6 +28,7 @@ export default class RegisterScreen extends ValidationComponent {
     }
 
     async onNavWillFocus() {
+        this._resetErrors();
         this.setState(this.getClearedState());
         if (await isAuthenticated()) {
             this.props.navigation.navigate('Groups'); // TODO: change to Home
