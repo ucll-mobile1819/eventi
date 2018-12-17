@@ -160,7 +160,7 @@ let tabNavigator = TabNavigator({
       tabBarComponent: props => <CustomTabBarBottom {...props}/>,
       tabBarPosition: "bottom",
       animationEnabled: true,
-      swipeEnabled: true
+      swipeEnabled: false
 });
 
 let Navigator = createStackNavigator({
