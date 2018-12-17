@@ -136,6 +136,10 @@ export default class RegisterScreen extends ValidationComponent {
                     value={this.state.passwordConfirmation}
                 />
                 <Button title='Register' onPress={() => this.register()} />
+                <Text 
+                    onPress={() => this.props.navigation.navigate('Login')}
+                    style={{ color: 'darkblue', marginTop: 10 }}
+                >Already registered? Login here.</Text>
             </KeyboardAwareScrollView>
         );
     }
