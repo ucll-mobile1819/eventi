@@ -1,23 +1,58 @@
 import React, { Component } from 'react';
 import { Button, View, Text, TextInput, Alert } from 'react-native';
 import { customStyles } from '../styles/customStyles';
+import { isAuthenticated, setJWTToken, login } from '../auth';
+import { NavigationEvents } from 'react-navigation';
+import { postLogin } from '../network/auth';
+import { fetchFailure } from '../actions';
 
 export default class LoginScreen extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            username: '',
+            password: '',
+        };
+    }
+
+    async onNavFocus() {
+        if (await isAuthenticated()) {
+            this.props.navigation.navigate('Groups'); // TODO: change to Home
+        }
+    }
+
+    async login() {
+        let response = await login(this.state.username, this.state.password);
+        if (!response) return;
+        this.props.navigation.navigate('Groups');
+    }
+
     render() {
         return (
             <View style={{alignItems: 'center', flex: 1 }}>
+                <NavigationEvents onDidFocus={() => this.onNavFocus()} />
                 <Text style={customStyles.bigTitle}>Eventi</Text>
-                <TextInput style={customStyles.inputField} placeholder="Username"/>
-                <TextInput style={customStyles.inputField} secureTextEntry={true} placeholder="Password" />
-                <Button title="Login" onPress={() => Alert.alert('Login placeholder')}/>
+                <TextInput
+                    style={customStyles.inputField}
+                    placeholder="Username"
+                    value={this.state.username}
+                    onChangeText={username => this.setState({ username })}
+                />
+                <TextInput
+                    style={customStyles.inputField}
+                    secureTextEntry={true}
+                    placeholder="Password"
+                    value={this.state.password}
+                    onChangeText={password => this.setState({ password })}
+                />
                 <Button
-                    title="Not a member yet? Register here."
+                    title="Login"
+                    onPress={() => this.login()}
+                />
+                <Text 
                     onPress={() => this.props.navigation.navigate('Register')}
-                />
-                <Button
-                    title="Check out the groups test screen"
-                    onPress={() => this.props.navigation.navigate('Groups')}
-                />
+                    style={{ color: 'darkblue', marginTop: 10 }}
+                >Not a member yet? Register here.</Text>
             </View>
         );
     }

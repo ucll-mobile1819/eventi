@@ -3,7 +3,6 @@ import { Alert } from 'react-native';
 export const FETCH_FAILURE = 'FETCH_FAILURE';
 
 export const fetchFailure = error => {
-    console.log(error);
     const errorMessages = {
         ['401']: {
             title: 'Not authorized',
@@ -18,7 +17,7 @@ export const fetchFailure = error => {
             message: 'This resource was not found.'
         },
         ['400']: {
-            title: 'Warning',
+            title: 'That didn\'t work',
             message: error.message === undefined ? (error.response && error.response.data ? error.response.data.error : 'Unknown error') : error.message || 'Unknown error'
         },
         ['500']: {
@@ -32,11 +31,7 @@ export const fetchFailure = error => {
     };
 
     const generalizeStatusCode = code => {
-        console.log("Generalizing...");
         if (code == 404 || code == 403 || code == 401) return code.toString();
-        console.log('------------------------------------');
-        console.log(code);
-        console.log('------------------------------------');
         if (code >= 400 && code <= 499) return '400';
         if (code >= 500 && code <= 599) return '500';
         return 'unknown';
