@@ -116,7 +116,7 @@ export default class RegisterScreen extends ValidationComponent {
                     confirmBtnText="Confirm"
                     cancelBtnText="Cancel"
                     onDateChange={birthday => {this.setState({ birthday })}}
-                    customStyles={{ dateInput: { borderWidth: 0 } }}
+                    customStyles={{ dateInput: { borderWidth: 0, alignItems: 'flex-start', paddingLeft: 2 }}}
                     date={this.state.birthday}
                 />
                 { this.isFieldInError('password') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('password')[0]}</Text> }
