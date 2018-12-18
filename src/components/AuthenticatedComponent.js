@@ -29,9 +29,11 @@ export default class AuthenticatedComponent extends Component {
         if (!this.onLoadExecuted) {
             this.onLoadExecuted = true;
             // Will only run once for each component
-            if (this.props.onLoad instanceof Function) this.props.onLoad();
             if (this.checkingAuth) return;
-            this.checkAuth();
+            if (await this.checkAuth()) {
+                // User is authenticated
+                if (this.props.onLoad instanceof Function) this.props.onLoad();
+            }
         }
         // Will most probably run multiple times
     }
@@ -40,8 +42,10 @@ export default class AuthenticatedComponent extends Component {
         if (!await isAuthenticated()) {
             this.checkingAuth = false;
             this.props.navigate('Login');
+            return false;
         }
         this.checkingAuth = false;
+        return true;
     }
 
     render() {
