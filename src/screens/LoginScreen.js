@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { Button, View, Text, TextInput, Alert } from 'react-native';
+import { View, Text, TextInput, Alert } from 'react-native';
 import loginregisterStyles from '../styles/loginregister';
 import { isAuthenticated, setJWTToken, login } from '../auth';
 import { NavigationEvents } from 'react-navigation';
 import { postLogin } from '../network/auth';
 import { fetchFailure } from '../actions';
-
+import { ButtonBase } from '@material-ui/core';
 export default class LoginScreen extends Component {
     constructor(props) {
         super(props);
@@ -44,11 +44,7 @@ export default class LoginScreen extends Component {
                     placeholder="Password"
                     value={this.state.password}
                     onChangeText={password => this.setState({ password })}
-                />
-                <Button
-                    title="Login"
-                    onPress={() => this.login()}
-                />
+                /> 
                 <Text 
                     onPress={() => this.props.navigation.navigate('Register')}
                     style={{ color: 'darkblue', marginTop: 10 }}
