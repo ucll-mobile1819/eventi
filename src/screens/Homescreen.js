@@ -1,9 +1,9 @@
 import React from 'react';
 import { Container, Header, Tab, Tabs, ScrollableTab, Text } from 'native-base';
-import {Going } from '../components/Tabs/Going';
-import {NotGoing} from '../components/Tabs/NotGoing';
-import {History} from '../components/Tabs/History';
-import {CreatedByMe} from '../components/Tabs/CreatedByMe';
+import Going  from '../components/Tabs/Going';
+import NotGoing from '../components/Tabs/NotGoing';
+import History from '../components/Tabs/History';
+import CreatedByMe from '../components/Tabs/CreatedByMe';
 class HomeScreen extends React.Component{
     
     // constructor(props){super(props)}
