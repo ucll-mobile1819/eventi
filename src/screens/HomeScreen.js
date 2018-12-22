@@ -1,28 +1,34 @@
 import React from 'react';
-import { Text, Button } from 'react-native';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { Container, Header, Tab, Tabs, ScrollableTab, Text } from 'native-base';
+import Going  from '../components/Tabs/Going';
+import NotGoing from '../components/Tabs/NotGoing';
+import History from '../components/Tabs/History';
+import CreatedByMe from '../components/Tabs/CreatedByMe';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
-
-class HomeScreen extends React.Component {
-    render() {
-        return (
+class HomeScreen extends React.Component{
+    
+    // constructor(props){super(props)}
+    render(){
+        return(
             <AuthenticatedComponent navigate={this.props.navigation.navigate}>
-                <Text>HomeScreen</Text>
-                <Button onPress={() => this.props.navigation.navigate('Event', { id: 5 })} title='Event (id: 5)'/>
+            <Container>
+            <Tabs>
+                <Tab heading="Going">
+                    <Going />
+                </Tab>
+                <Tab heading="Not Going">
+                    <NotGoing />
+                </Tab>
+                <Tab heading="History">
+                    <History />
+                </Tab>
+                <Tab heading="Created">
+                    <CreatedByMe />
+                </Tab>
+            </Tabs>
+            </Container>
             </AuthenticatedComponent>
-        );
+        )
     }
 }
-
-const mapStateToProps = state => {
-    return {
-    };
-};
-
-const mapDispatchToProps = dispatch => (
-    bindActionCreators({
-    }, dispatch)
-);
-
-export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
+export default HomeScreen;

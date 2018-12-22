@@ -33,7 +33,7 @@ export default class LoginScreen extends Component {
         return (
             <View style={{alignItems: 'center', flex: 1 }}>
                 <NavigationEvents onWillFocus={() => this.onNavWillFocus()} />
-                <Text style={customStyles.bigTitle}>Eventi</Text>
+                <Text style={loginregisterStyles.bigTitle}>Eventi</Text>
                 <TextInput
                     style={loginregisterStyles.inputField}
                     placeholder="Username"
@@ -46,7 +46,11 @@ export default class LoginScreen extends Component {
                     placeholder="Password"
                     value={this.state.password}
                     onChangeText={password => this.setState({ password })}
-                /> 
+                />
+                <Button
+                    title="Login"
+                    onPress={() => this.login()}
+                />
                 <Text 
                     onPress={() => this.props.navigation.navigate('Register')}
                     style={{ color: 'darkblue', marginTop: 10 }}
