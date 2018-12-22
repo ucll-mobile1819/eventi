@@ -1,28 +1,23 @@
 import React from 'react';
-import { View, Text, Button } from 'react-native';
+import { Text, Button } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { fetchGroups } from '../actions/GroupActions';
-import { NavigationEvents } from 'react-navigation';
+import AuthenticatedComponent from '../components/AuthenticatedComponent';
 
 class GroupsScreen extends React.Component {
-    onNavFocus() {
+    onLoad() {
         this.props.fetchGroups();
     }
 
     render() {
         return (
-            <View>
-                <NavigationEvents onDidFocus={() => this.onNavFocus()} />
+            <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 { this.props.loading && <Text>Loading...</Text> }
                 <Text>We have { this.props.groups.length } groups!</Text>
-                <Button
-                    title='Add group'
-                    onPress={() =>
-                    this.props.addGroup({})
-                    }
-                />
-            </View>
+                <Button onPress={() => this.props.navigation.push('Group', { id: 6 })} title='Group (id: 6)'/>
+                <Button onPress={() => this.props.navigation.push('CreateGroup')} title='CreateGroup'/>
+            </AuthenticatedComponent>
         );
     }
 }

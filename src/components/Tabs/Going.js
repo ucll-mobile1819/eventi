@@ -47,4 +47,4 @@ class Going extends React.Component{
 }
 
 
-export default (Going);
+export default Going;

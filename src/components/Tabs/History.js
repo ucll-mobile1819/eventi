@@ -5,4 +5,4 @@ const History = () => (
     <Text>Hello Title</Text>
 );
 
-export {History};
+export default History;

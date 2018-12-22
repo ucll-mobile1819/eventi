@@ -5,4 +5,4 @@ const CreatedByMe = () => (
     <Text>Hello Title</Text>
 );
 
-export {CreatedByMe};
+export default CreatedByMe;

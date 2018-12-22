@@ -4,11 +4,13 @@ import Going  from '../components/Tabs/Going';
 import NotGoing from '../components/Tabs/NotGoing';
 import History from '../components/Tabs/History';
 import CreatedByMe from '../components/Tabs/CreatedByMe';
+import AuthenticatedComponent from '../components/AuthenticatedComponent';
 class HomeScreen extends React.Component{
     
     // constructor(props){super(props)}
     render(){
         return(
+            <AuthenticatedComponent navigate={this.props.navigation.navigate}>
             <Container>
             <Tabs>
                 <Tab heading="Going">
@@ -24,7 +26,8 @@ class HomeScreen extends React.Component{
                     <CreatedByMe />
                 </Tab>
             </Tabs>
-        </Container>
+            </Container>
+            </AuthenticatedComponent>
         )
     }
 }

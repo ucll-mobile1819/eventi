@@ -5,4 +5,4 @@ const NotGoing = () => (
     <Text>Hello Title</Text>
 );
 
-export  {NotGoing};
+export default NotGoing;

@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, Alert } from 'react-native';
+import { View, Text, TextInput, Button } from 'react-native';
 import loginregisterStyles from '../styles/loginregister';
-import { isAuthenticated, setJWTToken, login } from '../auth';
+import { isAuthenticated, login } from '../auth';
 import { NavigationEvents } from 'react-navigation';
-import { postLogin } from '../network/auth';
-import { fetchFailure } from '../actions';
-import { ButtonBase } from '@material-ui/core';
+
 export default class LoginScreen extends Component {
     constructor(props) {
+        console.log('LOADING LOGIN SCREEN------');
         super(props);
         this.state = {
             username: '',
@@ -15,23 +14,26 @@ export default class LoginScreen extends Component {
         };
     }
 
-    async onNavFocus() {
+    async onNavWillFocus() {
+        console.log('ON NAV WILL FOCUS');
         if (await isAuthenticated()) {
-            this.props.navigation.navigate('Groups'); // TODO: change to Home
+            console.log('YOU ARE AUTHENTICATED');
+            this.props.navigation.navigate('Home');
         }
     }
 
     async login() {
         let response = await login(this.state.username, this.state.password);
         if (!response) return;
-        this.props.navigation.navigate('Groups');
+        console.log('NAVIGATING TO HOME...');
+        this.props.navigation.navigate('Home');
     }
 
     render() {
         return (
             <View style={{alignItems: 'center', flex: 1 }}>
-                <NavigationEvents onDidFocus={() => this.onNavFocus()} />
-                <Text style={loginregisterStyles.bigTitle}>Eventi</Text>
+                <NavigationEvents onWillFocus={() => this.onNavWillFocus()} />
+                <Text style={customStyles.bigTitle}>Eventi</Text>
                 <TextInput
                     style={loginregisterStyles.inputField}
                     placeholder="Username"
