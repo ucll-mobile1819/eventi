@@ -1,4 +1,4 @@
-import { sendAPIRequest } from ".";
+import { sendAPIRequest, handleRequestErrors } from ".";
 
 // GETS
 
@@ -8,15 +8,15 @@ export const getUser = async username => {
 
 // POSTS
 
-export const postUser = async (firstname, lastname, username, birthday, password, passwordConfirmation) => {
-    return await sendAPIRequest(`user`, 'POST', false, {
+export const postUser = async (firstname, lastname, username, birthday, password, passwordConfirmation, handleErrors = false) => {
+    return await handleRequestErrors(async () => await sendAPIRequest(`user`, 'POST', false, {
         firstname,
         lastname,
         username,
         birthday,
         password,
         passwordConf: passwordConfirmation
-    });
+    }), handleErrors);
 };
 
 // PUTS
