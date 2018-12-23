@@ -19,3 +19,7 @@ export const fetchGroupsSuccess = groups => ({
     type: FETCH_GROUPS_SUCCESS,
     payload: { groups },
 });
+
+export const createGroup = async (groupname, description, color) => {
+    return await groupAPI.postGroup(groupname, description, color);
+};
