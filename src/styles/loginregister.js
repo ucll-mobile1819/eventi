@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-const customStyles = StyleSheet.create({
+const loginregisterStyles = StyleSheet.create({
     inputField: {
         borderWidth: 1,
         borderColor: 'gray',
@@ -25,7 +25,13 @@ const customStyles = StyleSheet.create({
         fontSize: 20,
         textAlign: 'center',
         margin: 15
+    },
+    inputError: {
+        color: 'red',
+        fontSize: 10,
+        marginTop: 10,
+        textAlign: 'left'
     }
 });
 
-export { customStyles };
+export default loginregisterStyles;
