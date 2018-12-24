@@ -6,6 +6,7 @@ const defaultRules = {
     numbers: /^(([0-9]*)|(([0-9]*)\.([0-9]*)))$/,
     email: /^(\w)+(\.\w+)*@(\w)+((\.\w{2,3}){1,3})$/,
     required: /\S+/,
+    color: /^[0-9A-Fa-f]{6}$/,
     date(format="YYYY-MM-DD", value) {
       const d = moment(value, format);
       if(d == null || !d.isValid()) return false;
@@ -37,7 +38,8 @@ const defaultRules = {
       required: 'The field {0} is mandatory.',
       date: 'The field {0} must be a valid date ({1}).',
       minlength: 'The field {0} length must be greater than {1}.',
-      maxlength: 'The field {0} length must be lower than {1}.'
+      maxlength: 'The field {0} length must be lower than {1}.',
+      color: '{0} must be a hexadecimal color value'
     }
 };
 
