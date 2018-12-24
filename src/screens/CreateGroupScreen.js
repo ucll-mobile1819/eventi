@@ -10,7 +10,7 @@ import ValidationComponent from '../components/ValidationComponent';
 import { isAuthenticated } from '../auth';
 import Snackbar from 'react-native-snackbar';
 
-class CreateGroupScreen extends ValidationComponent {
+export default class CreateGroupScreen extends ValidationComponent {
     constructor(props) {
         super(props);
         this.state = this.getClearedState();
