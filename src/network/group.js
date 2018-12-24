@@ -22,6 +22,10 @@ export const getBannedUsers = async id => {
     return await sendAPIRequest(`group/${id}/banned-users`, 'GET');
 };
 
+export const getMemberCountOfGroup = async id => {
+    return await sendAPIRequest(`group/${id}/membercount`, 'GET');
+};
+
 // POSTS
 
 export const postGroup = async (name, description, color) => {
