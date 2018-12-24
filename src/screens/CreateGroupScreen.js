@@ -18,7 +18,7 @@ export default class CreateGroupScreen extends ValidationComponent {
         return {
             groupname: '',
             description: '',
-            color: ''
+            color: '#FFF'
         };
     }
 
