@@ -13,12 +13,12 @@ class GroupScreen extends React.Component {
     onLoad() {
         this.props.fetchGroup(this.props.navigation.state.params.id);
         this.props.navigation.setParams({
-            title: this.props.navigation.state.params.id.toString(),
-            customHeaderBackgroundColor: this.props.group.color,
+            title: this.props.navigation.state.params.name,
+            customHeaderBackgroundColor: this.props.navigation.state.params.color,
             headerTintColor: 'white', // Back arrow color
             headerTitleStyle: { color: 'white' }, // Title color
             headerRight: (
-                <TouchableWithoutFeedback  onPress={() => this.props.navigation.push('GroupSettings', { id: this.props.navigation.state.params.id })}>
+                <TouchableWithoutFeedback onPress={() => this.props.navigation.push('GroupSettings', { id: this.props.navigation.state.params.id })}>
                     <MaterialIcon name='settings' {...headerStyles.iconProps} />
                 </TouchableWithoutFeedback>
             )
@@ -29,8 +29,10 @@ class GroupScreen extends React.Component {
         return (
             <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 {this.props.loading && <Text>Loading group...</Text>}
-                <Text>This is group {this.props.group.name}</Text>
-                <Button onPress={() => this.props.navigation.push('Event', { id: 3 })} title='Dummy event (id: 3)'/>
+                <Text style={{fontSize: 30, fontWeight: 'bold', color: 'black'}}>{this.props.group.name}</Text>
+                <Text>{this.props.group.description}</Text>
+                <Button onPress={() => this.props.navigation.push('Event', { id: 3 })} title='Dummy event (id: 3)' />
+                <Button onPress={() => this.props.navigation.push('Event', { id: 5 })} title='Dummy event (id: 5)' />
             </AuthenticatedComponent>
         );
     }

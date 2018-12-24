@@ -7,7 +7,13 @@ export default class GroupComponent extends React.Component {
     render() {
         return (
             <View style={[groupStyles.container, { backgroundColor: this.props.group.color }]}>
-                <TouchableWithoutFeedback onPress={() => this.props.navigation.push('Group', { id: this.props.group.id })}>
+                <TouchableWithoutFeedback 
+                    onPress={() => this.props.navigation.push('Group', {
+                        id: this.props.group.id,
+                        name: this.props.group.name,
+                        color: this.props.group.color // also pass color to have right color instead of color of last group
+                    })}
+                >
                     <View>
                         <Text style={groupStyles.title}>{this.props.group.name}</Text>
                         <Text style={groupStyles.description}>{this.shorten(this.props.group.description, 50)}</Text>
