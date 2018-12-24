@@ -38,6 +38,12 @@ router.get('/:id/members', middleware.auth.loggedIn, (req, res, next) => {
     .catch(next);
 });
 
+router.get('/:id/membercount', middleware.auth.loggedIn, (req, res, next) => {
+    groupService.getGroupMemberCount(req.user, req.params.id)
+    .then(count => res.send({ count }))
+    .catch(next);
+});
+
 router.get('/:id/banned-users', middleware.auth.loggedIn, (req, res, next) => {
     groupService.getBannedUsers(req.user, req.params.id)
     .then(bannedUsers => res.send(bannedUsers))
