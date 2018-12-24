@@ -102,6 +102,25 @@ function getGroupMembers(currentUser, groupId) {
     });
 }
 
+function getGroupMemberCount(currentUser, groupId) {
+    return new Promise((resolve, reject) => {
+        Group.Group.findById(groupId)
+        .then(group => {
+            if (!group) return Promise.reject(new Error('This group does not exist.'));
+            return group.getUsers();
+        })
+        .then(users => {
+            let found = false;
+            users.forEach(user => {
+                if (user.username === currentUser.username) found = true;
+            });
+            if (!found) return Promise.reject(new Error('You do not belong to this group.'));
+            return resolve(users.length);
+        })
+        .catch(reject);
+    });
+}
+
 function removeUserFromGroup(currentUser, username, groupId) {
     return new Promise((resolve, reject) => {
         let tmpGroup;
@@ -298,4 +317,4 @@ function joinGroup(currentUser, inviteCode) {
     });
 }
 
-module.exports = { createGroup, updateGroup, removeGroup, getGroup, removeUserFromGroup, getJoinedGroups, getCreatedGroups, getGroupMembers, banUser, unbanUser, getBannedUsers, generateInviteCode, joinGroup };
+module.exports = { createGroup, updateGroup, removeGroup, getGroup, removeUserFromGroup, getJoinedGroups, getCreatedGroups, getGroupMembers, getGroupMemberCount, banUser, unbanUser, getBannedUsers, generateInviteCode, joinGroup };
