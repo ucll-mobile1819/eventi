@@ -26,8 +26,8 @@ class GroupScreen extends React.Component {
     render() {
         return (
             <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
-                <Text>GroupScreen</Text>
-                <Button onPress={() => this.props.navigation.push('Event', { id: 3 })} title='Event (id: 3)'/>
+                <Text>This is group {this.props.navigation.getParam('id')}</Text>
+                <Button onPress={() => this.props.navigation.push('Event', { id: 3 })} title='Dummy event (id: 3)'/>
             </AuthenticatedComponent>
         );
     }

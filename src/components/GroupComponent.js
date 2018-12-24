@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, Button, TouchableWithoutFeedback } from 'react-native';
+import { Text, View, TouchableWithoutFeedback, Alert } from 'react-native';
 import groupStyles from '../styles/groupStyles';
 
 export default class GroupComponent extends React.Component {

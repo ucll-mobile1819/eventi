@@ -15,10 +15,9 @@ class GroupsScreen extends React.Component {
         return (
             <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 {this.props.loading && <Text>Loading...</Text>}
-                <Text>You have {this.props.groups.length} groups!</Text>
                 <FlatList
                     data={this.props.groups}
-                    renderItem={({item}) => <GroupComponent group={item} />}
+                    renderItem={({item}) => <GroupComponent group={item} navigation={this.props.navigation} />}
                     keyExtractor={(group, index) => String(group.id)}
                 />
                 <Button onPress={() => this.props.navigation.push('CreateGroup')} title='Create Group' />
