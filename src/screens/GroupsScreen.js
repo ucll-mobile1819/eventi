@@ -14,7 +14,7 @@ class GroupsScreen extends React.Component {
     render() {
         return (
             <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
-                {this.props.loading && <Text>Loading...</Text>}
+                {this.props.loading && <Text>Loading groups...</Text>}
                 <FlatList
                     data={this.props.groups}
                     renderItem={({item}) => <GroupComponent group={item} navigation={this.props.navigation} />}
