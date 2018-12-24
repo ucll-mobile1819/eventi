@@ -2,10 +2,8 @@ import React from 'react';
 import { Text, TextInput, Button } from 'react-native';
 import { KeyboardAwareScrollView } from  'react-native-keyboard-aware-scroll-view';
 import { NavigationEvents } from 'react-navigation';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import loginregisterStyles from '../styles/loginregister';
-import postGroup from '../network/group';
+import { postGroup } from '../network/group';
 import ValidationComponent from '../components/ValidationComponent';
 import { isAuthenticated } from '../auth';
 import Snackbar from 'react-native-snackbar';
@@ -44,7 +42,7 @@ export default class CreateGroupScreen extends ValidationComponent {
                 }
             });
             this.setState(this.getClearedState());
-            this.props.navigation.navigate('Groups');
+            this.props.navigation.push('Groups');
         }
     }
 
