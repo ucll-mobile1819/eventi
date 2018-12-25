@@ -48,9 +48,8 @@ function updateComment(currentUser, commentId, content) {
             tmpComment.content = content;
             return tmpComment.save();
         })
-        .then(() => {
-            resolve();
-        })
+        .then(() => essentialisizer.essentializyComment(tmpComment))
+        .then(resolve)
         .catch(error => reject(error));
     });
 }

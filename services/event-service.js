@@ -88,7 +88,8 @@ function updateEvent(currentUser, eventId, name, description, startTime, endTime
             tmpEvent.country = country;
             return tmpEvent.save();
         })
-        .then(() => res())
+        .then(() => essentialisizer.essentializyEvent(tmpEvent))
+        .then(res)
         .catch(rej);
     });
 }
@@ -253,7 +254,8 @@ function endPoll(currentUser, eventId, pollDateId) {
             tmpEvent.type = 'event';
             return Promise.all([ tmpEvent.save(), removePollDates(tmpEvent) ]);
         })
-        .then(() => resolve())
+        .then(() => essentialisizer.essentializyEvent(tmpEvent))
+        .then(resolve)
         .catch(reject);
     });
 }
