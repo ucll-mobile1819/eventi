@@ -67,9 +67,6 @@ let GroupsTab = StackNavigator({
     },
     Group: {
         screen: GroupScreen,
-        navigationOptions: {
-            headerTitle: 'Group',
-        }
     },
     GroupSettings: {
         screen: GroupSettingsScreen,
