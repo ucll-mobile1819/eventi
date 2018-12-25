@@ -36,6 +36,6 @@ export default class GroupComponent extends React.Component {
         if (memberCount === 1) {
             return "1 member";
         }
-        return membercount + " members";
+        return memberCount + " members";
     }
 }

@@ -51,7 +51,7 @@ class GroupScreen extends React.Component {
         if (memberCount === 1) {
             return "1 member";
         }
-        return membercount + " members";
+        return memberCount + " members";
     };
 }
 
