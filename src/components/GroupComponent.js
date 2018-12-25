@@ -19,7 +19,7 @@ export default class GroupComponent extends React.Component {
                         <View style={{ padding: 10, flex: 1, flexDirection: 'row' }}>
                             <View style={{ flex: 1 }}>
                                 <Text style={groupStyles.title}>{this.props.group.name}</Text>
-                                <Text>{this.shorten(this.props.group.description, 50)}</Text>
+                                <Text numberOfLines={1}>{this.props.group.description}</Text>
                             </View>
                             <View style={groupStyles.memberCountContainer}>
                                 <FontAwesomeIcon name='group' size={25} color='lightgrey' />
@@ -30,14 +30,5 @@ export default class GroupComponent extends React.Component {
                 </TouchableWithoutFeedback>
             </View>
         );
-    }
-
-    shorten(string, maxLength) {
-        if (string.length > maxLength) {
-            return string.substring(0, maxLength - 1) + '...';
-        }
-        else {
-            return string;
-        }
     }
 }
