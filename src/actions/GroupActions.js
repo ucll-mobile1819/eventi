@@ -8,7 +8,6 @@ export const FETCH_GROUP_SUCCESS = 'FETCH_GROUP_SUCCESS';
 
 export const fetchGroups = () => dispatch => {
     dispatch(fetchGroupsBegin());
-    let newGroups = [];
 
     groupAPI.getGroups()
         .then(groups => {
@@ -40,7 +39,7 @@ export const fetchGroupsSuccess = groups => ({
 
 export const fetchGroup = groupId => dispatch => {
     dispatch(fetchGroupBegin());
-    groupAPI.getGroup(groupId)
+    return groupAPI.getGroup(groupId)
         .then(group => dispatch(fetchGroupSuccess(group)))
         .catch(error => dispatch(fetchFailure(error)));
 };

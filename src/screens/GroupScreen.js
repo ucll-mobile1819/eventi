@@ -11,17 +11,19 @@ class GroupScreen extends React.Component {
     static navigationOptions = obj => obj.navigation.state.params;
 
     onLoad() {
-        this.props.fetchGroup(this.props.navigation.state.params.id);
-        this.props.navigation.setParams({
-            title: this.props.navigation.state.params.name,
-            customHeaderBackgroundColor: this.props.navigation.state.params.color,
-            headerTintColor: 'white', // Back arrow color
-            headerTitleStyle: { color: 'white' }, // Title color
-            headerRight: (
-                <TouchableWithoutFeedback onPress={() => this.props.navigation.push('GroupSettings', { id: this.props.navigation.state.params.id })}>
-                    <MaterialIcon name='settings' {...headerStyles.iconProps} />
-                </TouchableWithoutFeedback>
-            )
+        this.props.fetchGroup(this.props.navigation.state.params.id)
+        .then(() => {
+            this.props.navigation.setParams({
+                title: this.props.group.name,
+                customHeaderBackgroundColor: this.props.group.color,
+                headerTintColor: 'white', // Back arrow color
+                headerTitleStyle: { color: 'white' }, // Title color
+                headerRight: (
+                    <TouchableWithoutFeedback onPress={() => this.props.navigation.push('GroupSettings', { id: this.props.group.id })}>
+                        <MaterialIcon name='settings' {...headerStyles.iconProps} />
+                    </TouchableWithoutFeedback>
+                )
+            });
         });
     }
 
