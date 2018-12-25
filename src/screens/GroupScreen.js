@@ -35,24 +35,22 @@ class GroupScreen extends React.Component {
         return (
             <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 {this.props.loading && <Text>Loading group...</Text>}
-                <View style={{ padding: 10, flexDirection: 'row' }}>
-                    <FontAwesomeIcon name='group' size={25} color='black'/>
-                    <Text style={{ marginLeft: 10 }}>{this.getMemberCountString(this.props.navigation.state.params.memberCount)}</Text>
+                <View style={{ padding: 10 }}>
+                    <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: 'lightgrey', paddingBottom: 20, marginBottom: 20 }}>
+                        <Text style={{ flex: 1 }}>{this.props.group.description}</Text>
+                        <View style={groupStyles.memberCountContainer}>
+                            <FontAwesomeIcon name='group' size={25} color='grey' />
+                            <Text style={[groupStyles.memberCount, { color: 'grey'}]}>{this.props.navigation.state.params.memberCount}</Text>
+                        </View>
+                    </View>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'black', marginBottom: 10 }}>Events</Text>
+                    {/* TODO: add events here */}
+                    {/* <Button onPress={() => this.props.navigation.push('Event', { id: 3 })} title='Dummy event (id: 3)' /> */}
+                    <Text>No events here yet...</Text>
                 </View>
-                <Text>{this.props.group.description}</Text>
-                <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'black', margin: 10 }}>Events</Text>
-                <Button onPress={() => this.props.navigation.push('Event', { id: 3 })} title='Dummy event (id: 3)' />
-                <Button onPress={() => this.props.navigation.push('Event', { id: 5 })} title='Dummy event (id: 5)' />
             </AuthenticatedComponent>
         );
     }
-
-    getMemberCountString(memberCount) {
-        if (memberCount === 1) {
-            return "1 member";
-        }
-        return memberCount + " members";
-    };
 }
 
 const mapStateToProps = state => {

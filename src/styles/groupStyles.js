@@ -15,6 +15,15 @@ const groupStyles = StyleSheet.create({
         width: 20,
         borderTopLeftRadius: 10,
         borderBottomLeftRadius: 10
+    },
+    memberCountContainer: {
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        marginLeft: 10
+    },
+    memberCount: {
+        fontSize: 15, 
+        color: 'lightgrey'
     }
 });
 
