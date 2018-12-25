@@ -7,6 +7,7 @@ import { postGroup } from '../network/group';
 import ValidationComponent from '../components/ValidationComponent';
 import { isAuthenticated } from '../auth';
 import ColorPalette from 'react-native-color-palette';
+import Snackbar from 'react-native-snackbar';
 
 export default class CreateGroupScreen extends ValidationComponent {
     constructor(props) {
@@ -35,13 +36,24 @@ export default class CreateGroupScreen extends ValidationComponent {
             Alert.alert(
                 'Group succesfully created',
                 'Share the following link to invite people to your group:',
-                [{text: 'Ok', onPress: () => this.createGroupDone()}],
+                [{text: 'Copy link to clipboard', onPress: () => this.createGroupDone('Link TODO')}],
                 { cancelable: false }
             );
         }
     }
 
-    createGroupDone() {
+    async createGroupDone(link) {
+        await Clipboard.setString(link);
+
+        Snackbar.show({
+            title: 'Link copied to clipboard',
+            duration: Snackbar.LENGTH_LONG,
+            action: {
+                title: 'CLOSE',
+                color: 'green',
+                onPress: () => Snackbar.dismiss(),
+            }
+        });
         this.setState(this.getClearedState());
         this.props.navigation.push('Groups');
     }
