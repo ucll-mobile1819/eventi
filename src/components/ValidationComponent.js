@@ -33,12 +33,12 @@ const defaultRules = {
   const defaultMessages = {
     // English language - Used by default
     en: {
-      numbers: 'The field {0} must be a valid number.',
-      email: 'The field {0} must be a valid email address.',
-      required: 'The field {0} is mandatory.',
-      date: 'The field {0} must be a valid date ({1}).',
-      minlength: 'The field {0} length must be greater than {1}.',
-      maxlength: 'The field {0} length must be lower than {1}.',
+      numbers: '{0} must contain a valid number.',
+      email: '{0} must contain a valid email address.',
+      required: '{0} is mandatory.',
+      date: '{0} must be a valid date ({1}).',
+      minlength: '{0} must be more than {1} characters.',
+      maxlength: '{0} must be less than {1} characters.',
       color: '{0} must be a hexadecimal color value'
     }
 };
