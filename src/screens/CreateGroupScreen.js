@@ -30,13 +30,13 @@ export default class CreateGroupScreen extends ValidationComponent {
             this.state.groupname,
             this.state.description,
             this.state.color
-        );
+        )
 
         if (response !== false) {
             Alert.alert(
                 'Group succesfully created',
-                'Share the following link to invite people to your group:',
-                [{text: 'Copy link to clipboard', onPress: () => this.createGroupDone('Link TODO')}],
+                'Share the following code to invite people to your group: ' + response.inviteCode,
+                [{text: 'Copy link to clipboard', onPress: () => this.createGroupDone(response.inviteCode)}],
                 { cancelable: false }
             );
         }
@@ -45,6 +45,7 @@ export default class CreateGroupScreen extends ValidationComponent {
     async createGroupDone(link) {
         await Clipboard.setString(link);
 
+        // TODO snackbar not showing
         Snackbar.show({
             title: 'Link copied to clipboard',
             duration: Snackbar.LENGTH_LONG,
