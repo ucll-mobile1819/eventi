@@ -52,35 +52,33 @@ router.get('/:id/banned-users', middleware.auth.loggedIn, (req, res, next) => {
 
 router.post('/', middleware.auth.loggedIn, (req, res, next) => {
     groupService.createGroup(req.user, req.body.name, req.body.description, req.body.color)
-    .then(() => {
-        res.send();
-    })
+    .then(group => res.send(group))
     .catch(next);
 });
 
 router.post('/:id/ban/:username', middleware.auth.loggedIn, (req, res, next) => {
     groupService.banUser(req.user, req.params.id, req.params.username)
-    .then(() => res.send())
+    .then(() => groupService.getBannedUsers(req.user, req.params.id))
+    .then(users => res.send(users))
     .catch(next);
 });
 
 router.post('/:id/unban/:username', middleware.auth.loggedIn, (req, res, next) => {
     groupService.unbanUser(req.user, req.params.id, req.params.username)
-    .then(() => res.send())
+    .then(() => groupService.getBannedUsers(req.user, req.params.id))
+    .then(users => res.send(users))
     .catch(next);
 });
 
 router.post('/join/:inviteCode', middleware.auth.loggedIn, (req, res, next) => {
     groupService.joinGroup(req.user, req.params.inviteCode)
-    .then(() => res.send())
+    .then(group => res.send(group))
     .catch(next);
 });
 
 router.put('/:id', middleware.auth.loggedIn, (req, res, next) => {
     groupService.updateGroup(req.user, req.params.id, req.body.name, req.body.description, req.body.color)
-    .then(() => {
-        res.send();
-    })
+    .then(group => res.send(group))
     .catch(next);
 });
 
@@ -92,19 +90,13 @@ router.put('/:id/generate-invite-code', middleware.auth.loggedIn, (req, res, nex
 
 router.delete('/:id', middleware.auth.loggedIn, (req, res, next) => {
     groupService.removeGroup(req.user, req.params.id)
-    .then(() => {
-        res.send();
-    })
-    .catch(err => {
-        next(err);
-    });
+    .then(() => res.send())
+    .catch(next);
 });
 
 router.delete('/:groupId/:username', middleware.auth.loggedIn, (req, res, next) => {
     groupService.removeUserFromGroup(req.user, req.params.username, req.params.groupId)
-    .then(() => {
-        res.send();
-    })
+    .then(() => res.send())
     .catch(next);
 });
 

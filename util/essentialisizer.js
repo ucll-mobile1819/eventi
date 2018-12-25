@@ -1,11 +1,11 @@
 const clone = obj => JSON.parse(JSON.stringify(obj)); // Also removes all functions
 const User = require('../models/user');
 
-function essentializyGroup(group) {
+function essentializyGroup(group, showInviteCode = false) {
     return new Promise((resolve) => {
         if (!group) return resolve(null);
         const r = clone(group);
-        resolve({ id: r.id, name: r.name, description: r.description, color: r.color, creator: r.creator_username });
+        resolve({ id: r.id, name: r.name, description: r.description, color: r.color, creator: r.creator_username, inviteCode: showInviteCode ? r.invite_code : undefined });
     });
 }
 

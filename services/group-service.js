@@ -15,8 +15,9 @@ function createGroup(currentUser, name, description, color) {
             tmpGroup = group;
             return group.setCreator(currentUser);
         })
-        .then(() => tmpGroup.addUser(currentUser))
-        .then(() => essentialisizer.essentializyGroup(tmpGroup))
+        .then(() => Promise.all([ tmpGroup.addUser(currentUser), generateInviteCode(currentUser, tmpGroup.id) ]))
+        .then(() => Group.Group.findById(tmpGroup.id))
+        .then(group => essentialisizer.essentializyGroup(group, true))
         .then(resolve)
         .catch(reject);
     });
@@ -41,9 +42,8 @@ function updateGroup(currentUser, groupId, name, description, color) {
             // ^ Same as: tmpGroup.name = name; tmpGroup.description = description; tmpGroup.color = color;
             return tmpGroup.save();
         })
-        .then(() => {
-            resolve();
-        })
+        .then(() => essentialisizer.essentializyGroup(tmpGroup))
+        .then(resolve)
         .catch(err => reject(err)); // Catching the possible error if the user is not the creator of the group which he's trying to edit or if the groupId does not exist
     });
 }
@@ -70,11 +70,14 @@ function removeGroup(currentUser, groupId) {
 
 function getGroup(currentUser, groupId) {
     return new Promise((resolve, reject) => {
+        let tmpGroup;
         currentUser.getGroups({ where: { id: groupId } })
         .then(groups => {
             if (!groups || groups.length === 0) return Promise.reject(new Error('You do not belong to this group.'));
-            return essentialisizer.essentializyGroup(groups[0]);
+            tmpGroup = groups[0];
+            return tmpGroup.getCreator();
         })
+        .then(creator => essentialisizer.essentializyGroup(tmpGroup, (currentUser.username === creator.username)))
         .then(resolve)
         .catch(err => reject(err));
     });
@@ -312,7 +315,8 @@ function joinGroup(currentUser, inviteCode) {
             if (results[0].map(el => el.username).indexOf(currentUser.username) !== -1) return Promise.reject(new Error('You are already in this group.'));
             return tmpGroup.addUser(currentUser);
         })
-        .then(() => resolve())
+        .then(() => essentialisizer.essentializyGroup(tmpGroup))
+        .then(resolve)
         .catch(reject);
     });
 }

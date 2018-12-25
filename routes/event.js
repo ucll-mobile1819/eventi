@@ -56,27 +56,29 @@ router.post('/', middleware.auth.loggedIn,  (req, res, next) => {
 
 router.post('/:id/end-poll', middleware.auth.loggedIn, (req, res, next) => {
     eventService.endPoll(req.user, req.params.id, req.body.pollDateId)
-    .then(() => res.send())
+    .then(event => res.send(event))
     .catch(next);
 });
 
 // Body: pollDateIds: [id1, id2, ...]
 router.post('/:id/vote', middleware.auth.loggedIn, (req, res, next) => {
     eventService.votePoll(req.user, req.params.id, req.body.pollDateIds)
-    .then(() => res.send())
+    .then(() => eventService.getVotes(req.user, req.params.id))
+    .then(votes => res.send(votes))
     .catch(next);
 });
 
 // Body: state: null|'going'|'not going'
 router.post('/:id/attendance', middleware.auth.loggedIn, (req, res, next) => {
     eventService.setEventAttendance(req.user, req.params.id, req.body.state)
-    .then(() => res.send())
+    .then(() => eventService.getEventAttendances(req.user, req.params.id))
+    .then(attendances => res.send(attendances))
     .catch(next);
 });
 
 router.put('/:id', middleware.auth.loggedIn, (req, res, next) => {
     eventService.updateEvent(req.user, req.params.id, req.body.name, req.body.description, req.body.startTime, req.body.endTime, req.body.locationName, req.body.zipcode, req.body.city, req.body.address, req.body.country)
-    .then(() => res.send())
+    .then(event => res.send(event))
     .catch(next);
 });
 

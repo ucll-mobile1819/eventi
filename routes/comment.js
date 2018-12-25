@@ -24,7 +24,7 @@ router.post('/', middleware.auth.loggedIn, (req, res, next) => {
 
 router.put('/:id', middleware.auth.loggedIn, (req, res, next) => {
     commentService.updateComment(req.user, req.params.id, req.body.content)
-    .then(() => res.send())
+    .then(comment => res.send(comment))
     .catch(next);
 })
 
