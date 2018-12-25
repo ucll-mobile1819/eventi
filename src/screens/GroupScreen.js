@@ -31,7 +31,6 @@ class GroupScreen extends React.Component {
         return (
             <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 {this.props.loading && <Text>Loading group...</Text>}
-                <Text style={{fontSize: 30, fontWeight: 'bold', color: 'black'}}>{this.props.group.name}</Text>
                 <Text>{this.getMemberCountString(this.props.navigation.state.params.memberCount)}</Text>
                 <Text>{this.props.group.description}</Text>
                 <Text style={{fontSize: 20, fontWeight: 'bold', color: 'black'}}>Events</Text>
