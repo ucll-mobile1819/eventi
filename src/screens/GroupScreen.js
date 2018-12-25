@@ -37,7 +37,7 @@ class GroupScreen extends React.Component {
                 {this.props.loading && <Text>Loading group...</Text>}
                 <View style={{ padding: 10 }}>
                     <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: 'lightgrey', paddingBottom: 20, marginBottom: 20 }}>
-                        <Text style={{ flex: 1 }}>{this.props.group.description}</Text>
+                        <Text style={{ flex: 1 }}>{this.props.group.description || "No description was provided for this group."}</Text>
                         <View style={groupStyles.memberCountContainer}>
                             <FontAwesomeIcon name='group' size={25} color='grey' />
                             <Text style={[groupStyles.memberCount, { color: 'grey'}]}>{this.props.navigation.state.params.memberCount}</Text>
