@@ -11,7 +11,8 @@ export default class GroupComponent extends React.Component {
                     onPress={() => this.props.navigation.push('Group', {
                         id: this.props.group.id,
                         name: this.props.group.name,  // possibly needed for changing navigation header with name
-                        color: this.props.group.color // also pass color to have right color immediately instead of color of last group
+                        color: this.props.group.color, // also pass color to have right color immediately instead of color of last group
+                        memberCount: this.props.group.memberCount  // pass memberCount to not have to fetch it a second time
                     })}
                 >
                     <View>
