@@ -1,11 +1,10 @@
 import React from 'react';
 import { Text, TextInput, Button, View, Alert } from 'react-native';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
 import groupStyles from '../styles/groupStyles';
 import loginregisterStyles from '../styles/loginregister';
 import ValidationComponent from '../components/ValidationComponent';
+import { postJoinGroup } from '../network/group';
 
 export default class JoinGroupScreen extends ValidationComponent {
     constructor(props) {
@@ -20,7 +19,18 @@ export default class JoinGroupScreen extends ValidationComponent {
     async joinGroup() {
         if (!this.validateForm()) return;
 
-        Alert.alert('Join group');
+        let response = await postJoinGroup(this.state.invitecode);
+        console.log("PRINT RESPONSE: " + response);
+
+        // TODO check if a group was found / joining was successful
+        // TODO owner shouldn't be able to join his own group
+        if (response !== false) {
+            // TODO show group name when join was succesful
+
+            Alert.alert('Group succesfully joined!');
+            // this.setState(this.getClearedState());
+            // this.props.navigation.push('Groups');
+        }
     }
 
     validateForm() {
