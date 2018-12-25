@@ -3,20 +3,18 @@ import { StyleSheet } from 'react-native';
 const groupStyles = StyleSheet.create({
     container: {
         margin: 8,
-        padding: 10,
         borderRadius: 10,
+        backgroundColor: 'white',
     },
     title: {
         fontSize: 25,
         fontWeight: 'bold',
-        color: 'white'
+        color: 'black'
     },
-    subtitle: {
-        color: 'white'
-    },
-    description: {
-        color: 'white',
-        fontSize: 15
+    overviewColor: {
+        width: 20,
+        borderTopLeftRadius: 10,
+        borderBottomLeftRadius: 10
     }
 });
 

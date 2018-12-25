@@ -1,22 +1,31 @@
 import React from 'react';
 import { Text, View, TouchableWithoutFeedback, Alert } from 'react-native';
 import groupStyles from '../styles/groupStyles';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
 export default class GroupComponent extends React.Component {
     // TODO? show amount of members in group
     render() {
         return (
-            <View style={[groupStyles.container, { backgroundColor: this.props.group.color }]}>
+            <View style={groupStyles.container}>
                 <TouchableWithoutFeedback
                     onPress={() => this.props.navigation.push('Group', {
                         id: this.props.group.id,
                         memberCount: this.props.group.memberCount  // pass memberCount to not have to fetch it a second time
                     })}
                 >
-                    <View>
-                        <Text style={groupStyles.title}>{this.props.group.name}</Text>
-                        <Text style={groupStyles.subtitle}>{this.getMemberCountString(this.props.group.memberCount)}</Text>
-                        <Text style={groupStyles.description}>{this.shorten(this.props.group.description, 50)}</Text>
+                    <View style={{ flexDirection: 'row' }}>
+                        <View style={[groupStyles.overviewColor, { backgroundColor: this.props.group.color }]} />
+                        <View style={{ padding: 10, flex: 1, flexDirection: 'row' }}>
+                            <View style={{ flex: 1 }}>
+                                <Text style={groupStyles.title}>{this.props.group.name}</Text>
+                                <Text>{this.shorten(this.props.group.description, 50)}</Text>
+                            </View>
+                            <View style={{ alignItems: 'center', justifyContent: 'center', marginLeft: 10 }}>
+                                <FontAwesomeIcon name='group' size={25} color='black' />
+                                <Text style={{ fontSize: 15 }}>{this.props.group.memberCount}</Text>
+                            </View>
+                        </View>
                     </View>
                 </TouchableWithoutFeedback>
             </View>
@@ -30,12 +39,5 @@ export default class GroupComponent extends React.Component {
         else {
             return string;
         }
-    }
-
-    getMemberCountString(memberCount) {
-        if (memberCount === 1) {
-            return "1 member";
-        }
-        return memberCount + " members";
     }
 }
