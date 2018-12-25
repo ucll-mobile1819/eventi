@@ -43,7 +43,7 @@ class GroupScreen extends React.Component {
                             <Text style={[groupStyles.memberCount, { color: 'grey'}]}>{this.props.navigation.state.params.memberCount}</Text>
                         </View>
                     </View>
-                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'black', marginBottom: 10 }}>Events</Text>
+                    <Text style={[groupStyles.subtitle, {marginBottom: 10 }]}>Events</Text>
                     {/* TODO: add events here */}
                     {/* <Button onPress={() => this.props.navigation.push('Event', { id: 3 })} title='Dummy event (id: 3)' /> */}
                     <Text>No events here yet...</Text>

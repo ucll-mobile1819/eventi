@@ -11,6 +11,11 @@ const groupStyles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'black'
     },
+    subtitle: {
+        fontSize: 20, 
+        fontWeight: 'bold', 
+        color: 'black'
+    },
     overviewColor: {
         width: 20,
         borderTopLeftRadius: 10,
@@ -24,6 +29,14 @@ const groupStyles = StyleSheet.create({
     memberCount: {
         fontSize: 15, 
         color: 'lightgrey'
+    },
+    inputField: {
+        borderWidth: 1,
+        borderColor: 'gray',
+        backgroundColor: 'white',
+        borderRadius: 10,
+        height: 40,
+        marginBottom: 20
     }
 });
 
