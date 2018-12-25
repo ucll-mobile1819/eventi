@@ -22,8 +22,8 @@ export default class GroupComponent extends React.Component {
                                 <Text>{this.shorten(this.props.group.description, 50)}</Text>
                             </View>
                             <View style={{ alignItems: 'center', justifyContent: 'center', marginLeft: 10 }}>
-                                <FontAwesomeIcon name='group' size={25} color='black' />
-                                <Text style={{ fontSize: 15 }}>{this.props.group.memberCount}</Text>
+                                <FontAwesomeIcon name='group' size={25} color='lightgrey' />
+                                <Text style={{ fontSize: 15, color: 'lightgrey' }}>{this.props.group.memberCount}</Text>
                             </View>
                         </View>
                     </View>
