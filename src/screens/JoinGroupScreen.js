@@ -19,8 +19,7 @@ export default class JoinGroupScreen extends ValidationComponent {
     async joinGroup() {
         if (!this.validateForm()) return;
 
-        let response = await postJoinGroup(this.state.invitecode);
-        console.log("PRINT RESPONSE: " + response);
+        let response = await postJoinGroup(this.state.invitecode, true);
 
         // TODO check if a group was found / joining was successful
         // TODO owner shouldn't be able to join his own group
