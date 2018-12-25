@@ -7,6 +7,7 @@ const defaultRules = {
     email: /^(\w)+(\.\w+)*@(\w)+((\.\w{2,3}){1,3})$/,
     required: /\S+/,
     color: /^#[0-9A-Fa-f]{6}$/,
+    invitecode: /[0-9A-Z]{8}/,
     date(format="YYYY-MM-DD", value) {
       const d = moment(value, format);
       if(d == null || !d.isValid()) return false;
@@ -39,7 +40,8 @@ const defaultRules = {
       date: '{0} must be a valid date ({1}).',
       minlength: '{0} must be more than {1} characters.',
       maxlength: '{0} must be less than {1} characters.',
-      color: '{0} must be a hexadecimal color value'
+      color: '{0} must be a hexadecimal color value',
+      invitecode: '{0} must be 8 characters (0-9 and A-Z)'
     }
 };
 
