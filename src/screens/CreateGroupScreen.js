@@ -1,12 +1,11 @@
 import React from 'react';
-import { Text, TextInput, Button } from 'react-native';
+import { Text, TextInput, Button, Alert, Clipboard } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { NavigationEvents } from 'react-navigation';
 import loginregisterStyles from '../styles/loginregister';
 import { postGroup } from '../network/group';
 import ValidationComponent from '../components/ValidationComponent';
 import { isAuthenticated } from '../auth';
-import Snackbar from 'react-native-snackbar';
 import ColorPalette from 'react-native-color-palette';
 
 export default class CreateGroupScreen extends ValidationComponent {
@@ -33,18 +32,18 @@ export default class CreateGroupScreen extends ValidationComponent {
         );
 
         if (response !== false) {
-            Snackbar.show({
-                title: 'Group succesfully created',
-                duration: Snackbar.LENGTH_LONG,
-                action: {
-                    title: 'CLOSE',
-                    color: 'green',
-                    onPress: () => Snackbar.dismiss(),
-                }
-            });
-            this.setState(this.getClearedState());
-            this.props.navigation.push('Groups');
+            Alert.alert(
+                'Group succesfully created',
+                'Share the following link to invite people to your group:',
+                [{text: 'Ok', onPress: () => this.createGroupDone()}],
+                { cancelable: false }
+            );
         }
+    }
+
+    createGroupDone() {
+        this.setState(this.getClearedState());
+        this.props.navigation.push('Groups');
     }
 
     validateForm() {

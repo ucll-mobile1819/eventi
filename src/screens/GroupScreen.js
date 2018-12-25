@@ -32,6 +32,7 @@ class GroupScreen extends React.Component {
                 <Text style={{fontSize: 30, fontWeight: 'bold', color: 'black'}}>{this.props.group.name}</Text>
                 <Text>{this.getMemberCountString(this.props.navigation.state.params.memberCount)}</Text>
                 <Text>{this.props.group.description}</Text>
+                <Text style={{fontSize: 20, fontWeight: 'bold', color: 'black'}}>Events</Text>
                 <Button onPress={() => this.props.navigation.push('Event', { id: 3 })} title='Dummy event (id: 3)' />
                 <Button onPress={() => this.props.navigation.push('Event', { id: 5 })} title='Dummy event (id: 5)' />
             </AuthenticatedComponent>
