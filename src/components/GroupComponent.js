@@ -17,7 +17,7 @@ export default class GroupComponent extends React.Component {
                 >
                     <View>
                         <Text style={groupStyles.title}>{this.props.group.name}</Text>
-                        <Text>{this.getMemberCountString(this.props.group.memberCount)}</Text>
+                        <Text style={groupStyles.subtitle}>{this.getMemberCountString(this.props.group.memberCount)}</Text>
                         <Text style={groupStyles.description}>{this.shorten(this.props.group.description, 50)}</Text>
                     </View>
                 </TouchableWithoutFeedback>
