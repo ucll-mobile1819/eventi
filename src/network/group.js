@@ -2,64 +2,64 @@ import { sendAPIRequest } from ".";
 
 // GETS
 
-export const getGroups = async () => {
-    return await sendAPIRequest(`group`, 'GET'); 
+export const getGroups = async (handleErrors = false) => {
+    return await sendAPIRequest(`group`, 'GET', handleErrors); 
 }
 
-export const getGroup = async id => {
-    return await sendAPIRequest(`group/${id}`, 'GET'); 
+export const getGroup = async (id, handleErrors = false) => {
+    return await sendAPIRequest(`group/${id}`, 'GET', handleErrors); 
 }
 
-export const getGroupMembers = async id => {
-    return await sendAPIRequest(`group/${id}/members`, 'GET')
+export const getGroupMembers = async (id, handleErrors = false) => {
+    return await sendAPIRequest(`group/${id}/members`, 'GET', handleErrors)
 };
 
-export const getCreatedGroups = async () => {
-    return await sendAPIRequest(`group/created`, 'GET');
+export const getCreatedGroups = async (handleErrors = false) => {
+    return await sendAPIRequest(`group/created`, 'GET', handleErrors);
 };
 
-export const getBannedUsers = async id => {
-    return await sendAPIRequest(`group/${id}/banned-users`, 'GET');
+export const getBannedUsers = async (id, handleErrors = false) => {
+    return await sendAPIRequest(`group/${id}/banned-users`, 'GET', handleErrors);
 };
 
-export const getMemberCountOfGroup = async id => {
-    return await sendAPIRequest(`group/${id}/membercount`, 'GET');
+export const getMemberCountOfGroup = async (id, handleErrors = false) => {
+    return await sendAPIRequest(`group/${id}/membercount`, 'GET', handleErrors);
 };
 
 // POSTS
 
-export const postGroup = async (name, description, color) => {
-    return await sendAPIRequest(`group`, 'POST', true, { name, description, color });
+export const postGroup = async (name, description, color, handleErrors = false) => {
+    return await sendAPIRequest(`group`, 'POST', handleErrors, true, { name, description, color });
 };
 
-export const postJoinGroup = async inviteCode => {
-    return await sendAPIRequest(`group/join/${inviteCode}`, 'POST');
+export const postJoinGroup = async (inviteCode, handleErrors = false) => {
+    return await sendAPIRequest(`group/join/${inviteCode}`, 'POST', handleErrors);
 };
 
-export const postBanUser = async (id, username) => {
-    return await sendAPIRequest(`group/${id}/ban/${username}`, 'POST');
+export const postBanUser = async (id, username, handleErrors = false) => {
+    return await sendAPIRequest(`group/${id}/ban/${username}`, 'POST', handleErrors);
 };
 
-export const postUnbanUser = async (id, username) => {
-    return await sendAPIRequest(`group/${id}/unban/${username}`, 'POST');
+export const postUnbanUser = async (id, username, handleErrors = false) => {
+    return await sendAPIRequest(`group/${id}/unban/${username}`, 'POST', handleErrors);
 };
 
 // PUTS
 
-export const putGroup = async (id, name, description, color) => {
-    return await sendAPIRequest(`group/${id}`, 'PUT', true, { name, description, color });
+export const putGroup = async (id, name, description, color, handleErrors = false) => {
+    return await sendAPIRequest(`group/${id}`, 'PUT', handleErrors, true, { name, description, color });
 };
 
-export const putGenerateInviteCode = async id => {
-    return await sendAPIRequest(`group/${id}/generate-invite-code`, 'PUT');
+export const putGenerateInviteCode = async (id, handleErrors = false) => {
+    return await sendAPIRequest(`group/${id}/generate-invite-code`, 'PUT', handleErrors);
 };
 
 // DELETES
 
-export const deleteGroup = async id => {
-    return await sendAPIRequest(`group/${id}`, 'DELETE');
+export const deleteGroup = async (id, handleErrors = false) => {
+    return await sendAPIRequest(`group/${id}`, 'DELETE', handleErrors);
 };
 
-export const deleteUser = async (id, username) => {
-    return await sendAPIRequest(`group/${id}/${username}`, 'DELETE');
+export const deleteUser = async (id, username, handleErrors = false) => {
+    return await sendAPIRequest(`group/${id}/${username}`, 'DELETE', handleErrors);
 };

@@ -2,12 +2,12 @@ import { sendAPIRequest } from ".";
 
 // GETS
 
-export const getComments = async eventId => {
-    return await sendAPIRequest(`comment/event/${eventId}`, 'GET');
+export const getComments = async (eventId, handleErrors = false) => {
+    return await sendAPIRequest(`comment/event/${eventId}`, 'GET', handleErrors);
 };
 
 // POSTS
 
-export const postComments = async (eventId, content) => {
-    return await sendAPIRequest(`comment`, 'GET', true, { eventId, content });
+export const postComments = async (eventId, content, handleErrors = false) => {
+    return await sendAPIRequest(`comment`, 'GET', handleErrors, true, { eventId, content });
 };
