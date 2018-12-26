@@ -7,7 +7,7 @@ const defaultRules = {
     email: /^(\w)+(\.\w+)*@(\w)+((\.\w{2,3}){1,3})$/,
     required: /\S+/,
     color: /^#[0-9A-Fa-f]{6}$/,
-    invitecode: /[0-9A-Z]{8}/,
+    invitecode: /[0-9A-Za-z]{8}/,
     date(format="YYYY-MM-DD", value) {
       const d = moment(value, format);
       if(d == null || !d.isValid()) return false;

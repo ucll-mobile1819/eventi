@@ -33,7 +33,7 @@ export default class JoinGroupScreen extends ValidationComponent {
 
     validateForm() {
         if (!this.validate({
-            invitecode: { name: 'Invitecode', required: true, invitecode: true },
+            invitecode: { name: 'Invite code', required: true, invitecode: true },
         })) {
             return false;
         }
@@ -49,12 +49,12 @@ export default class JoinGroupScreen extends ValidationComponent {
         return (
             <AuthenticatedComponent navigate={this.props.navigation.navigate}>
                 <View style={{ flex: 1, padding: 20 }} >
-                    <Text>Enter an invitecode here to join a group.</Text>
-                    {this.isFieldInError('invitecode') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('invitecode')[0]}</Text>}
+                    <Text style={{ marginBottom: 5 }}>Enter an invite code to join a group:</Text>
+                    {this.isFieldInError('invitecode') && <Text style={{...loginregisterStyles.inputError, marginBottom: 5, marginLeft: 3}}>{this.getErrorsInField('invitecode')[0]}</Text>}
                     <View style={{ flexDirection: 'row', marginBottom: 20 }}>
                         <TextInput
-                            style={[groupStyles.inputField, {marginBottom: 0, marginRight: 10, flex: 1}]}
-                            placeholder="Invitecode"
+                            style={[groupStyles.inputField, {marginBottom: -10, marginTop: -2, marginRight: 10, flex: 1}]}
+                            placeholder="Invite code"
                             value={this.state.invitecode}
                             onChangeText={invitecode => this.setState({ invitecode })}
                         />
