@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, TextInput, Button, View, Alert } from 'react-native';
+import { Text, TextInput, Button, View, Alert, Clipboard } from 'react-native';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
 import groupStyles from '../styles/groupStyles';
 import loginregisterStyles from '../styles/loginregister';
@@ -24,8 +24,8 @@ export default class JoinGroupScreen extends ValidationComponent {
         if (response !== false) {
             Alert.alert(
                 'Group joined',
-                'You succesfully joined ' + response.name 
-                );
+                'You succesfully joined ' + response.name
+            );
             this.setState(this.getClearedState());
             this.props.navigation.push('Groups');
         }
@@ -40,18 +40,29 @@ export default class JoinGroupScreen extends ValidationComponent {
         return true;
     }
 
+    async pasteFromClipboard() {
+        const invitecode = await Clipboard.getString();
+        this.setState({ invitecode });
+    }
+
     render() {
         return (
             <AuthenticatedComponent navigate={this.props.navigation.navigate}>
                 <View style={{ flex: 1, padding: 20 }} >
                     <Text>Enter an invitecode here to join a group.</Text>
                     {this.isFieldInError('invitecode') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('invitecode')[0]}</Text>}
-                    <TextInput
-                        style={groupStyles.inputField}
-                        placeholder="Invitecode"
-                        value={this.state.inviteCode}
-                        onChangeText={invitecode => this.setState({ invitecode })}
-                    />
+                    <View style={{ flexDirection: 'row', marginBottom: 20 }}>
+                        <TextInput
+                            style={[groupStyles.inputField, {marginBottom: 0, marginRight: 10, flex: 1}]}
+                            placeholder="Invitecode"
+                            value={this.state.invitecode}
+                            onChangeText={invitecode => this.setState({ invitecode })}
+                        />
+                        <Button
+                            title="Paste"
+                            onPress={() => this.pasteFromClipboard()}
+                        />
+                    </View>
                     <Button
                         title="Join group"
                         onPress={() => this.joinGroup()}
