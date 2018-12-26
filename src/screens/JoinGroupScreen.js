@@ -21,14 +21,13 @@ export default class JoinGroupScreen extends ValidationComponent {
 
         let response = await postJoinGroup(this.state.invitecode, true);
 
-        // TODO check if a group was found / joining was successful
-        // TODO owner shouldn't be able to join his own group
         if (response !== false) {
-            // TODO show group name when join was succesful
-
-            Alert.alert('Group succesfully joined!');
-            // this.setState(this.getClearedState());
-            // this.props.navigation.push('Groups');
+            Alert.alert(
+                'Group joined',
+                'You succesfully joined ' + response.name 
+                );
+            this.setState(this.getClearedState());
+            this.props.navigation.push('Groups');
         }
     }
 
