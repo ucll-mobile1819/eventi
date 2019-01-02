@@ -40,7 +40,7 @@ class GroupScreen extends React.Component {
                         <Text style={{ flex: 1 }}>{this.props.group.description || "No description was provided for this group."}</Text>
                         <View style={groupStyles.memberCountContainer}>
                             <FontAwesomeIcon name='group' size={25} color='grey' />
-                            <Text style={[groupStyles.memberCount, { color: 'grey'}]}>{this.props.navigation.state.params.memberCount}</Text>
+                            <Text style={[groupStyles.memberCount, { color: 'grey'}]}>{this.props.group.memberCount}</Text>
                         </View>
                     </View>
                     <Text style={[groupStyles.subtitle, {marginBottom: 10 }]}>Events</Text>

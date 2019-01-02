@@ -3,7 +3,6 @@ import { Alert } from 'react-native';
 export const FETCH_FAILURE = 'FETCH_FAILURE';
 
 export const fetchFailure = err => {
-    console.log(err);
     let error = {};
     if (err.message) {
         error.message = err.message;

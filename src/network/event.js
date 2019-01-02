@@ -6,38 +6,38 @@ import { sendAPIRequest } from ".";
  * 
  * @param {String} type 'event' or 'poll' or null/undefined/''
  */
-export const getEvents = async (type = null) => {
-    return await sendAPIRequest(`event${!type ? '' : `?type=${type}`}`, 'GET');
+export const getEvents = async (type = null, handleErrors = false) => {
+    return await sendAPIRequest(`event${!type ? '' : `?type=${type}`}`, 'GET', handleErrors);
 };
 
-export const getEvent = async id => {
-    return await sendAPIRequest(`event/${id}`, 'GET');
+export const getEvent = async (id, handleErrors = false) => {
+    return await sendAPIRequest(`event/${id}`, 'GET', handleErrors);
 };
 
 /**
  * 
  * @param {String} type 'event' or 'poll' or null/undefined/''
  */
-export const getGroupEvents = async (groupId, type) => {
-    return await sendAPIRequest(`event/group/${groupId}${!type ? '' : `?type=${type}`}`, 'GET');
+export const getGroupEvents = async (groupId, type, handleErrors = false) => {
+    return await sendAPIRequest(`event/group/${groupId}${!type ? '' : `?type=${type}`}`, 'GET', handleErrors);
 };
 
-export const getVotes = async id => {
-    return await sendAPIRequest(`event/${id}/votes`, 'GET');
+export const getVotes = async (id, handleErrors = false) => {
+    return await sendAPIRequest(`event/${id}/votes`, 'GET', handleErrors);
 };
 
-export const getAttendances = async id => {
-    return await sendAPIRequest(`event/${id}/attendances`, 'GET');
+export const getAttendances = async (id, handleErrors = false) => {
+    return await sendAPIRequest(`event/${id}/attendances`, 'GET', handleErrors);
 };
 
-export const getAttendance = async id => {
-    return await sendAPIRequest(`event/${id}/attendance`, 'GET');
+export const getAttendance = async (id, handleErrors = false) => {
+    return await sendAPIRequest(`event/${id}/attendance`, 'GET', handleErrors);
 };
 
 // POSTS
 
-export const postEvent = async (groupId, name, description, startTime, endTime, locationName, address, zipcode, city, housenumber, country) => {
-    return await sendAPIRequest(`event`, 'POST', true, {
+export const postEvent = async (groupId, name, description, startTime, endTime, locationName, address, zipcode, city, housenumber, country, handleErrors = false) => {
+    return await sendAPIRequest(`event`, 'POST', handleErrors, true, {
         type: 'event',
         groupId,
         name,
@@ -59,8 +59,8 @@ export const postEvent = async (groupId, name, description, startTime, endTime, 
  * @param {Date} pollDates[].startTime - Start time of poll item.
  * @param {Date} pollDates[].endTime - Start time of poll item.
  */
-export const postEventWithPoll = async (groupId, name, description, locationName, address, zipcode, city, housenumber, country, pollDates) => {
-    return await sendAPIRequest(`event`, 'POST', true, {
+export const postEventWithPoll = async (groupId, name, description, locationName, address, zipcode, city, housenumber, country, pollDates, handleErrors = false) => {
+    return await sendAPIRequest(`event`, 'POST', handleErrors, true, {
         type: 'poll',
         groupId,
         name,
@@ -75,29 +75,29 @@ export const postEventWithPoll = async (groupId, name, description, locationName
     });
 };
 
-export const postVote = async (id, pollDateIds) => {
-    return await sendAPIRequest(`event/${id}/vote`, 'POST', true, { pollDateIds });
+export const postVote = async (id, pollDateIds, handleErrors = false) => {
+    return await sendAPIRequest(`event/${id}/vote`, 'POST', handleErrors, true, { pollDateIds });
 };
 
-export const postEndPoll = async (id, finalPollDateId) => {
-    return await sendAPIRequest(`event/${id}/end-poll`, 'POST', { pollDateId: finalPollDateId });
+export const postEndPoll = async (id, finalPollDateId, handleErrors = false) => {
+    return await sendAPIRequest(`event/${id}/end-poll`, 'POST', handleErrors, { pollDateId: finalPollDateId });
 };
 
 /**
  * @param {String} state - 'going' or 'not going' or null|undefined
  */
-export const postAttendance = async (id, state) => {
-    return await sendAPIRequest(`event/${id}/attendance`, 'POST', true, { state });
+export const postAttendance = async (id, state, handleErrors = false) => {
+    return await sendAPIRequest(`event/${id}/attendance`, 'POST', handleErrors, true, { state });
 };
 
 // PUTS
 
-export const putEvent = async (id, name, description, startTime, endTime, locationName, address, city, zipcode, country) => {
-    return await sendAPIRequest(`event/${id}`, 'PUT', true, { id, name, description, startTime, endTime, locationName, address, city, zipcode, country });
+export const putEvent = async (id, name, description, startTime, endTime, locationName, address, city, zipcode, country, handleErrors = false) => {
+    return await sendAPIRequest(`event/${id}`, 'PUT', handleErrors, true, { id, name, description, startTime, endTime, locationName, address, city, zipcode, country });
 };
 
 // DELETES
 
-export const deleteEvent = async id => {
-    return await sendAPIRequest(`event/${id}`, 'DELETE');
+export const deleteEvent = async (id, handleErrors = false) => {
+    return await sendAPIRequest(`event/${id}`, 'DELETE', handleErrors);
 };

@@ -2,6 +2,6 @@ import { sendAPIRequest } from ".";
 
 // GETS
 
-export const getVersion = async () => {
-    return await sendAPIRequest('version', 'GET', false);
+export const getVersion = async (handleErrors = false) => {
+    return await sendAPIRequest('version', 'GET', handleErrors, false);
 };

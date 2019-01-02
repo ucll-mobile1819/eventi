@@ -22,11 +22,12 @@ export const getAuthorizationHeader = async () => {
  * 
  * @param {String} endpoint 
  * @param {String} method 
+ * @param {Boolean} handleErrors 
  * @param {Boolean} checkAuthorized 
  * @param {Object} data 
  * @returns Object. Boolean:false on failure
  */
-export const sendAPIRequest = async ( endpoint, method, checkAuthorized = true, data ) => {
+export const sendAPIRequest = async ( endpoint, method, handleErrors, checkAuthorized = true, data ) => {
     let header;
     if (checkAuthorized) {
         header = await getAuthorizationHeader();
@@ -37,7 +38,11 @@ export const sendAPIRequest = async ( endpoint, method, checkAuthorized = true, 
     header = header || {};
     try {
         let params = [ constructApiUrl(endpoint) ];
-        if (data instanceof Object && Object.keys(data).length > 0) params.push(data);
+        if (data instanceof Object && Object.keys(data).length > 0) {
+            params.push(data);
+        } else {
+            if (method.toLowerCase() === "post") params.push({});
+        }
         params.push({
             headers: {
                 ...header,
@@ -50,14 +55,8 @@ export const sendAPIRequest = async ( endpoint, method, checkAuthorized = true, 
         console.log('--------- NETWORK ERROR ---------');
         console.log(error);
         console.log('---------------------------------');
-        throw { status: error.response.status, message: error.response.data.error || error.response.data };
-    }
-};
 
-export const handleRequestErrors = async (request, handleErrors) => {
-    try {
-        return await request();
-    } catch (error) {
+        error = { status: error.response.status, message: error.response.data.error || error.response.data };
         if (handleErrors) {
             fetchFailure(error);
             return false;
