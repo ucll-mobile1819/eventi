@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, Button, FlatList } from 'react-native';
+import { Text, Button, FlatList, TouchableWithoutFeedback } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { fetchGroups } from '../actions/GroupActions';
@@ -7,6 +7,8 @@ import AuthenticatedComponent from '../components/AuthenticatedComponent';
 import GroupComponent from '../components/GroupComponent';
 
 class GroupsScreen extends React.Component {
+    static navigationOptions = obj => obj.navigation.state.params;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -17,6 +19,20 @@ class GroupsScreen extends React.Component {
     onLoad() {
         this.props.fetchGroups()
         .then(() => this.setState({ showActivityIndicator: false }));
+
+        this.props.navigation.setParams({
+            headerRight: (
+                    <TouchableWithoutFeedback onPress={() => this.props.navigation.push('CreateGroup')}>
+                        <Text 
+                        style={{
+                            color: 'white',
+                            marginRight: 15,
+                            fontSize: 34,
+                        }}
+                        >+</Text>
+                    </TouchableWithoutFeedback>
+            )
+        });
     }
 
     render() {
@@ -27,7 +43,6 @@ class GroupsScreen extends React.Component {
                     renderItem={({item}) => <GroupComponent group={item} navigation={this.props.navigation} />}
                     keyExtractor={(group, index) => String(group.id)}
                 />
-                <Button onPress={() => this.props.navigation.push('CreateGroup')} title='Create Group' />
             </AuthenticatedComponent>
         );
     }
