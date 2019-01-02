@@ -3,19 +3,19 @@ import { Text, Button } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
-import { logout } from '../auth';
+import { fetchLogout } from '../actions/AuthenticationActions';
 
 class ProfileScreen extends React.Component {
     static navigationOptions = obj => obj.navigation.state.params;
 
     onLoad() {
         this.props.navigation.setParams({
-            title: 'Username placeholder',
+            title: this.props.user.firstname + ' ' + this.props.user.lastname,
         });
     }
     
     async logout() {
-        await logout();
+        await this.props.fetchLogout();
         this.props.navigation.navigate('Login');
     }
 
@@ -31,11 +31,13 @@ class ProfileScreen extends React.Component {
 
 const mapStateToProps = state => {
     return {
+        user: state.user.user
     };
 };
 
 const mapDispatchToProps = dispatch => (
     bindActionCreators({
+        fetchLogout,
     }, dispatch)
 );
 
