@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import { DeviceEventEmitter } from 'react-native';
+import { DeviceEventEmitter, ActivityIndicator, View, StyleSheet } from 'react-native';
 import { isAuthenticated } from "../auth";
 import { NavigationEvents } from 'react-navigation';
 
 export default class AuthenticatedComponent extends Component {
     constructor(props) {
         super(props);
+        if (!this.props.showActivityIndicator) this.props.showActivityIndicator = () => false;
         this.checkingAuth = false;
         this.onLoadExecuted = false;
     }
@@ -52,8 +53,18 @@ export default class AuthenticatedComponent extends Component {
         return (
             <>
                 <NavigationEvents onWillFocus={() => this.onNavWillFocus()} />
-                { this.props.children }
+                { this.props.showActivityIndicator && this.props.showActivityIndicator() ? 
+                    <View style={styles.container}><ActivityIndicator size="large" color="#757de8"></ActivityIndicator></View> :
+                    this.props.children
+                }
             </>
         );
     }
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+    }
+});
