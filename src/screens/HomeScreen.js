@@ -17,6 +17,7 @@ class HomeScreen extends React.Component{
         return(
             <AuthenticatedComponent navigate={this.props.navigation.navigate}>
             <Container>
+                 <Text>{this.props.events}</Text>
             <Tabs>
                 <Tab heading="Going">
                     <Going />
@@ -38,7 +39,7 @@ class HomeScreen extends React.Component{
 }
 const mapStateToProps = state => {
     return {
-        groups: state.event.events,
+        events: state.event.events,
         loading: state.event.loading,
         error: state.event.error
     };
