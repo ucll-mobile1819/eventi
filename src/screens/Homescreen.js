@@ -5,19 +5,13 @@ import NotGoing from '../components/Tabs/NotGoing';
 import History from '../components/Tabs/History';
 import CreatedByMe from '../components/Tabs/CreatedByMe';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
-import { fetchEvents } from '../actions/EventActions';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 class HomeScreen extends React.Component{
-    onLoad() {
-        this.props.fetchEvents();
-        alert(this.props.events);
-    }
+    
     // constructor(props){super(props)}
     render(){
         return(
-            <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>  
-            
+            <AuthenticatedComponent navigate={this.props.navigation.navigate}>
+            <Container>
             <Tabs>
                 <Tab heading="Going">
                     <Going />
@@ -32,25 +26,9 @@ class HomeScreen extends React.Component{
                     <CreatedByMe />
                 </Tab>
             </Tabs>
-            { this.props.loading && <Text>Loading...</Text> }
-            
+            </Container>
             </AuthenticatedComponent>
-        );
+        )
     }
 }
-
-
-const mapStateToProps = state => {
-    return {
-        events: state.event.events,
-        loading: state.event.loading,
-        error: state.event.error
-    };
-};
-
-const mapDispatchToProps = dispatch => (
-    bindActionCreators({
-        fetchEvents,
-    }, dispatch)
-);
-export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
+export default HomeScreen;
