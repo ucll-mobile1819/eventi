@@ -5,8 +5,13 @@ import NotGoing from '../components/Tabs/NotGoing';
 import History from '../components/Tabs/History';
 import CreatedByMe from '../components/Tabs/CreatedByMe';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
+import { fetchEvents } from '../actions/EventActions';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 class HomeScreen extends React.Component{
-    
+    onLoad() {
+        this.props.fetchEvents();
+    }
     // constructor(props){super(props)}
     render(){
         return(
@@ -31,4 +36,17 @@ class HomeScreen extends React.Component{
         )
     }
 }
-export default HomeScreen;
+const mapStateToProps = state => {
+    return {
+        groups: state.event.events,
+        loading: state.event.loading,
+        error: state.event.error
+    };
+};
+
+const mapDispatchToProps = dispatch => (
+    bindActionCreators({
+        fetchEvents,
+    }, dispatch)
+);
+export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
