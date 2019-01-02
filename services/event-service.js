@@ -155,7 +155,10 @@ function getAllEvents(currentUser, type) {
             let promises = [];
             groups.forEach(group => promises.push(group.getEvents({
                 where: { 
-                    end_time: { [op.gt]: new Date() },
+                    [op.or]: [
+                        { end_time: { [op.gt]: new Date() } },
+                        { end_time: { [op.eq]: null } },
+                    ],
                     ...typeQuery
                 }
             })));
