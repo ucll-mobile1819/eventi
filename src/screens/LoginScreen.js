@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
-import { Button, View, Text, TextInput, Alert } from 'react-native';
+import { Button, View, Text, TextInput } from 'react-native';
 import loginregisterStyles from '../styles/loginregister';
-import { isAuthenticated, setJWTToken, login } from '../auth';
+import { isAuthenticated } from '../auth';
 import { NavigationEvents } from 'react-navigation';
+import { fetchLogin } from '../actions/AuthenticationActions';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-export default class LoginScreen extends Component {
+class LoginScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -20,9 +23,10 @@ export default class LoginScreen extends Component {
     }
 
     async login() {
-        let response = await login(this.state.username, this.state.password);
-        if (!response) return;
-        this.props.navigation.navigate('Home');
+        this.props.fetchLogin(this.state.username, this.state.password)
+        .then(() => {
+            if (!this.props.error) this.props.navigation.navigate('Home');
+        });
     }
 
     render() {
@@ -55,3 +59,18 @@ export default class LoginScreen extends Component {
         );
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        user: state.user.user,
+        error: state.user.error,
+    };
+};
+
+const mapDispatchToProps = dispatch => (
+    bindActionCreators({
+        fetchLogin,
+    }, dispatch)
+);
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);
