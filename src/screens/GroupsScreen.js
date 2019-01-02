@@ -7,14 +7,21 @@ import AuthenticatedComponent from '../components/AuthenticatedComponent';
 import GroupComponent from '../components/GroupComponent';
 
 class GroupsScreen extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            showActivityIndicator: true
+        };
+    }
+
     onLoad() {
-        this.props.fetchGroups();
+        this.props.fetchGroups()
+        .then(() => this.setState({ showActivityIndicator: false }));
     }
 
     render() {
         return (
-            <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
-                {this.props.loading && <Text>Loading groups...</Text>}
+            <AuthenticatedComponent showActivityIndicator={() => this.state.showActivityIndicator} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 <FlatList
                     data={this.props.groups}
                     renderItem={({item}) => <GroupComponent group={item} navigation={this.props.navigation} />}

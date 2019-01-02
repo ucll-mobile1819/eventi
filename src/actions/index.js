@@ -16,9 +16,9 @@ export const fetchFailure = (err, showAlert = true) => {
         error.message = 'Unknown error';
     }
 
-    if (err.status) {
+    if (err.status !== undefined && err.status !== null) {
         error.status = err.status;
-    } else if (err.request.status) {
+    } else if (err.request && err.request.status) {
         error.status = err.request.status;
     } else {
         error.status = 'unknown';
@@ -57,7 +57,7 @@ export const fetchFailure = (err, showAlert = true) => {
         if (code >= 500 && code <= 599) return '500';
         return 'unknown';
     };
-    if (showAlert) Alert.alert(
+    if (showAlert && error.status !== 0) Alert.alert(
         errorMessages[generalizeStatusCode(error.status)].title,
         errorMessages[generalizeStatusCode(error.status)].message,
         [{ text: 'OK' }],

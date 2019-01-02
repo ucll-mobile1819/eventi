@@ -9,7 +9,7 @@ export const FETCH_GROUP_SUCCESS = 'FETCH_GROUP_SUCCESS';
 export const fetchGroups = () => dispatch => {
     dispatch(fetchGroupsBegin());
 
-    groupAPI.getGroups()
+    return groupAPI.getGroups()
         .then(groups => dispatch(fetchGroupsSuccess(groups)))
         .catch(error => dispatch(fetchFailure(error)));
 };
