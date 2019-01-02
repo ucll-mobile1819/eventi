@@ -90,18 +90,18 @@ function generateDummyData() {
     })
     .then(() => {
         // CREATING EVENTS
-        let e1 = eventService.createEvent(alice, groupA.id, 'A', 'A Desc', new Date(2018, 11, 23, 20, 0, 0), new Date(2018, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium');
-        let e2 = eventService.createEvent(bob, groupA.id, 'B', 'B Desc', new Date(2018, 11, 18, 20, 0, 0), new Date(2018, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium');
+        let e1 = eventService.createEvent(alice, groupA.id, 'A', 'A Desc', new Date(2019, 11, 23, 20, 0, 0), new Date(2019, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium');
+        let e2 = eventService.createEvent(bob, groupA.id, 'B', 'B Desc', new Date(2019, 11, 18, 20, 0, 0), new Date(2019, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium');
         let pollDates = [ 
-            { startTime: new Date(2018, 10, 23, 13, 00, 00), endTime: new Date(2018, 10, 23, 15, 00, 00) },
-            { startTime: new Date(2018, 10, 23, 15, 00, 00), endTime: new Date(2018, 10, 23, 17, 00, 00) },
-            { startTime: new Date(2018, 10, 23, 17, 00, 00), endTime: new Date(2018, 10, 23, 19, 00, 00) },
-            { startTime: new Date(2018, 10, 23, 10, 30, 00), endTime: new Date(2018, 10, 23, 12, 30, 00) },
-            { startTime: new Date(2018, 10, 23, 13, 30, 00), endTime: new Date(2018, 10, 23, 15, 30, 00) }
+            { startTime: new Date(2019, 1, 23, 13, 00, 00), endTime: new Date(2019, 1, 23, 15, 00, 00) },
+            { startTime: new Date(2019, 1, 23, 15, 00, 00), endTime: new Date(2019, 1, 23, 17, 00, 00) },
+            { startTime: new Date(2019, 1, 23, 17, 00, 00), endTime: new Date(2019, 1, 23, 19, 00, 00) },
+            { startTime: new Date(2019, 1, 23, 10, 30, 00), endTime: new Date(2019, 1, 23, 12, 30, 00) },
+            { startTime: new Date(2019, 1, 23, 13, 30, 00), endTime: new Date(2019, 1, 23, 15, 30, 00) },
         ];
-        let e3 = eventService.createPoll(bob, groupB.id, 'C', 'C Desc', new Date(2018, 11, 23, 20, 0, 0), new Date(2018, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium', pollDates)
-        let e4 = eventService.createEvent(bob, groupB.id, 'D', 'D Desc', new Date(2018, 7, 23, 20, 0, 0), new Date(2018, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium');
-        let e5 = eventService.createEvent(john, groupB.id, 'E', 'E Desc', new Date(2018, 7, 23, 20, 0, 0), new Date(2018, 7, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium');
+        let e3 = eventService.createPoll(bob, groupB.id, 'C', 'C Desc', null, null, 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium', pollDates);
+        let e4 = eventService.createEvent(bob, groupB.id, 'D', 'D Desc', new Date(2019, 7, 23, 20, 0, 0), new Date(2019, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium');
+        let e5 = eventService.createEvent(john, groupB.id, 'E', 'E Desc', new Date(2019, 7, 23, 20, 0, 0), new Date(2019, 7, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium');
         return Promise.all([ e1, e2, e3, e4, e5 ]);
     })
     .then(events => {
