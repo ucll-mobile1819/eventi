@@ -1,4 +1,4 @@
-import React from 'react';
+ls import React from 'react';
 import { Container, Header, Tab, Tabs, ScrollableTab, Text } from 'native-base';
 import Going  from '../components/Tabs/Going';
 import NotGoing from '../components/Tabs/NotGoing';
