@@ -4,14 +4,12 @@ import groupStyles from '../styles/groupStyles';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
 export default class GroupComponent extends React.Component {
-    // TODO? show amount of members in group
     render() {
         return (
             <View style={groupStyles.container}>
                 <TouchableWithoutFeedback
                     onPress={() => this.props.navigation.push('Group', {
-                        id: this.props.group.id,
-                        memberCount: this.props.group.memberCount  // pass memberCount to not have to fetch it a second time
+                        id: this.props.group.id
                     })}
                 >
                     <View style={{ flexDirection: 'row' }}>

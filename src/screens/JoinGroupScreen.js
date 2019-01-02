@@ -24,10 +24,10 @@ export default class JoinGroupScreen extends ValidationComponent {
         if (response !== false) {
             Alert.alert(
                 'Group joined',
-                'You succesfully joined ' + response.name
+                'You succesfully joined ' + response.name + '.'
             );
             this.setState(this.getClearedState());
-            this.props.navigation.push('Groups');
+            this.props.navigation.navigate('Group', { id: response.id });
         }
     }
 

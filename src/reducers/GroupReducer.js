@@ -8,7 +8,8 @@ const INITIAL_STATE = {
         name: '',
         description: '',
         color: '',
-        creator: ''
+        creator: '',
+        memberCount: 0
     }
 };
 

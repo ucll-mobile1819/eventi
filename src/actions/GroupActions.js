@@ -10,20 +10,6 @@ export const fetchGroups = () => dispatch => {
     dispatch(fetchGroupsBegin());
 
     groupAPI.getGroups()
-        .then(groups => {
-            // get a list of all promises that are going to get the memberCount of each group
-            let promises = [];       
-            groups.forEach(group => promises.push(groupAPI.getMemberCountOfGroup(group.id)));
-
-            // run all promises and put their values in a new array                
-            return Promise.all(promises)
-            .then(counts => {
-                groups.forEach((group, index) => {
-                    groups[index].memberCount = counts[index].count;
-                })
-                return groups;
-            });
-        })
         .then(groups => dispatch(fetchGroupsSuccess(groups)))
         .catch(error => dispatch(fetchFailure(error)));
 };
