@@ -71,8 +71,8 @@ function generateDummyData() {
 
         // GENERATING GROUPS
         reqs = [];
-        reqs.push(groupService.createGroup(alice, 'GroupA', 'Description of group A', '555555'));
-        reqs.push(groupService.createGroup(bob, 'GroupB', 'Description of group B', '121212'));
+        reqs.push(groupService.createGroup(alice, 'GroupA', 'Description of group A', '#8BC34A'));
+        reqs.push(groupService.createGroup(bob, 'GroupB', 'Description of group B', '#673AB7'));
         return Promise.all(reqs);
     })
     .then(results => {
