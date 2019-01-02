@@ -2,7 +2,7 @@ import { Alert } from 'react-native';
 
 export const FETCH_FAILURE = 'FETCH_FAILURE';
 
-export const fetchFailure = err => {
+export const fetchFailure = (err, showAlert = true) => {
     let error = {};
     if (err.message) {
         error.message = err.message;
@@ -57,7 +57,7 @@ export const fetchFailure = err => {
         if (code >= 500 && code <= 599) return '500';
         return 'unknown';
     };
-    Alert.alert(
+    if (showAlert) Alert.alert(
         errorMessages[generalizeStatusCode(error.status)].title,
         errorMessages[generalizeStatusCode(error.status)].message,
         [{ text: 'OK' }],

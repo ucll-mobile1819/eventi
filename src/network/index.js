@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { getJWTToken } from '../auth';
 import { fetchFailure } from '../actions';
+import Snackbar from 'react-native-snackbar';
 
 export const constructApiUrl = endpoint => {
     endpoint = endpoint.trim();
@@ -56,6 +57,24 @@ export const sendAPIRequest = async ( endpoint, method, handleErrors, checkAutho
         console.log(error);
         console.log('---------------------------------');
 
+        if (!error.response) {
+            const showSnackbar = () => Snackbar.show({
+                title: 'No internet connection.',
+                duration: Snackbar.LENGTH_INDEFINITE,
+                action: {
+                    title: 'CLOSE',
+                    color: 'red',
+                    onPress: () => Snackbar.dismiss(),
+                }
+            });
+            if (handleErrors) {
+                fetchFailure({ status: 0, message: 'No internet connection.' }, false);
+                showSnackbar();
+                return false;
+            }
+            showSnackbar();
+            throw { status: 0, message: 'No internet connection.' };
+        }
         error = { status: error.response.status, message: error.response.data.error || error.response.data };
         if (handleErrors) {
             fetchFailure(error);
