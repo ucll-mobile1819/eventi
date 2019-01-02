@@ -11,6 +11,7 @@ import { bindActionCreators } from 'redux';
 class HomeScreen extends React.Component{
     onLoad() {
         this.props.fetchEvents();
+        alert(this.props.events);
     }
     // constructor(props){super(props)}
     render(){

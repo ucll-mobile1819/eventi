@@ -2,7 +2,7 @@ import { FETCH_EVENTS_BEGIN, FETCH_EVENTS_SUCCESS } from "../actions/EventAction
 import { FETCH_FAILURE } from "../actions";
 
 const INITIAL_STATE = {
-    groups: [],
+    events: [],
 };
 
 const eventReducer = (state = INITIAL_STATE, action) => {
