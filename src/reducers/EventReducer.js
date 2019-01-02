@@ -17,7 +17,7 @@ const eventReducer = (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 loading: false,
-                groups: action.payload.groups
+                events: action.payload.events
             };
         case FETCH_FAILURE:
             return {
