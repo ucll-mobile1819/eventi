@@ -25,7 +25,7 @@ class MyCard extends React.Component{
       },
       date:{
         height:50,
-        paddingTop:5,
+        paddingTop:10,
         flex: 1, 
         backgroundColor: this.props.color
       },

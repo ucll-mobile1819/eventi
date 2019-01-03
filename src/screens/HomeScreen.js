@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import { MyCard } from '../components/MyCard';
 import { FlatList } from 'react-native-gesture-handler';
 // import { array } from '../../../../../Library/Caches/typescript/3.2/node_modules/@types/prop-types';
-
+var all = [];
 var going = [];
 var mine = [];
 class HomeScreen extends React.Component{
@@ -24,8 +24,7 @@ class HomeScreen extends React.Component{
     }
     
     createGoing(){
-        lol = this.props.events;
-        lol.forEach(element => {
+        all.forEach(element => {
             if(element.status == "Going"){
                 going.push(element);
             }
@@ -36,12 +35,22 @@ class HomeScreen extends React.Component{
     createMine(){
         //Implement after merge 
     }
+    start(){
+        all = this.props.events;
+        all.forEach(element => {
+            if(element.startTime != null){
+                var date = new Date(element.startTime);
+                element.startTime = date.getDate() + "/" + date.getMonth();
+            }
+        });
+    }
     // constructor(props){super(props)}
     render(){
         return(
             <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
             <Container>
             { this.props.loading && <Text>Loading...</Text> }
+            {this.start()}
             {this.createGoing()}
             <Tabs>
                 <Tab heading="All">
