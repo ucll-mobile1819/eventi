@@ -5,20 +5,27 @@ import { StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 const cross = (<Icon name="close" size={30} color="#DD1111" />)
 const check = (<Icon name="check" size={30} color="#11DD52" />)
+const dateIcon = (<Icon name="calendar" size={30} color="#FFF" />)
 
 class MyCard extends React.Component{
     constructor(props){
       super(props);
     }
     render(){
+    
     var olddate = this.props.date;
     var date = replaceAll("\n" , " ", olddate);
+    if(date == ""){
+      console.log(11);
+        date = dateIcon;
+    }
     const styles = StyleSheet.create({
       cardItem:{
-        paddingLeft: 0 , paddingTop: 0 ,paddingBottom:0
+        paddingLeft: 0 , paddingTop:0 ,paddingBottom:0
       },
       date:{
         height:50,
+        paddingTop:5,
         flex: 1, 
         backgroundColor: this.props.color
       },
