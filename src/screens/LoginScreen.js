@@ -3,7 +3,7 @@ import { Button, View, Text, TextInput } from 'react-native';
 import loginregisterStyles from '../styles/loginregister';
 import { isAuthenticated } from '../auth';
 import { NavigationEvents } from 'react-navigation';
-import { fetchLogin } from '../actions/AuthenticationActions';
+import { fetchLogin, fetchUser } from '../actions/AuthenticationActions';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -18,6 +18,7 @@ class LoginScreen extends Component {
 
     async onNavWillFocus() {
         if (await isAuthenticated()) {
+            if (this.props.user.username === '') await this.props.fetchUser();
             this.props.navigation.navigate('Home');
         }
     }
@@ -70,6 +71,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => (
     bindActionCreators({
         fetchLogin,
+        fetchUser,
     }, dispatch)
 );
 

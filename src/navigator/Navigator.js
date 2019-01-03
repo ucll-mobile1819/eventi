@@ -183,7 +183,7 @@ let Navigator = createStackNavigator({
     },
 },
 {
-    initialRouteName: "TabNavigator",
+    initialRouteName: "Login",
     navigationOptions: {
         ...NavigatorStyles,
         animationEnabled: true

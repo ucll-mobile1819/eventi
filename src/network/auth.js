@@ -8,3 +8,7 @@ export const postLogin = async (username, password, handleErrors = false) => {
         password
     });
 };
+
+export const getUser = async (handleErrors = false) => {
+    return await sendAPIRequest('user', 'GET', handleErrors);
+};
