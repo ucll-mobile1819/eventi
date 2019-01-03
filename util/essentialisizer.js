@@ -17,16 +17,22 @@ function essentializyUser(user) {
     });
 }
 
-function essentializyEvent(event) {
+function essentializyEvent(event, currentUsername) {
     return new Promise((resolve, reject) => {
         if (!event) return resolve(null);
         const r = clone(event);
         let result;
-        Promise.all([ event.getGroup(), event.getCreator(), event.getPollDates() ])
-        .then(results => Promise.all([ results[0], results[1], ...results[2].map(el => essentializyPollDate(el)) ]))    
+        Promise.all([ event.getGroup(), event.getCreator(), event.getUserAttendances(), event.getPollDates() ])
+        .then(results => Promise.all([ results[0], results[1], results[2], ...results[3].map(el => essentializyPollDate(el)) ]))    
         .then(results => {
             result = { id: r.id, name: r.name, description: r.description, startTime: r.start_time, endTime: r.end_time, address: r.address, locationName: r.location_name, city: r.city, zipcode: r.zipcode, country: r.country, type: r.type };
-            if (r.type === 'poll') result.pollDates = results.slice(2);
+            if (r.type === 'poll') result.pollDates = results.slice(3);
+            results[2].forEach(user => {
+                if (user.username === currentUsername) {
+                    result.status = user.attendances.status;
+                }
+            });
+            if (!result.status) result.status = 'Pending';
             return Promise.all([ essentializyGroup(results[0]), essentializyUser(results[1]) ]);
         })
         .then(results => {

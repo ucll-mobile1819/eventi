@@ -37,7 +37,7 @@ function createEvent(currentUser, groupId, name, description, startTime, endTime
             tmpEvent = event;
             return Promise.all([ tmpEvent.setGroup(tmpGroup), event.setCreator(currentUser) ]);
         })
-        .then(() => (essentializyResponse ? essentialisizer.essentializyEvent(tmpEvent) : tmpEvent))
+        .then(() => (essentializyResponse ? essentialisizer.essentializyEvent(tmpEvent, currentUser.username) : tmpEvent))
         .then(resolve)
         .catch(reject);
     });
@@ -58,7 +58,7 @@ function createPoll(currentUser, groupId, name, description, startTime, endTime,
             return Promise.all(promises);
         })
         .then(pollDates => tmpEvent.setPollDates(pollDates))
-        .then(() => essentialisizer.essentializyEvent(tmpEvent))
+        .then(() => essentialisizer.essentializyEvent(tmpEvent, currentUser.username))
         .then(resolve)
         .catch(reject);
     });
@@ -88,7 +88,7 @@ function updateEvent(currentUser, eventId, name, description, startTime, endTime
             tmpEvent.country = country;
             return tmpEvent.save();
         })
-        .then(() => essentialisizer.essentializyEvent(tmpEvent))
+        .then(() => essentialisizer.essentializyEvent(tmpEvent, currentUser.username))
         .then(res)
         .catch(rej);
     });
@@ -166,7 +166,7 @@ function getAllEvents(currentUser, type) {
         })
         .then(results => {
             results = [].concat.apply([], results);
-            return Promise.all(results.map(el => essentialisizer.essentializyEvent(el)));
+            return Promise.all(results.map(el => essentialisizer.essentializyEvent(el, currentUser.username)));
         })
         .then(res)
         .catch(rej);
@@ -188,7 +188,7 @@ function getAllEventsInGroup(currentUser, groupId, type) {
                 return Promise.reject(new Error('You are not a part of this group.'));
             return tmpGroup.getEvents({ where: { ...typeQuery } });
         })
-        .then(events => Promise.all(events.map(el => essentialisizer.essentializyEvent(el))))
+        .then(events => Promise.all(events.map(el => essentialisizer.essentializyEvent(el, currentUser.username))))
         .then(res)
         .catch(rej);
     });
@@ -206,7 +206,7 @@ function getEvent(currentUser, eventId, essentializyResponse = true) {
         .then(group => group.getUsers({ where: { username: currentUser.username } }))
         .then(users => {
             if (users.length === 0) return Promise.reject(new Error('You do not belong to the group of this event.'));
-            return essentializyResponse ? essentialisizer.essentializyEvent(tmpEvent) : tmpEvent;
+            return essentializyResponse ? essentialisizer.essentializyEvent(tmpEvent, currentUser.username) : tmpEvent;
         })
         .then(res)
         .catch(rej);
@@ -257,7 +257,7 @@ function endPoll(currentUser, eventId, pollDateId) {
             tmpEvent.type = 'event';
             return Promise.all([ tmpEvent.save(), removePollDates(tmpEvent) ]);
         })
-        .then(() => essentialisizer.essentializyEvent(tmpEvent))
+        .then(() => essentialisizer.essentializyEvent(tmpEvent, currentUser.username))
         .then(resolve)
         .catch(reject);
     });
