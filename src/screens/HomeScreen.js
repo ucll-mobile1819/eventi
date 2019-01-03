@@ -13,7 +13,7 @@ import { FlatList } from 'react-native-gesture-handler';
 // import { array } from '../../../../../Library/Caches/typescript/3.2/node_modules/@types/prop-types';
 
 var going = [];
-
+var mine = [];
 class HomeScreen extends React.Component{
     constructor(props){
         super(props);
@@ -33,6 +33,9 @@ class HomeScreen extends React.Component{
         });
         console.table(going);
     }
+    createMine(){
+        //Implement after merge 
+    }
     // constructor(props){super(props)}
     render(){
         return(
@@ -41,22 +44,24 @@ class HomeScreen extends React.Component{
             { this.props.loading && <Text>Loading...</Text> }
             {this.createGoing()}
             <Tabs>
-                <Tab heading="Going">
+                <Tab heading="All">
                 <FlatList
-                data={going}
+                data={this.props.events}
                 renderItem={({item}) => 
                    <MyCard date={ item.startTime || "" } title={item.name} color={item.group.color} buttons="true" />
                 }
                 />
                 </Tab>
-                <Tab heading="Not Going">
-                    <NotGoing />
+                <Tab heading="Going">
+                    <FlatList
+                    data={going}
+                    renderItem={({item}) => 
+                    <MyCard date={ item.startTime || "" } title={item.name} color={item.group.color} buttons="true" />
+                    }
+                    />
                 </Tab>
-                <Tab heading="History">
+                <Tab heading="Mine">
                     <History />
-                </Tab>
-                <Tab heading="Created">
-                    <CreatedByMe />
                 </Tab>
             </Tabs>
             </Container>
