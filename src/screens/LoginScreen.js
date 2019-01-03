@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import { StyleSheet } from 'react-native';
-import { Text,Button, Container, Content, Item,Input, Label, Form, Header } from 'native-base';
-import { isAuthenticated, login } from '../auth';
+import { Button, View, Text, TextInput } from 'react-native';
+import loginregisterStyles from '../styles/loginregister';
+import { isAuthenticated } from '../auth';
 import { NavigationEvents } from 'react-navigation';
-import { Fonts } from '../utils/Fonts';
+import { fetchLogin } from '../actions/AuthenticationActions';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-export default class LoginScreen extends Component {
+class LoginScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -21,63 +23,54 @@ export default class LoginScreen extends Component {
     }
 
     async login() {
-        let response = await login(this.state.username, this.state.password);
-        if (!response) return;
-        this.props.navigation.navigate('Home');
+        this.props.fetchLogin(this.state.username, this.state.password)
+        .then(() => {
+            if (!this.props.error) this.props.navigation.navigate('Home');
+        });
     }
 
     render() {
         return (
-            <Container>
-                <Content>
+            <View style={{alignItems: 'center', flex: 1 }}>
                 <NavigationEvents onWillFocus={() => this.onNavWillFocus()} />
-                <Text style={styles.title}>Eventi</Text>
-                <Form>
-                <Item floatingLabel>
-                    <Label><Text>Username</Text></Label>
-                  <Input 
+                <Text style={loginregisterStyles.bigTitle}>Eventi</Text>
+                <TextInput
+                    style={loginregisterStyles.inputField}
+                    placeholder="Username"
                     value={this.state.username}
                     onChangeText={username => this.setState({ username })}
-                    />
-                 </Item>
-                
-                 <Item floatingLabel>
-                 <Label><Text>Password</Text></Label>
-                  <Input 
+                />
+                <TextInput
+                    style={loginregisterStyles.inputField}
                     secureTextEntry={true}
+                    placeholder="Password"
                     value={this.state.password}
                     onChangeText={password => this.setState({ password })}
-                    />
-                 </Item>
-                
+                />
                 <Button
-                    style={{marginLeft:10, marginTop:20,marginRight:10}}
-                    
-                    block
-                    onPress={() => this.login()}>
-                    <Text>Login</Text>
-                </Button>
-                
-                </Form>
+                    title="Login"
+                    onPress={() => this.login()}
+                />
                 <Text 
                     onPress={() => this.props.navigation.navigate('Register')}
-                    style={{ color: 'darkblue', marginTop: 10,alignSelf:"center" }}
+                    style={{ color: 'darkblue', marginTop: 10 }}
                 >Not a member yet? Register here.</Text>
-                </Content>
-            </Container>
+            </View>
         );
     }
 }
-const styles = StyleSheet.create({
-  title: {
-    fontFamily: Fonts.OpenSansBold,
-    fontSize: 40,
-    color: 'black',
-    alignSelf: "center"
-    
-  },
-  container:{
-    // alignItems: "center",
 
-   },
-});
+const mapStateToProps = state => {
+    return {
+        user: state.user.user,
+        error: state.user.error,
+    };
+};
+
+const mapDispatchToProps = dispatch => (
+    bindActionCreators({
+        fetchLogin,
+    }, dispatch)
+);
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);

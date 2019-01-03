@@ -1,43 +1,39 @@
-import { FETCH_GROUPS_BEGIN, FETCH_GROUPS_SUCCESS, FETCH_GROUP_BEGIN, FETCH_GROUP_SUCCESS } from "../actions/GroupActions";
 import { FETCH_FAILURE } from "../actions";
+import { FETCH_LOGIN_BEGIN, FETCH_LOGIN_SUCCESS, FETCH_LOGOUT, FETCH_LOGOUT_BEGIN } from "../actions/AuthenticationActions";
 
 const INITIAL_STATE = {
-    groups: [],
-    group: {
-        id: 0,
-        name: '',
-        description: '',
-        color: '',
-        creator: '',
-        memberCount: 0
+    user: {
+        firstname: '',
+        lastname: '',
+        username: '',
+        birthday: null
     }
 };
 
-const groupReducer = (state = INITIAL_STATE, action) => {
+const authReducer = (state = INITIAL_STATE, action) => {
     switch (action.type) {
-        case FETCH_GROUPS_BEGIN:
+        case FETCH_LOGIN_BEGIN:
             return {
                 ...state,
                 loading: true,
                 error: null // Needed to reset any previous errors
             };
-        case FETCH_GROUPS_SUCCESS:
+        case FETCH_LOGIN_SUCCESS:
             return {
                 ...state,
                 loading: false,
-                groups: action.payload.groups
+                user: action.payload.user
             };
-        case FETCH_GROUP_BEGIN:
+        case FETCH_LOGOUT_BEGIN:
             return {
                 ...state,
                 loading: true,
                 error: null
             };
-        case FETCH_GROUP_SUCCESS:
+        case FETCH_LOGOUT_BEGIN:
             return {
                 ...state,
                 loading: false,
-                group: action.payload.group
             };
         case FETCH_FAILURE:
             return {
@@ -50,4 +46,4 @@ const groupReducer = (state = INITIAL_STATE, action) => {
     }
 };
 
-export default groupReducer;
+export default authReducer;

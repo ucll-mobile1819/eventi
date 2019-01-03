@@ -1,33 +1,53 @@
 import React from 'react';
-import { Text, Button, TouchableWithoutFeedback } from 'react-native';
+import { Text, Button, TouchableWithoutFeedback, Alert, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
 import headerStyles from '../styles/headerStyles';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import { fetchGroup } from '../actions/GroupActions';
+import groupStyles from '../styles/groupStyles';
 
 class GroupScreen extends React.Component {
     static navigationOptions = obj => obj.navigation.state.params;
 
     onLoad() {
-        this.props.navigation.setParams({
-            title: this.props.navigation.state.params.id.toString(),
-            customHeaderBackgroundColor: '#f44242',
-            headerTintColor: 'white', // Back arrow color
-            headerTitleStyle: { color: 'white' }, // Title color
-            headerRight: (
-                <TouchableWithoutFeedback  onPress={() => this.props.navigation.push('GroupSettings', { id: this.props.navigation.state.params.id })}>
-                    <MaterialIcon name='settings' {...headerStyles.iconProps} />
-                </TouchableWithoutFeedback>
-            )
-        });
+        this.props.fetchGroup(this.props.navigation.state.params.id)
+            .then(() => {
+                this.props.navigation.setParams({
+                    title: this.props.group.name,
+                    customHeaderBackgroundColor: this.props.group.color,
+                    headerTintColor: 'white', // Back arrow color
+                    headerTitleStyle: { color: 'white' }, // Title color
+                    headerRight: (
+                        <View>
+                            <TouchableWithoutFeedback onPress={() => this.props.navigation.push('GroupSettings', { id: this.props.group.id })}>
+                                <MaterialIcon name='settings' {...headerStyles.iconProps} />
+                            </TouchableWithoutFeedback>
+                        </View>
+                    )
+                });
+            });
     }
 
     render() {
         return (
             <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
-                <Text>GroupScreen</Text>
-                <Button onPress={() => this.props.navigation.push('Event', { id: 3 })} title='Event (id: 3)'/>
+                {this.props.loading && <Text>Loading group...</Text>}
+                <View style={{ padding: 10 }}>
+                    <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: 'lightgrey', paddingBottom: 20, marginBottom: 20 }}>
+                        <Text style={{ flex: 1 }}>{this.props.group.description || "No description was provided for this group."}</Text>
+                        <View style={groupStyles.memberCountContainer}>
+                            <FontAwesomeIcon name='group' size={25} color='grey' />
+                            <Text style={[groupStyles.memberCount, { color: 'grey'}]}>{this.props.group.memberCount}</Text>
+                        </View>
+                    </View>
+                    <Text style={[groupStyles.subtitle, {marginBottom: 10 }]}>Events</Text>
+                    {/* TODO: add events here */}
+                    {/* <Button onPress={() => this.props.navigation.push('Event', { id: 3 })} title='Dummy event (id: 3)' /> */}
+                    <Text>No events here yet...</Text>
+                </View>
             </AuthenticatedComponent>
         );
     }
@@ -35,11 +55,15 @@ class GroupScreen extends React.Component {
 
 const mapStateToProps = state => {
     return {
+        group: state.group.group,
+        loading: state.group.loading,
+        error: state.group.error
     };
 };
 
 const mapDispatchToProps = dispatch => (
     bindActionCreators({
+        fetchGroup
     }, dispatch)
 );
 

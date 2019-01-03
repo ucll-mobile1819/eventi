@@ -1,11 +1,19 @@
 import { combineReducers } from 'redux';
 import groupReducer from './GroupReducer'
-import EventReducer from './EventReducer';
+import { FETCH_LOGOUT_SUCCESS } from '../actions/AuthenticationActions';
+import authReducer from './AuthReducer';
 
 // Root Reducer
-const rootReducer = combineReducers({
+const appReducer = combineReducers({
     group: groupReducer,
-    event: EventReducer
+    user: authReducer,
 });
+
+const rootReducer = (state, action) => {
+    if (action.type === FETCH_LOGOUT_SUCCESS) {
+        state = undefined;
+    }
+    return appReducer(state, action);
+};
 
 export default rootReducer;
