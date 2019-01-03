@@ -18,8 +18,6 @@ import NavigatorStyles from "./NavigatorStyles";
 import CustomTabBarBottom from "./CustomTabBarBottom";
 import DefaultHeader from "./DefaultHeader";
 
-console.log('LOADING NAVIGATOR -----------');
-
 let headerDefaultNavigationConfig = {
     header: props => <DefaultHeader {...props} />,
     ...NavigatorStyles
@@ -188,7 +186,7 @@ let Navigator = createStackNavigator({
     },
 },
 {
-    initialRouteName: ( (console.log('SETTING DEFAULT ROUTE NAME    ') && false) || "Login"),
+    initialRouteName: "Login",
     navigationOptions: {
         ...NavigatorStyles,
         animationEnabled: true

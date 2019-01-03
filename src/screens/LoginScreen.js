@@ -7,7 +7,6 @@ import { Fonts } from '../utils/Fonts';
 
 export default class LoginScreen extends Component {
     constructor(props) {
-        console.log('LOADING LOGIN SCREEN------');
         super(props);
         this.state = {
             username: '',
@@ -16,9 +15,7 @@ export default class LoginScreen extends Component {
     }
 
     async onNavWillFocus() {
-        console.log('ON NAV WILL FOCUS');
         if (await isAuthenticated()) {
-            console.log('YOU ARE AUTHENTICATED');
             this.props.navigation.navigate('Home');
         }
     }
@@ -26,7 +23,6 @@ export default class LoginScreen extends Component {
     async login() {
         let response = await login(this.state.username, this.state.password);
         if (!response) return;
-        console.log('NAVIGATING TO HOME...');
         this.props.navigation.navigate('Home');
     }
 

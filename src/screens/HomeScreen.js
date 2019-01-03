@@ -1,14 +1,10 @@
 import React from 'react';
-import { Container, Header, Tab, Tabs, ScrollableTab, Text ,Button} from 'native-base';
-import Going  from '../components/Tabs/Going';
-import NotGoing from '../components/Tabs/NotGoing';
-import History from '../components/Tabs/History';
-import CreatedByMe from '../components/Tabs/CreatedByMe';
+import { Container, Tab, Tabs } from 'native-base';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
 import { fetchEvents } from '../actions/EventActions';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { MyCard } from '../components/MyCard';
+import EventComponent from '../components/EventComponent';
 import { FlatList } from 'react-native-gesture-handler';
 
 class HomeScreen extends React.Component{
@@ -21,39 +17,43 @@ class HomeScreen extends React.Component{
     onLoad() {
         this.props.fetchEvents();
     }
+
+    sortEventsByDate(events) {
+        return events.sort((a, b) => {
+            if (!(a.startTime instanceof Date)) return -1;
+            if (!(b.startTime instanceof Date)) return 1;
+            return a.startTime.getTime() - b.startTime.getTime();
+        });
+    }
     
     render(){
+        const renderItem = ({item}) => <EventComponent event={item}/>;
+        let events = this.sortEventsByDate(this.props.events);
         return(
             <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
             {/* TODO: Add activity loader */}
-            <Container>
-            <Tabs>
-                <Tab heading="All">
-                <FlatList
-                data={this.props.events}
-                renderItem={({item}) => 
-                   <MyCard date={ item.startTime || "" } title={item.name} color={item.group.color} buttons="true" />
-                }
-                />
-                </Tab>
-                <Tab heading="Going">
-                    <FlatList
-                    data={this.props.events.filter(event => event.status === 'Going')}
-                    renderItem={({item}) => 
-                    <MyCard date={ item.startTime || "" } title={item.name} color={item.group.color} buttons="true" />
-                    }
-                    />
-                </Tab>
-                <Tab heading="Mine">
-                    <FlatList
-                    data={this.props.events.filter(event => event.creator.username === this.username)}
-                    renderItem={({item}) => 
-                    <MyCard date={ item.startTime || "" } title={item.name} color={item.group.color} buttons="true" />
-                    }
-                    />
-                </Tab>
-            </Tabs>
-            </Container>
+                <Container>
+                    <Tabs>
+                        <Tab heading="All events">
+                        <FlatList
+                        data={events}
+                        renderItem={renderItem}
+                        />
+                        </Tab>
+                        <Tab heading="Going">
+                            <FlatList
+                            data={events.filter(event => event.status === 'Going')}
+                            renderItem={renderItem}
+                            />
+                        </Tab>
+                        <Tab heading="My events">
+                            <FlatList
+                            data={events.filter(event => event.creator.username === this.username)}
+                            renderItem={renderItem}
+                            />
+                        </Tab>
+                    </Tabs>
+                </Container>
             </AuthenticatedComponent>
         )
     }
