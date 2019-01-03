@@ -34,6 +34,12 @@ class HomeScreen extends React.Component{
     }
     createMine(){
         //Implement after merge 
+        all.forEach(element => {
+            //hardcoded
+            if(element.creator.username === "john" ){
+                mine.push(element);
+            }
+        });
     }
     start(){
         all = this.props.events;
@@ -52,6 +58,7 @@ class HomeScreen extends React.Component{
             { this.props.loading && <Text>Loading...</Text> }
             {this.start()}
             {this.createGoing()}
+            {this.createMine()}
             <Tabs>
                 <Tab heading="All">
                 <FlatList
@@ -70,7 +77,12 @@ class HomeScreen extends React.Component{
                     />
                 </Tab>
                 <Tab heading="Mine">
-                    <History />
+                    <FlatList
+                    data={mine}
+                    renderItem={({item}) => 
+                    <MyCard date={ item.startTime || "" } title={item.name} color={item.group.color} buttons="true" />
+                    }
+                    />
                 </Tab>
             </Tabs>
             </Container>
