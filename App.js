@@ -10,7 +10,8 @@ const store = createStore(rootReducer, applyMiddleware(thunk));
 
 YellowBox.ignoreWarnings([
     "TabBarBottom is deprecated",
-    "jumpToIndex"
+    "jumpToIndex",
+    "missing keys for items"
 ]);
 
 export default class App extends Component {

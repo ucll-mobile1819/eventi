@@ -10,55 +10,23 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { MyCard } from '../components/MyCard';
 import { FlatList } from 'react-native-gesture-handler';
-// import { array } from '../../../../../Library/Caches/typescript/3.2/node_modules/@types/prop-types';
-var all = [];
-var going = [];
-var mine = [];
+
 class HomeScreen extends React.Component{
     constructor(props){
         super(props);
-        this.createGoing = this.createGoing.bind(this);
+        // TODO: remove hard coded value & add user redux state implementation by merging with master-react-native so you can use this.props.user.user.username
+        this.username = 'bob';
     }
+
     onLoad() {
         this.props.fetchEvents();
     }
     
-    createGoing(){
-        all.forEach(element => {
-            if(element.status == "Going"){
-                going.push(element);
-            }
-            
-        });
-        console.table(going);
-    }
-    createMine(){
-        //Implement after merge 
-        all.forEach(element => {
-            //hardcoded
-            if(element.creator.username === "john" ){
-                mine.push(element);
-            }
-        });
-    }
-    start(){
-        all = this.props.events;
-        all.forEach(element => {
-            if(element.startTime != null){
-                var date = new Date(element.startTime);
-                element.startTime = date.getDate() + "/" + date.getMonth();
-            }
-        });
-    }
-    // constructor(props){super(props)}
     render(){
         return(
             <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
+            {/* TODO: Add activity loader */}
             <Container>
-            { this.props.loading && <Text>Loading...</Text> }
-            {this.start()}
-            {this.createGoing()}
-            {this.createMine()}
             <Tabs>
                 <Tab heading="All">
                 <FlatList
@@ -70,7 +38,7 @@ class HomeScreen extends React.Component{
                 </Tab>
                 <Tab heading="Going">
                     <FlatList
-                    data={going}
+                    data={this.props.events.filter(event => event.status === 'Going')}
                     renderItem={({item}) => 
                     <MyCard date={ item.startTime || "" } title={item.name} color={item.group.color} buttons="true" />
                     }
@@ -78,7 +46,7 @@ class HomeScreen extends React.Component{
                 </Tab>
                 <Tab heading="Mine">
                     <FlatList
-                    data={mine}
+                    data={this.props.events.filter(event => event.creator.username === this.username)}
                     renderItem={({item}) => 
                     <MyCard date={ item.startTime || "" } title={item.name} color={item.group.color} buttons="true" />
                     }
