@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, Button, TextInput } from 'react-native';
+import { View, Text, Button, TextInput } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
@@ -101,7 +101,9 @@ class ProfileScreen extends ValidationComponent {
                     <Button title="Change Password" onPress={() => this.changePassword()} />
 
                     <Text style={groupStyles.title}>Logout</Text>
-                    <Button title="Logout" onPress={() => this.logout()} color="#f44242" />
+                    <View style={{ paddingBottom: 70 }}>
+                        <Button title="Logout" onPress={() => this.logout()} color="#f44242" />
+                    </View>
                 </KeyboardAwareScrollView>
             </AuthenticatedComponent>
         );
