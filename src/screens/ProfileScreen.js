@@ -1,11 +1,14 @@
 import React from 'react';
-import { Text, Button } from 'react-native';
+import { Text, Button, TextInput } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
 import { fetchLogout } from '../actions/AuthenticationActions';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ValidationComponent from '../components/ValidationComponent';
+import loginregisterStyles from '../styles/loginregister';
+import groupStyles from '../styles/groupStyles';
+import DatePicker from 'react-native-datepicker';
 
 class ProfileScreen extends ValidationComponent {
     static navigationOptions = obj => obj.navigation.state.params;
@@ -58,11 +61,46 @@ class ProfileScreen extends ValidationComponent {
         return (
             <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 <KeyboardAwareScrollView resetScrollToCoords={{ x: 0, y: 0 }} style={{ padding: 20 }}  >
-                    <Text>Change User Info</Text>
+                    <Text style={groupStyles.title}> Change User Info</Text>
+                    <TextInput
+                        style={[groupStyles.inputField, { flex: 1 }]}
+                        onChangeText={firstname => this.setState({ firstname })}
+                        value={this.state.firstname}
+                    />
+                    <TextInput
+                        style={[groupStyles.inputField, { flex: 1 }]}
+                        onChangeText={lastname => this.setState({ lastname })}
+                        value={this.state.lastname}
+                    />
+                    <DatePicker
+                        style={[groupStyles.inputField, { flex: 1, width: undefined }]}
+                        format="DD-MM-YYYY"
+                        minDate="01-01-1900"
+                        maxDate={new Date()}
+                        confirmBtnText="Confirm"
+                        cancelBtnText="Cancel"
+                        onDateChange={birthday => { this.setState({ birthday }) }}
+                        customStyles={{ dateInput: { borderWidth: 0, alignItems: 'flex-start', paddingLeft: 2 } }}
+                        date={this.state.birthday}
+                    />
                     <Button title="Change Info" onPress={() => this.changeInfo()} />
-                    <Text>Change Password</Text>
+
+                    <Text style={groupStyles.title}>Change Password</Text>
+                    <TextInput
+                        style={[groupStyles.inputField, { flex: 1 }]}
+                        secureTextEntry={true}
+                        onChangeText={password => this.setState({ password })}
+                        value={this.state.password}
+                    />
+                    <TextInput
+                        style={[groupStyles.inputField, { flex: 1 }]}
+                        secureTextEntry={true}
+                        onChangeText={passwordConfirmation => this.setState({ passwordConfirmation })}
+                        value={this.state.passwordConfirmation}
+                    />
                     <Button title="Change Password" onPress={() => this.changePassword()} />
-                    <Text>Logout</Text>
+
+                    <Text style={groupStyles.title}>Logout</Text>
                     <Button title="Logout" onPress={() => this.logout()} color="#f44242" />
                 </KeyboardAwareScrollView>
             </AuthenticatedComponent>
