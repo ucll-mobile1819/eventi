@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, Button } from 'react-native';
+import { Text, Button } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
 import { fetchLogout } from '../actions/AuthenticationActions';
+import { KeyboardAwareScrollView } from  'react-native-keyboard-aware-scroll-view';
 
 class ProfileScreen extends React.Component {
     static navigationOptions = obj => obj.navigation.state.params;
@@ -22,10 +23,12 @@ class ProfileScreen extends React.Component {
     render() {
         return (
             <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
-                <View style={{ padding: 20 }}>
-                    <Text>ProfileScreen</Text>
+                <KeyboardAwareScrollView resetScrollToCoords={{ x: 0, y: 0 }} style={{ padding: 20 }}  >
+                    <Text>Change User Info</Text>
+                    <Text>Change Password</Text>
+                    <Text>Logout</Text>
                     <Button title="Logout" onPress={() => this.logout()} color="#f44242"/>
-                </View>
+                </KeyboardAwareScrollView>
             </AuthenticatedComponent>
         );
     }
