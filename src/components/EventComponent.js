@@ -6,21 +6,23 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { TouchableWithoutFeedback } from 'react-native';
 import AuthenticatedComponent from './AuthenticatedComponent';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { changeStatus } from '../actions/EventActions';
 
-const cross = <Icon name="close" size={30} color="#DD1111" />;
-const check = <Icon name="check" size={30} color="#11DD52" />;
 const dateIcon = <Icon name="calendar" size={30} color="#FFF" />;
 const pollIcon = <MaterialCommunityIcon name="poll" size={30} color="#FFF" />;
+
 const months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
 
-export default class EventComponent extends React.Component{
+const red = '#DD1111';
+const green = '#11DD52';
+const grey = '#a8aeb7';
+
+class EventComponent extends React.Component{
     constructor(props) {
         super(props);
-        this.state = {
-            showToast: false
-        };
     }
-
     getDateDisplayFormat(date) {
         return date.getDate() + '\n' + months[date.getMonth()];
     }
@@ -38,17 +40,18 @@ export default class EventComponent extends React.Component{
     }
     goingToEvent(event){
         //Set event on going
+        // if()
+        this.props.changeStatus(event.id , "Going");
+        
+    }
+    toEvent(event){
+        //Set event on going
         //Redirect to event info page
-        this.props.nav.navigate('Event', {event: event}  );
+        this.props.nav.navigate('Event', {id: event.id}  );
     }
     notGoingToEvent(event){
         //Set event on not going
-        Toast.show({
-            text: "Not going to " + event.name,
-            buttonText: "Okay",
-            duration: 3000,
-            type: "succes"
-          })
+        this.props.changeStatus(event.id , "Not going");
         
     }
     render() {
@@ -56,12 +59,14 @@ export default class EventComponent extends React.Component{
             name,
             description,
             startTime,
-            type
+            type,
+            status
         } = this.props.event;
         event = this.props.event;
         const styles = getStyles(this.props.event.group.color);
 
         return (
+            <TouchableWithoutFeedback  onPress={() => this.toEvent(this.props.event)}>
             <Card>
                 <CardItem style={styles.cardItem}>
                     <View style={styles.date}>
@@ -88,17 +93,36 @@ export default class EventComponent extends React.Component{
                     </View>
                     {type === 'event' ?
                         <>
-                            <TouchableWithoutFeedback  onPress={() => this.goingToEvent(this.props.event)}><View><Right style={styles.attendanceIcon}>{check}</Right></View></TouchableWithoutFeedback>
-                            <TouchableWithoutFeedback  onPress={() => this.notGoingToEvent(this.props.event)}><View><Right style={styles.attendanceIcon}>{cross}</Right></View></TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback  onPress={() => this.goingToEvent(this.props.event)}><View><Right style={styles.attendanceIcon}>
+                            <Icon name="check" size={30} color={status == 'Going'? green : grey} />
+                            </Right></View></TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback  onPress={() => this.notGoingToEvent(this.props.event)}><View><Right style={styles.attendanceIcon}>
+                            <Icon name="close" size={30} color={status == 'Not going'? red : grey} />
+                            </Right></View></TouchableWithoutFeedback>
                         </> :
                         null
                     }
                 </CardItem>
             </Card>
+            </TouchableWithoutFeedback>
         );
     }
 
 }
+
+const mapStateToProps = state => {
+    return {
+        events: state.event.events,
+        user: state.user.user,
+        loading: state.event.loading,
+        error: state.event.error
+    };
+};
+
+const mapDispatchToProps = dispatch => (
+    bindActionCreators( {changeStatus} , dispatch)
+);
+
 const getStyles = color => StyleSheet.create({
     cardItem: {
         paddingLeft: 0,
@@ -123,3 +147,5 @@ const getStyles = color => StyleSheet.create({
         marginLeft: 10,
     }
 });
+
+export default connect(mapStateToProps, mapDispatchToProps)(EventComponent);

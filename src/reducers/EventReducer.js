@@ -1,4 +1,4 @@
-import { FETCH_EVENTS_BEGIN, FETCH_EVENTS_SUCCESS } from "../actions/EventActions";
+import { FETCH_EVENTS_BEGIN, FETCH_EVENTS_SUCCESS, CHANGE_STATUS_EVENT_BEGIN, CHANGE_STATUS_EVENT_SUCCESS } from "../actions/EventActions";
 import { FETCH_FAILURE } from "../actions";
 
 const INITIAL_STATE = {
@@ -24,6 +24,25 @@ const eventReducer = (state = INITIAL_STATE, action) => {
                 ...state,
                 loading: false,
                 error: action.payload.error
+            };
+        case CHANGE_STATUS_EVENT_BEGIN:
+            return {
+                ...state,
+                loading: true,
+                error: null,
+            };
+        case CHANGE_STATUS_EVENT_SUCCESS:
+            let events = [...state.events];
+            events.map((event) => {
+                if(event.id === action.payload.id){
+                    event.status = action.payload.status;
+                }
+                return event;
+            })
+            return {
+                ...state,
+                loading: false,
+                events: events,
             };
         default:
             return state;

@@ -22,7 +22,6 @@ class HomeScreen extends React.Component{
         console.log("------------- ONLOAD HOMESCREEN -------------")
         this.props.fetchEvents();
     }
-
     sortEventsByDate(events) {
         return events.sort((a, b) => {
             if (!(a.startTime instanceof Date)) return -1;
@@ -34,11 +33,11 @@ class HomeScreen extends React.Component{
     render(){
         const renderItem = ({item}) => <EventComponent event={item} nav={this.props.navigation}/>;
         let events = this.sortEventsByDate(this.props.events);
+        // let events = this.props.events;
         return(
             <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
             {/* TODO: Add activity loader */}
 
-            {this.props.loading && <Spinner color='blue' />}
                 <Container>
                     <Tabs>
                         <Tab heading="All events">
