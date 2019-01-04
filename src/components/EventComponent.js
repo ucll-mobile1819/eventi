@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Header, Content, Card, CardItem, Text, Right, View } from 'native-base';
+import { Container, Header, Content, Card, CardItem, Text, Right, View, Toast } from 'native-base';
 import { Fonts } from '../utils/Fonts';
 import { StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -13,10 +13,12 @@ const dateIcon = <Icon name="calendar" size={30} color="#FFF" />;
 const pollIcon = <MaterialCommunityIcon name="poll" size={30} color="#FFF" />;
 const months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
 
-var event;
 export default class EventComponent extends React.Component{
     constructor(props) {
         super(props);
+        this.state = {
+            showToast: false
+        };
     }
 
     getDateDisplayFormat(date) {
@@ -34,13 +36,19 @@ export default class EventComponent extends React.Component{
             return "";
         }
     }
-    goingToEvent(id){
+    goingToEvent(event){
         //Set event on going
         //Redirect to event info page
         this.props.nav.navigate('Event', {event: event}  );
     }
-    notGoingToEvent(id){
+    notGoingToEvent(event){
         //Set event on not going
+        Toast.show({
+            text: "Not going to " + event.name,
+            buttonText: "Okay",
+            duration: 3000,
+            type: "succes"
+          })
         
     }
     render() {
@@ -80,8 +88,8 @@ export default class EventComponent extends React.Component{
                     </View>
                     {type === 'event' ?
                         <>
-                            <TouchableWithoutFeedback  onPress={() => this.goingToEvent(this.props.event.id)}><View><Right style={styles.attendanceIcon}>{check}</Right></View></TouchableWithoutFeedback>
-                            <TouchableWithoutFeedback  onPress={() => this.notGoingToEvent(this.props.event.id)}><View><Right style={styles.attendanceIcon}>{cross}</Right></View></TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback  onPress={() => this.goingToEvent(this.props.event)}><View><Right style={styles.attendanceIcon}>{check}</Right></View></TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback  onPress={() => this.notGoingToEvent(this.props.event)}><View><Right style={styles.attendanceIcon}>{cross}</Right></View></TouchableWithoutFeedback>
                         </> :
                         null
                     }

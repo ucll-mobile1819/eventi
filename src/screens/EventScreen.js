@@ -1,17 +1,23 @@
 import React from 'react';
-import { Text, Button, TouchableWithoutFeedback ,StyleSheet} from 'react-native';
+import { Text, TouchableWithoutFeedback ,StyleSheet} from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import headerStyles from '../styles/headerStyles';
-import { Container, Tabs, Tab } from 'native-base';
+import { Container, Tabs, Tab , Button, ActionSheet} from 'native-base';
 import { Header } from 'react-navigation';
 import { color } from 'color';
 
-var event;
-var styles;
+var BUTTONS = ["Option 0", "Option 1", "Option 2", "Delete", "Cancel"];
+var DESTRUCTIVE_INDEX = 3;
+var CANCEL_INDEX = 4;
+
 class EventScreen extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {};
+    }
     static navigationOptions = obj => obj.navigation.state.params;
 
     onLoad() {
@@ -30,26 +36,22 @@ class EventScreen extends React.Component {
         });
     }
 
-    loadStyles(){
-        styles = StyleSheet.create({
-            Tabs:{
-                backgroundColor: event.group.color
-            }
-        });
-    }
     render() {
         return (
             <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
             
                 <Container>
-                    <Tabs>
-                    <Tab tabStyle={styles.Tabs} activeTabStyle={{ backgroundColor: "green" }} heading="Tab1">
+                    <Tabs tabBarUnderlineStyle={{backgroundColor:'black'}}>
+                    <Tab tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
+                    heading="Info">
                         <Text>1</Text>
                     </Tab>
-                    <Tab heading="Tab2">
+                    <Tab tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
+                    heading="Geusts">
                         <Text>2</Text>
                     </Tab>
-                    <Tab heading="Tab3">
+                    <Tab tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
+                    heading="Comments">
                         <Text>3</Text>
                     </Tab>
                     </Tabs>

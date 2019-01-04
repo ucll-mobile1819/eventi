@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Tab, Tabs, Button, Text,Spinner} from 'native-base';
+import { Container, Tab, Tabs, Button, Text,Spinner, Toast, Root} from 'native-base';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
 import { fetchEvents } from '../actions/EventActions';
 import { bindActionCreators } from 'redux';
@@ -13,7 +13,9 @@ class HomeScreen extends React.Component{
         super(props);
         // TODO: remove hard coded value & add user redux state implementation by merging with master-react-native so you can use this.props.user.user.username
         this.username = this.props.user.username;
-        console.log("CURRENT USER: "+ this.props.user.username);
+        this.state = {
+            showToast: false
+          };
     }
 
     onLoad() {
@@ -33,7 +35,6 @@ class HomeScreen extends React.Component{
         const renderItem = ({item}) => <EventComponent event={item} nav={this.props.navigation}/>;
         let events = this.sortEventsByDate(this.props.events);
         return(
-
             <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
             {/* TODO: Add activity loader */}
 
@@ -60,8 +61,7 @@ class HomeScreen extends React.Component{
                             />
                         </Tab>
                     </Tabs>
-                    <Button onPress={() => this.props.navigation.navigate('Event',{})}><Text>Click me</Text></Button>
-                </Container>
+                    </Container>
             </AuthenticatedComponent>
         )
     }

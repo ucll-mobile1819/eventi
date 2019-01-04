@@ -5,6 +5,7 @@ import { createStore, applyMiddleware } from 'redux';
 import rootReducer from './src/reducers';
 import thunk from 'redux-thunk';
 import Navigator from './src/navigator/Navigator';
+import { Root } from 'native-base';
 
 const store = createStore(rootReducer, applyMiddleware(thunk));
 
@@ -17,6 +18,7 @@ YellowBox.ignoreWarnings([
 export default class App extends Component {
     render() {
         return (
+            <Root>
             <Provider store={store}>
                 <Navigator onNavigationStateChange={(prevState, currentState) => {
                     let route = currentState;
@@ -26,6 +28,7 @@ export default class App extends Component {
                     DeviceEventEmitter.emit('routeStateChanged', route);
                   }} />
             </Provider>
+            </Root>
         );
     }
 }
