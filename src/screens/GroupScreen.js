@@ -12,9 +12,18 @@ import groupStyles from '../styles/groupStyles';
 class GroupScreen extends React.Component {
     static navigationOptions = obj => obj.navigation.state.params;
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            showActivityIndicator: true
+        };
+    }
+
     onLoad() {
         this.props.fetchGroup(this.props.navigation.state.params.id)
             .then(() => {
+                this.setState({ showActivityIndicator: false });
+                if (this.props.error) return;
                 this.props.navigation.setParams({
                     title: this.props.group.name,
                     customHeaderBackgroundColor: this.props.group.color,
@@ -33,8 +42,7 @@ class GroupScreen extends React.Component {
 
     render() {
         return (
-            <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
-                {this.props.loading && <Text>Loading group...</Text>}
+            <AuthenticatedComponent showActivityIndicator={() => this.state.showActivityIndicator} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 <View style={{ padding: 10 }}>
                     <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: 'lightgrey', paddingBottom: 20, marginBottom: 20 }}>
                         <Text style={{ flex: 1 }}>{this.props.group.description || "No description was provided for this group."}</Text>
