@@ -1,20 +1,23 @@
 import React from 'react';
-import { Container, Tab, Tabs } from 'native-base';
+import { Container, Tab, Tabs, Button, Text,Spinner} from 'native-base';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
 import { fetchEvents } from '../actions/EventActions';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import EventComponent from '../components/EventComponent';
 import { FlatList } from 'react-native-gesture-handler';
+import { color } from 'color';
 
 class HomeScreen extends React.Component{
     constructor(props){
         super(props);
         // TODO: remove hard coded value & add user redux state implementation by merging with master-react-native so you can use this.props.user.user.username
-        this.username = 'bob';
+        this.username = this.props.user.username;
+        console.log("CURRENT USER: "+ this.props.user.username);
     }
 
     onLoad() {
+        console.log("------------- ONLOAD HOMESCREEN -------------")
         this.props.fetchEvents();
     }
 
@@ -27,11 +30,14 @@ class HomeScreen extends React.Component{
     }
     
     render(){
-        const renderItem = ({item}) => <EventComponent event={item}/>;
+        const renderItem = ({item}) => <EventComponent event={item} nav={this.props.navigation}/>;
         let events = this.sortEventsByDate(this.props.events);
         return(
+
             <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
             {/* TODO: Add activity loader */}
+
+            {this.props.loading && <Spinner color='blue' />}
                 <Container>
                     <Tabs>
                         <Tab heading="All events">
@@ -41,6 +47,7 @@ class HomeScreen extends React.Component{
                         />
                         </Tab>
                         <Tab heading="Going">
+                        
                             <FlatList
                             data={events.filter(event => event.status === 'Going')}
                             renderItem={renderItem}
@@ -53,6 +60,7 @@ class HomeScreen extends React.Component{
                             />
                         </Tab>
                     </Tabs>
+                    <Button onPress={() => this.props.navigation.navigate('Event',{})}><Text>Click me</Text></Button>
                 </Container>
             </AuthenticatedComponent>
         )
@@ -61,6 +69,7 @@ class HomeScreen extends React.Component{
 const mapStateToProps = state => {
     return {
         events: state.event.events,
+        user: state.user.user,
         loading: state.event.loading,
         error: state.event.error
     };
