@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, Button } from 'react-native';
+import { View, Text, Button } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
@@ -22,8 +22,10 @@ class ProfileScreen extends React.Component {
     render() {
         return (
             <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
-                <Text>ProfileScreen</Text>
-                <Button title="Logout" onPress={() => this.logout()}/>
+                <View style={{ padding: 20 }}>
+                    <Text>ProfileScreen</Text>
+                    <Button title="Logout" onPress={() => this.logout()} color="#f44242"/>
+                </View>
             </AuthenticatedComponent>
         );
     }
