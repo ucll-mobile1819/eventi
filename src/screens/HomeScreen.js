@@ -19,7 +19,6 @@ class HomeScreen extends React.Component{
     }
 
     onLoad() {
-        console.log("------------- ONLOAD HOMESCREEN -------------")
         this.props.fetchEvents();
     }
     sortEventsByDate(events) {
