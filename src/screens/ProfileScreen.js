@@ -95,11 +95,13 @@ class ProfileScreen extends ValidationComponent {
             <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 <KeyboardAwareScrollView resetScrollToCoords={{ x: 0, y: 0 }} style={{ padding: 20 }}  >
                     <Text style={groupStyles.title}> Change User Info</Text>
+                    {this.isFieldInError('firstname') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('firstname')[0]}</Text>}
                     <TextInput
                         style={[groupStyles.inputField, { flex: 1 }]}
                         onChangeText={firstname => this.setState({ firstname })}
                         value={this.state.firstname}
                     />
+                    {this.isFieldInError('lastname') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('lastname')[0]}</Text>}
                     <TextInput
                         style={[groupStyles.inputField, { flex: 1 }]}
                         onChangeText={lastname => this.setState({ lastname })}
