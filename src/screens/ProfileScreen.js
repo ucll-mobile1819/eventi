@@ -9,6 +9,7 @@ import ValidationComponent from '../components/ValidationComponent';
 import loginregisterStyles from '../styles/loginregister';
 import groupStyles from '../styles/groupStyles';
 import DatePicker from 'react-native-datepicker';
+import { fetchUser } from '../actions/AuthenticationActions';
 
 class ProfileScreen extends ValidationComponent {
     static navigationOptions = obj => obj.navigation.state.params;
@@ -22,7 +23,6 @@ class ProfileScreen extends ValidationComponent {
         return {
             password: '',
             passwordConfirmation: '',
-            username: '',
             firstname: '',
             lastname: '',
             birthday: null
@@ -33,6 +33,9 @@ class ProfileScreen extends ValidationComponent {
         this.props.navigation.setParams({
             title: this.props.user.firstname + ' ' + this.props.user.lastname,
         });
+
+        this.props.fetchUser()
+            .then(() => this.setState({ ...this.props.user }));
     }
 
     async logout() {
@@ -118,7 +121,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => (
     bindActionCreators({
-        fetchLogout,
+        fetchLogout, fetchUser,
     }, dispatch)
 );
 
