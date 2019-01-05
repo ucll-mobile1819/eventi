@@ -198,19 +198,20 @@ function getAllEventsInGroup(currentUser, groupId, type) {
     });
 }
 
-function getEvent(currentUser, eventId, essentializyResponse = true) {
+function getEvent(currentUser, eventId, essentializyResponse = true, addVotes = true) {
     return new Promise((res, rej) => {
         let tmpEvent;
+        let getVotesFunc = () => addVotes ? getVotes(currentUser, eventId) : null;
         Event.Event.findById(eventId)
         .then(event => {
             if (!event) return Promise.reject(new Error('This event does not exist.'));
             tmpEvent = event;
             return event.getGroup();
         })
-        .then(group => group.getUsers({ where: { username: currentUser.username } }))
-        .then(users => {
-            if (users.length === 0) return Promise.reject(new Error('You do not belong to the group of this event.'));
-            return essentializyResponse ? essentialisizer.essentializyEvent(tmpEvent, currentUser.username) : tmpEvent;
+        .then(group => Promise.all([ group.getUsers({ where: { username: currentUser.username } }), getVotesFunc() ]))
+        .then(results => {
+            if (results[0].length === 0) return Promise.reject(new Error('You do not belong to the group of this event.'));
+            return essentializyResponse ? essentialisizer.essentializyEvent(tmpEvent, currentUser.username, results[1]) : tmpEvent;
         })
         .then(res)
         .catch(rej);
@@ -219,7 +220,7 @@ function getEvent(currentUser, eventId, essentializyResponse = true) {
 
 function getVotes(currentUser, eventId) {
     return new Promise((resolve, reject) => {
-        getEvent(currentUser, eventId, false)
+        getEvent(currentUser, eventId, false, false)
         .then(event => {
             if (event.type !== 'poll') return Promise.reject(new Error('This event is not a poll.'));
             return event.getPollDates();

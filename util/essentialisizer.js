@@ -17,7 +17,7 @@ function essentializyUser(user) {
     });
 }
 
-function essentializyEvent(event, currentUsername) {
+function essentializyEvent(event, currentUsername, votes=null) {
     return new Promise((resolve, reject) => {
         if (!event) return resolve(null);
         const r = clone(event);
@@ -38,6 +38,9 @@ function essentializyEvent(event, currentUsername) {
         .then(results => {
             result.group = results[0];
             result.creator = results[1];
+            if (result.pollDates instanceof Array && votes !== null) {
+                result.pollDates.map((e, i) => e.votes = votes.find(el => el.id === e.id).votes);
+            }
             resolve(result);
         })
         .catch(reject);
@@ -48,7 +51,7 @@ function essentializyPollDate(pollDate) {
     return new Promise((resolve) => {
         if (!pollDate) return resolve(null);
         const r = clone(pollDate);
-        resolve({ id: r.id, startTime: r.start_time, endTime: r.end_time });
+        resolve({ id: r.id, startTime: r.start_time, endTime: r.end_time, votes: r.votes });
     });
 }
 
