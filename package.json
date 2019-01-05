@@ -2,16 +2,22 @@
   "name": "eventi",
   "version": "0.0.1",
   "private": true,
+  "rnpm": {
+    "assets": [
+      "assets/fonts"
+    ]
+  },
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest"
   },
   "dependencies": {
-    "@material-ui/core": "^3.6.2",
+    "@material-ui/core": "^3.7.0",
     "@react-navigation/core": "^3.0.1",
     "axios": "^0.18.0",
     "moment": "^2.23.0",
-    "react": "16.6.1",
+    "native-base": "^2.9.0",
+    "react": "^16.6.1",
     "react-dom": "^16.6.3",
     "react-native": "0.57.7",
     "react-native-color-palette": "^2.0.1",

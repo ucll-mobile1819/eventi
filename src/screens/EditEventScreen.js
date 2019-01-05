@@ -4,13 +4,15 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
 
+var event;
 class EditEventScreen extends React.Component {
     static navigationOptions = obj => obj.navigation.state.params;
 
     onLoad() {
+        event = this.props.navigation.getParam("event","No event"); 
         this.props.navigation.setParams({
-            title: this.props.navigation.state.params.id.toString(),
-            customHeaderBackgroundColor: '#f44242',
+            title: "Title does not work",
+            customHeaderBackgroundColor: event.group.color,
             headerTintColor: 'white', // Back arrow color
             headerTitleStyle: { color: 'white' }, // Title color
         });
@@ -19,7 +21,7 @@ class EditEventScreen extends React.Component {
     render() {
         return (
             <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
-                <Text>EditEventScreen</Text>
+                
             </AuthenticatedComponent>
         );
     }
