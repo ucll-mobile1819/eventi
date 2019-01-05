@@ -53,7 +53,7 @@ class EventScreen extends React.Component {
                         headerTitleStyle: { color: 'white' }, // Title color
                         headerRight: (
                             <View>
-                                <TouchableWithoutFeedback onPress={() => this.props.navigation.push('GroupSettings', { id: this.props.group.id })}>
+                                <TouchableWithoutFeedback onPress={() => this.props.navigation.push('EditEvent', { id: this.state.event.id })}>
                                     <MaterialIcon name='settings' {...headerStyles.iconProps} />
                                 </TouchableWithoutFeedback>
                             </View>
