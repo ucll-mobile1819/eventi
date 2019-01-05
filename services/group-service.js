@@ -3,8 +3,11 @@ const Group = require('../models/group');
 const eventService = require('../services/event-service');
 const essentialisizer = require('../util/essentialisizer');
 
+const trimStrings = strings => strings.map(el => typeof el === 'string' ? el.trim() : el);
+
 function createGroup(currentUser, name, description, color) {
     return new Promise((resolve, reject) => {
+        [ name, description, color ] = trimStrings([ name, description, color ]);
         let tmpGroup;
         Group.Group.create({
             name,
@@ -25,6 +28,7 @@ function createGroup(currentUser, name, description, color) {
 
 function updateGroup(currentUser, groupId, name, description, color) {
     return new Promise((resolve, reject) => {
+        [ name, description, color ] = trimStrings([ name, description, color ]);
         let tmpGroup;
         Group.Group.findById(groupId)
         .then(group => {
@@ -127,6 +131,7 @@ function getGroupMemberCount(currentUser, groupId) {
 
 function removeUserFromGroup(currentUser, username, groupId) {
     return new Promise((resolve, reject) => {
+        [ username ] = trimStrings([ username ]);
         let tmpGroup;
         let tmpUser;
         Group.Group.findById(groupId)
@@ -236,6 +241,7 @@ function getCreatedGroups(currentUser) {
 
 function banUser(currentUser, groupId, username) {
     return new Promise((resolve, reject) => {
+        [ username ] = trimStrings([ username ]);
         let tmpGroup;
         let tmpUser;
         if (currentUser.username === username) return reject(new Error('You can\'t ban yourself.'));
@@ -259,6 +265,7 @@ function banUser(currentUser, groupId, username) {
 
 function unbanUser(currentUser, groupId, username) {
     return new Promise((resolve, reject) => {
+        [ username ] = trimStrings([ username ]);
         let tmpGroup;
         let tmpUser;
         Promise.all([ User.User.findByPrimary(username), Group.Group.findById(groupId) ])
@@ -314,6 +321,7 @@ function getBannedUsers(currentUser, groupId) {
 
 function joinGroup(currentUser, inviteCode) {
     return new Promise((resolve, reject) => {
+        [ inviteCode ] = trimStrings([ inviteCode ]);
         let tmpGroup;
         Group.Group.findOne({ where: { invite_code: inviteCode } })
         .then(group => {

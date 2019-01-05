@@ -5,8 +5,11 @@ const PollDate = require('../models/poll-date');
 const essentialisizer = require('../util/essentialisizer');
 const op = Sequelize.Op;
 
+const trimStrings = strings => strings.map(el => typeof el === 'string' ? el.trim() : el);
+
 function createEvent(currentUser, groupId, name, description, startTime, endTime, locationName, address, zipcode, city, country, type = 'event', essentializyResponse = true) {
     return new Promise((resolve, reject) =>{
+        [ name, description, locationName, address, zipcode, city, country ] = trimStrings([ name, description, locationName, address, zipcode, city, country ]);
         let tmpGroup;
         let tmpEvent;
         Group.Group.findById(groupId)
@@ -66,6 +69,7 @@ function createPoll(currentUser, groupId, name, description, startTime, endTime,
 
 function updateEvent(currentUser, eventId, name, description, startTime, endTime, locationName, address, zipcode, city, country) {
     return new Promise((res, rej) => {
+        [ name, description, locationName, address, zipcode, city, country ] = trimStrings([ name, description, locationName, address, zipcode, city, country ]);
         let tmpEvent;
         Event.Event.findById(eventId)
         .then(event => {

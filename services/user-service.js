@@ -3,8 +3,11 @@ const bcrypt = require("../auth/bcrypt");
 const auth = require('../auth/auth');
 const essentialisizer = require('../util/essentialisizer');
 
+const trimStrings = strings => strings.map(el => typeof el === 'string' ? el.trim() : el);
+
 function createUser(firstname, lastname, birthday, username, password, passwordConf, essentializyResponse = true) {
     return new Promise((resolve, reject) =>{
+        [ firstname, lastname, username ] = trimStrings([ firstname, lastname, username ]);
         if (password !== passwordConf) {
             return reject(new Error("Passwords don't match."));
         }
@@ -44,6 +47,7 @@ function createUser(firstname, lastname, birthday, username, password, passwordC
 
 function loginUser(username, password) {
     return new Promise((resolve, reject) => {
+        [ username ] = trimStrings([ username ]);
         username = username.toLowerCase();
         let tmpUser;
         User.User.findOne({ where: { username } })
@@ -67,6 +71,7 @@ function loginUser(username, password) {
 }
 
 function getUser(currentUser, username) {
+    [ username ] = trimStrings([ username ]);
     if (currentUser.username === username) {
         return essentialisizer.essentializyUser(currentUser);
     }
@@ -95,6 +100,7 @@ function getUser(currentUser, username) {
 
 function updateUser(currentUser, firstname, lastname, birthday, password) {
     return new Promise((resolve, reject) => {
+        [ firstname, lastname ] = trimStrings([ firstname, lastname ]);
         bcrypt.secureString(password)
         .then(passwd => {
             if (!!firstname) currentUser.firstname = firstname;
