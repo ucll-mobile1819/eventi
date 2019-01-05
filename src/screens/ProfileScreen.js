@@ -46,7 +46,27 @@ class ProfileScreen extends ValidationComponent {
     }
 
     async changePassword() {
+        if (!this.validatePasswordForm()) return;
 
+        let response = await putUser(
+            null, null, null,
+            this.state.password,
+            this.state.passwordConfirmation,
+            true
+        );
+        if (response !== false) {
+            Snackbar.show({
+                title: 'Password succesfully updated',
+                duration: Snackbar.LENGTH_LONG,
+                action: {
+                    title: 'CLOSE',
+                    color: 'green',
+                    onPress: () => Snackbar.dismiss(),
+                }
+            });
+            this.props.fetchUser()
+                .then(() => this.setState({ ...this.props.user }));
+        }
     }
 
     async changeInfo() {
@@ -75,7 +95,18 @@ class ProfileScreen extends ValidationComponent {
     }
 
     validatePasswordForm() {
+        if (!this.validate({
+            password: { name: 'Password', required: true },
+            passwordConfirmation: { name: 'Password confirmation', required: true },
+        })) {
+            return false;
+        }
+        if (this.state.password !== this.state.passwordConfirmation) {
+            fetchFailure({ status: 400, error: 'The fields Password and Password confirmation must match.' });
+            return false;
+        }
 
+        return true;
     }
 
     validateInfoForm() {
@@ -125,12 +156,14 @@ class ProfileScreen extends ValidationComponent {
                     <Button title="Change Info" onPress={() => this.changeInfo()} />
 
                     <Text style={groupStyles.title}>Change Password</Text>
+                    { this.isFieldInError('password') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('password')[0]}</Text> }
                     <TextInput
                         style={[groupStyles.inputField, { flex: 1 }]}
                         secureTextEntry={true}
                         onChangeText={password => this.setState({ password })}
                         value={this.state.password}
                     />
+                    { this.isFieldInError('passwordConfirmation') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('passwordConfirmation')[0]}</Text> }
                     <TextInput
                         style={[groupStyles.inputField, { flex: 1 }]}
                         secureTextEntry={true}
