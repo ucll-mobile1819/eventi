@@ -9,6 +9,7 @@ import loginregisterStyles from '../styles/loginregister';
 import groupStyles from '../styles/groupStyles';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ColorPalette from 'react-native-color-palette';
+import { putGroup } from '../network/group';
 
 class GroupSettingsScreen extends ValidationComponent {
     static navigationOptions = obj => obj.navigation.state.params;
@@ -40,7 +41,17 @@ class GroupSettingsScreen extends ValidationComponent {
     async updateGroup() {
         if (!this.validateForm()) return;
 
-        Alert.alert('Placeholder');
+        let response = await putGroup(
+            this.props.group.id,
+            this.state.groupname,
+            this.state.description,
+            this.state.color
+        )
+
+        if (response !== false) {
+            Alert.alert('Group updated succesfully!');
+            this.props.navigation.navigate('Group', { id: this.props.group.id });
+        }
     }
 
     validateForm() {
