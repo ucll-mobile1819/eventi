@@ -51,7 +51,10 @@ export const fetchUser = () => dispatch => {
     dispatch(fetchUserBegin());
 
     return authAPI.getUser()
-    .then(user => dispatch(fetchUserSuccess(user)))
+    .then(user => {
+        user.birthday = new Date(user.birthday);
+        dispatch(fetchUserSuccess(user));
+    })
     .catch(error => dispatch(fetchFailure(error)));
 };
 
