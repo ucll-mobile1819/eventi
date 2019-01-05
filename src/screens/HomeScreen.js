@@ -20,7 +20,7 @@ class HomeScreen extends React.Component{
 
     onLoad() {
         this.props.fetchEvents()
-        this.setState({ showActivityIndicator: false });
+        .then(() => this.setState({ showActivityIndicator: false }));
     }
     sortEventsByDate(events) {
         return events.sort((a, b) => {
