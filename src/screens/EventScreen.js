@@ -16,14 +16,15 @@ import { Table, TableWrapper, Row } from 'react-native-table-component';
 const red = '#DD1111';
 const green = '#11DD52';
 const grey = '#a8aeb7';
-var event;
+
 class EventScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             tableHead: ['Head', 'Head2', 'Head3', 'Head4', 'Head5', 'Head6', 'Head7', 'Head8', 'Head9'],
             widthArr: [40, 60, 80, 100, 120, 140, 160, 180, 200],
-            showActivityIndicator: true
+            showActivityIndicator: true,
+            event: this.props.emptyEvent,
         };
     }
     static navigationOptions = obj => obj.navigation.state.params;
@@ -38,37 +39,42 @@ class EventScreen extends React.Component {
         // );
         
         this.props.fetchEvent(this.props.navigation.state.params.id)
-            .then(() => { 
-                event = this.props.event;
-                this.setState({ showActivityIndicator: false });
-                if (this.props.error) return;
-                this.props.navigation.setParams({
-                    title: this.props.event.name,
-                    customHeaderBackgroundColor: this.props.event.group.color,
-                    headerTintColor: 'white', // Back arrow color
-                    headerTitleStyle: { color: 'white' }, // Title color
-                    headerRight: (
-                        <View>
-                            <TouchableWithoutFeedback onPress={() => this.props.navigation.push('GroupSettings', { id: this.props.group.id })}>
-                                <MaterialIcon name='settings' {...headerStyles.iconProps} />
-                            </TouchableWithoutFeedback>
-                        </View>
-                    )
+            .then(() => {
+                this.setState({
+                    showActivityIndicator: false,
+                    event: this.props.events.find(e => e.id === this.props.navigation.state.params.id)
+                }, () => {
+                    // Callback: when the state has been updated, we will update the header with the new event data
+                    if (this.props.error) return;
+                    this.props.navigation.setParams({
+                        title: this.state.event.name,
+                        customHeaderBackgroundColor: this.state.event.group.color,
+                        headerTintColor: 'white', // Back arrow color
+                        headerTitleStyle: { color: 'white' }, // Title color
+                        headerRight: (
+                            <View>
+                                <TouchableWithoutFeedback onPress={() => this.props.navigation.push('GroupSettings', { id: this.props.group.id })}>
+                                    <MaterialIcon name='settings' {...headerStyles.iconProps} />
+                                </TouchableWithoutFeedback>
+                            </View>
+                        )
+                    });
                 });
             });
     }
 
     render() {
-
         const state = this.state;
         const tableData = [];
         for (let i = 0; i < 30; i += 1) {
-        const rowData = [];
-        for (let j = 0; j < 9; j += 1) {
-            rowData.push(`${i}${j}`);
+            const rowData = [];
+            for (let j = 0; j < 9; j += 1) {
+                rowData.push(`${i}${j}`);
+            }
+            tableData.push(rowData);
         }
-        tableData.push(rowData);
-    }
+
+        let event = this.state.event;
         return (
             <AuthenticatedComponent showActivityIndicator={() => this.state.showActivityIndicator}  navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
             
@@ -77,6 +83,7 @@ class EventScreen extends React.Component {
                     <Tab tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
                     heading="Info">
                         <Container style={groupStyles.container}>
+                            <Text>{event.name}</Text>
                             <Text>11 Nov 18:30 - 11 Nov 23:30</Text>
                             <ScrollView horizontal={true}>
                                 <View>
@@ -84,19 +91,19 @@ class EventScreen extends React.Component {
                                         <Row data={state.tableHead} widthArr={state.widthArr} style={styles.header} textStyle={styles.text}/>
                                     </Table>
                                     <ScrollView style={styles.dataWrapper}>
-                                    <Table borderStyle={{borderColor: '#C1C0B9'}}>
-                                    {
-                                    tableData.map((rowData, index) => (
-                                    <Row
-                                    key={index}
-                                    data={rowData}
-                                    widthArr={state.widthArr}
-                                    style={[styles.row, index%2 && {backgroundColor: '#F7F6E7'}]}
-                                    textStyle={styles.text}
-                                    />
-                                    ))
-                                    }
-                                    </Table>
+                                        <Table borderStyle={{borderColor: '#C1C0B9'}}>
+                                        {
+                                            tableData.map((rowData, index) => (
+                                            <Row
+                                            key={index}
+                                            data={rowData}
+                                            widthArr={state.widthArr}
+                                            style={[styles.row, index%2 && {backgroundColor: '#F7F6E7'}]}
+                                            textStyle={styles.text}
+                                            />
+                                            ))
+                                        }
+                                        </Table>
                                     </ScrollView>
                                 </View>
                             </ScrollView>
@@ -138,7 +145,8 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => {
     return {
-        event: state.event.event,
+        events: state.event.events,
+        emptyEvent: state.event.emptyEvent,
         loading: state.group.loading,
         error: state.group.error
     };

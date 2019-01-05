@@ -3,7 +3,33 @@ import { FETCH_FAILURE } from "../actions";
 
 const INITIAL_STATE = {
     events: [],
+    emptyEvent: {
+        id: -1,
+        name: '',
+        description: '',
+        startTime: null,
+        endTime: null,
+        address: '',
+        locationName: '',
+        city: '',
+        zipcode: '',
+        country: '',
+        type: 'event',
+        status: 'Pending',
+        group: {
+            id: -1,
+            name: '',
+            color: '',
+        },
+        creator: {
+            firstname: '',
+            lastname: '',
+            username: '',
+        }
+    },
 };
+
+let events;
 
 const eventReducer = (state = INITIAL_STATE, action) => {
     switch (action.type) {
@@ -26,10 +52,11 @@ const eventReducer = (state = INITIAL_STATE, action) => {
                 error: null // Needed to reset any previous errors
             };
         case FETCH_EVENT_SUCCESS:
+            events = state.events.map(el => el.id === action.payload.event.id ? action.payload.event : el);
             return {
                 ...state,
                 loading: false,
-                event: action.payload.event
+                events
             };
         case FETCH_FAILURE:
             return {
@@ -44,7 +71,7 @@ const eventReducer = (state = INITIAL_STATE, action) => {
                 error: null,
             };
         case CHANGE_STATUS_EVENT_SUCCESS:
-            let events = [...state.events];
+            events = [...state.events];
             events.map((event) => {
                 if(event.id === action.payload.id){
                     event.status = action.payload.status;
