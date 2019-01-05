@@ -10,6 +10,7 @@ import loginregisterStyles from '../styles/loginregister';
 import groupStyles from '../styles/groupStyles';
 import DatePicker from 'react-native-datepicker';
 import { fetchUser } from '../actions/AuthenticationActions';
+import { putUser } from '../network/user';
 
 class ProfileScreen extends ValidationComponent {
     static navigationOptions = obj => obj.navigation.state.params;
@@ -86,12 +87,13 @@ class ProfileScreen extends ValidationComponent {
                         style={[groupStyles.inputField, { flex: 1, width: undefined }]}
                         format="DD-MM-YYYY"
                         minDate="01-01-1900"
+                        placeholder="Birtday"
                         maxDate={new Date()}
                         confirmBtnText="Confirm"
                         cancelBtnText="Cancel"
                         onDateChange={birthday => { this.setState({ birthday }) }}
                         customStyles={{ dateInput: { borderWidth: 0, alignItems: 'flex-start', paddingLeft: 2 } }}
-                        date={this.state.birthdaywq}
+                        date={this.state.birthday}
                     />
                     <Button title="Change Info" onPress={() => this.changeInfo()} />
 
