@@ -17,7 +17,7 @@ router.get('/:id', middleware.auth.loggedIn,  (req, res, next) =>{
 });
 
 router.get('/:id/votes', middleware.auth.loggedIn, (req, res, next) => {
-    eventService.getVotes(req.user, req.params.id)
+    eventService.getMyVotes(req.user, req.params.id)
     .then(votes => res.send(votes))
     .catch(next);
 });

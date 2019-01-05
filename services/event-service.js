@@ -240,6 +240,32 @@ function getVotes(currentUser, eventId) {
     });
 }
 
+function getMyVotes(currentUser, eventId) {
+    return new Promise((resolve, reject) => {
+        getEvent(currentUser, eventId, false, false)
+        .then(event => {
+            if (event.type !== 'poll') return Promise.reject([]);
+            return event.getPollDates();
+        })
+        .then(pollDates => Promise.all([ pollDates, ...pollDates.map(el => el.getUsers()) ])) // ... spreads an array to a bunch of individual elements (pulls them out of the array)
+        // Fun fact: Next line does the exact same as the line underneath, explanation: https://davidwalsh.name/spread-operator
+        // .then(([ pollDates, ...pollDateUsers ]) => Promise.all([ pollDateUsers, ...pollDates.map(el => essentialisizer.essentializyPollDate(el)) ]))
+        .then(results =>  Promise.all([ results.slice(1), ...results[0].map(el => essentialisizer.essentializyPollDate(el)) ]))
+        .then(results => {
+            let res = results.slice(1);
+            let myVotes = [];
+            results[0].forEach((el, index) => {
+                if (el.some(el => el.username === currentUser.username)) myVotes.push(res[index]);
+            });
+            resolve(myVotes);
+        })
+        .catch(err => {
+            if (err instanceof Array) return resolve(err);
+            reject(err);
+        });
+    });
+}
+
 function endPoll(currentUser, eventId, pollDateId) {
     return new Promise((resolve, reject) => {
         let tmpEvent;
@@ -393,4 +419,4 @@ function belongsToGroup(user, event) {
     });
 }
 
-module.exports = { createEvent, createPoll, getAllEvents, getAllEventsInGroup, getEvent, updateEvent, deleteEvent, endPoll, votePoll, getVotes, setEventAttendance, getEventAttendances, getEventAttendance };
+module.exports = { createEvent, createPoll, getAllEvents, getAllEventsInGroup, getEvent, updateEvent, deleteEvent, endPoll, votePoll, getVotes, getMyVotes, setEventAttendance, getEventAttendances, getEventAttendance };
