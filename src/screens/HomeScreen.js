@@ -15,7 +15,7 @@ class HomeScreen extends React.Component{
         this.username = this.props.user.username;
         this.state = {
             showToast: false
-          };
+      };
     }
 
     onLoad() {

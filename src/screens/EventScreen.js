@@ -1,45 +1,60 @@
 import React from 'react';
-import { Text, TouchableWithoutFeedback ,StyleSheet} from 'react-native';
+import { Text, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import headerStyles from '../styles/headerStyles';
-import { Container, Tabs, Tab , Button, ActionSheet} from 'native-base';
+import { Container, Tabs, Tab , Button, ActionSheet, View} from 'native-base';
 import { Header } from 'react-navigation';
 import { color } from 'color';
+import { fetchEvent } from '../actions/EventActions';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
-var BUTTONS = ["Option 0", "Option 1", "Option 2", "Delete", "Cancel"];
-var DESTRUCTIVE_INDEX = 3;
-var CANCEL_INDEX = 4;
 
+const red = '#DD1111';
+const green = '#11DD52';
+const grey = '#a8aeb7';
 class EventScreen extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            showActivityIndicator: true
+        };
     }
     static navigationOptions = obj => obj.navigation.state.params;
 
     onLoad() {
-        event = this.props.navigation.getParam("event","No event");
-        this.props.navigation.setParams({
-            // title: this.props.navigation.state.params.id.toString(),
-            title: event.name,
-            customHeaderBackgroundColor: event.group.color,
-            headerTintColor: 'white', // Back arrow color
-            headerTitleStyle: { color: 'white' }, // Title color
-            headerRight: (
-                <TouchableWithoutFeedback  onPress={() => this.props.navigation.push('EditEvent', { event: event })}>
-                    <MaterialIcon name='settings' {...headerStyles.iconProps} />
-                </TouchableWithoutFeedback>
-            )
-        });
+        this.props.fetchEvent(this.props.navigation.state.params.id)
+            .then(() => {
+                this.setState({ showActivityIndicator: false });
+                if (this.props.error) return;
+                const {
+                    name,
+                    description,
+                    startTime,
+                    type,
+                    status
+                } = this.props.event;
+                this.props.navigation.setParams({
+                    title: this.props.event.name,
+                    customHeaderBackgroundColor: this.props.event.group.color,
+                    headerTintColor: 'white', // Back arrow color
+                    headerTitleStyle: { color: 'white' }, // Title color
+                    headerRight: (
+                        <View>
+                            <TouchableWithoutFeedback onPress={() => this.props.navigation.push('GroupSettings', { id: this.props.group.id })}>
+                                <MaterialIcon name='settings' {...headerStyles.iconProps} />
+                            </TouchableWithoutFeedback>
+                        </View>
+                    )
+                });
+            });
     }
 
     render() {
         return (
-            <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
-            
+            <AuthenticatedComponent showActivityIndicator={() => this.state.showActivityIndicator}  navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 <Container>
                     <Tabs tabBarUnderlineStyle={{backgroundColor:'black'}}>
                     <Tab tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
@@ -55,7 +70,19 @@ class EventScreen extends React.Component {
                         <Text>3</Text>
                     </Tab>
                     </Tabs>
-                </Container>
+
+                    <TouchableWithoutFeedback  onPress={() => this.notGoingToEvent()}>
+                        <View>
+                            <Icon name="close" size={30} />
+                        </View>
+                    </TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback  onPress={() => this.notGoingToEvent()}>
+                        <View>
+                            <Icon name="close" size={30}  />
+                        </View>
+                    </TouchableWithoutFeedback>
+
+                   </Container>
             </AuthenticatedComponent>
         );
     }
@@ -63,12 +90,14 @@ class EventScreen extends React.Component {
 
 const mapStateToProps = state => {
     return {
+        event: state.event.event,
+        loading: state.group.loading,
+        error: state.group.error
     };
 };
 
 const mapDispatchToProps = dispatch => (
-    bindActionCreators({
-    }, dispatch)
+    bindActionCreators({fetchEvent}, dispatch)
 );
 
 export default connect(mapStateToProps, mapDispatchToProps)(EventScreen);

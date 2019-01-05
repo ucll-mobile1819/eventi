@@ -39,7 +39,7 @@ class GroupScreen extends React.Component {
                 });
             });
     }
-
+    
     render() {
         return (
             <AuthenticatedComponent showActivityIndicator={() => this.state.showActivityIndicator} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>

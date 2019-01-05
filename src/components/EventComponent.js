@@ -62,7 +62,6 @@ class EventComponent extends React.Component{
             type,
             status
         } = this.props.event;
-        event = this.props.event;
         const styles = getStyles(this.props.event.group.color);
 
         return (

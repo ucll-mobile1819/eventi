@@ -37,7 +37,6 @@ export default class RegisterScreen extends ValidationComponent {
 
     async register() {
         if (!this.validateForm()) return;
-
         let response = await postUser(
             this.state.firstname,
             this.state.lastname,
