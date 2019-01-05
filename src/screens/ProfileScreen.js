@@ -66,10 +66,7 @@ class ProfileScreen extends ValidationComponent {
                 }
             });
             this.props.fetchUser()
-                .then(() => this.setState({ ...this.props.user }))
-                .then(() => this.props.navigation.setParams({
-                    title: this.state.firstname + ' ' + this.state.lastname,
-                }));
+                .then(() => this.setState({ ...this.props.user }));
         }
     }
 
@@ -93,7 +90,10 @@ class ProfileScreen extends ValidationComponent {
                 }
             });
             this.props.fetchUser()
-                .then(() => this.setState({ ...this.props.user }));
+                .then(() => this.setState({ ...this.props.user }))
+                .then(() => this.props.navigation.setParams({
+                    title: this.state.firstname + ' ' + this.state.lastname,
+                }));
         }
 
     }
