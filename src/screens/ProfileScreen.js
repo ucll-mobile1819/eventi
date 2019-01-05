@@ -12,6 +12,7 @@ import DatePicker from 'react-native-datepicker';
 import { fetchUser } from '../actions/AuthenticationActions';
 import { putUser } from '../network/user';
 import Snackbar from 'react-native-snackbar';
+import { fetchFailure } from '../actions';
 
 class ProfileScreen extends ValidationComponent {
     static navigationOptions = obj => obj.navigation.state.params;
@@ -65,7 +66,10 @@ class ProfileScreen extends ValidationComponent {
                 }
             });
             this.props.fetchUser()
-                .then(() => this.setState({ ...this.props.user }));
+                .then(() => this.setState({ ...this.props.user }))
+                .then(() => this.props.navigation.setParams({
+                    title: this.state.firstname + ' ' + this.state.lastname,
+                }));
         }
     }
 
