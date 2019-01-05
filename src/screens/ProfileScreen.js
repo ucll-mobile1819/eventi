@@ -11,6 +11,7 @@ import groupStyles from '../styles/groupStyles';
 import DatePicker from 'react-native-datepicker';
 import { fetchUser } from '../actions/AuthenticationActions';
 import { putUser } from '../network/user';
+import Snackbar from 'react-native-snackbar';
 
 class ProfileScreen extends ValidationComponent {
     static navigationOptions = obj => obj.navigation.state.params;
@@ -49,6 +50,27 @@ class ProfileScreen extends ValidationComponent {
     }
 
     async changeInfo() {
+        if (!this.validateInfoForm()) return;
+
+        let response = putUser(
+            this.state.firstname,
+            this.state.lastname,
+            this.state.birthday,
+            null, null, true
+        );
+        if (response !== false) {
+            Snackbar.show({
+                title: 'Account succesfully updated',
+                duration: Snackbar.LENGTH_LONG,
+                action: {
+                    title: 'CLOSE',
+                    color: 'green',
+                    onPress: () => Snackbar.dismiss(),
+                }
+            });
+            this.props.fetchUser()
+                .then(() => this.setState({ ...this.props.user }));
+        }
 
     }
 
@@ -87,7 +109,7 @@ class ProfileScreen extends ValidationComponent {
                         style={[groupStyles.inputField, { flex: 1, width: undefined }]}
                         format="DD-MM-YYYY"
                         minDate="01-01-1900"
-                        placeholder="Birtday"
+                        placeholder="Birthday"
                         maxDate={new Date()}
                         confirmBtnText="Confirm"
                         cancelBtnText="Cancel"
