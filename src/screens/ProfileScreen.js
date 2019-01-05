@@ -56,7 +56,14 @@ class ProfileScreen extends ValidationComponent {
     }
 
     validateInfoForm() {
+        if (!this.validate({
+            firstname: { name: 'First name', required: true, minlength: 2, maxlength: 50 },
+            lastname: { name: 'Last name', required: true, minlength: 2, maxlength: 50 },
+        })) {
+            return false;
+        }
 
+        return true;
     }
 
 
@@ -84,7 +91,7 @@ class ProfileScreen extends ValidationComponent {
                         cancelBtnText="Cancel"
                         onDateChange={birthday => { this.setState({ birthday }) }}
                         customStyles={{ dateInput: { borderWidth: 0, alignItems: 'flex-start', paddingLeft: 2 } }}
-                        date={this.state.birthday}
+                        date={this.state.birthdaywq}
                     />
                     <Button title="Change Info" onPress={() => this.changeInfo()} />
 
