@@ -19,7 +19,6 @@ class GroupsScreen extends React.Component {
     onLoad() {
         this.props.fetchGroups()
         .then(() => this.setState({ showActivityIndicator: false }));
-
         this.props.navigation.setParams({
             headerRight: (
                     <TouchableWithoutFeedback onPress={() => this.props.navigation.push('CreateGroup')}>
