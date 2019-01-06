@@ -1,17 +1,20 @@
 import React from 'react';
-import { ScrollView } from 'react-native';
 import { Text, TouchableWithoutFeedback, StyleSheet, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import headerStyles from '../styles/headerStyles';
-import { Container, Tabs, Tab , Button, ActionSheet, View} from 'native-base';
+import { Container, Tabs, Tab, Button, ActionSheet, View, Card, CardItem, Body } from 'native-base';
 import { fetchEvent } from '../actions/EventActions';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import IconEvil from 'react-native-vector-icons/EvilIcons';
+import IconMat from 'react-native-vector-icons/MaterialIcons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import groupStyles from '../styles/groupStyles';
 import { Table, TableWrapper, Row } from 'react-native-table-component';
+
+const months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
 
 const red = '#DD1111';
 const green = '#11DD52';
@@ -21,8 +24,6 @@ class EventScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            tableHead: ['Head', 'Head2', 'Head3', 'Head4', 'Head5', 'Head6', 'Head7', 'Head8', 'Head9'],
-            widthArr: [40, 60, 80, 100, 120, 140, 160, 180, 200],
             showActivityIndicator: true,
             event: this.props.emptyEvent,
         };
@@ -30,13 +31,6 @@ class EventScreen extends React.Component {
     static navigationOptions = obj => obj.navigation.state.params;
 
     onLoad() {
-        // this.props.fetchEvent(this.props.navigation.state.params.id)
-        // .then(() => {
-        //     console.log("Name Event");
-        //     console.log(this.props.event.name);
-        //     this.setState({ showActivityIndicator: false });
-        //     }
-        // );
         
         this.props.fetchEvent(this.props.navigation.state.params.id)
             .then(() => {
@@ -62,62 +56,88 @@ class EventScreen extends React.Component {
                 });
             });
     }
-
-    render() {
-        const state = this.state;
-        const tableData = [];
-        for (let i = 0; i < 30; i += 1) {
-            const rowData = [];
-            for (let j = 0; j < 9; j += 1) {
-                rowData.push(`${i}${j}`);
-            }
-            tableData.push(rowData);
+    getDateDisplayFormat(date) {
+        return date.getDate() + ' ' + months[date.getMonth()];
+    }
+    getTimeDisplayFormat(date) {
+        let transformInt = num => {
+            if (num.toString().length === 1) return '0' + num;
+            return num;
+        };
+        if (date instanceof Date) {
+            return transformInt(date.getHours()) + ':' + transformInt(date.getMinutes());
+        } else {
+            return "";
         }
+    }
+    render() {
 
         let event = this.state.event;
+        let time = "No date yet";
+        if(event.startTime !== null){
+            time= this.getDateDisplayFormat(event.startTime) +" "+ this.getTimeDisplayFormat(event.startTime) +" - "+ this.getDateDisplayFormat(event.endTime) +" "+ this.getTimeDisplayFormat(event.endTime);
+        }
+
         return (
             <AuthenticatedComponent showActivityIndicator={() => this.state.showActivityIndicator}  navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 <Container>
                     <Tabs locked tabBarUnderlineStyle={{backgroundColor:'black'}}>
-                    <Tab tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
+                    <Tab style={{backgroundColor: '#E9E9EF'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
                     heading="Info">
-                        <Container style={groupStyles.container}>
-                            <Text>{event.name}</Text>
-                            <Text>11 Nov 18:30 - 11 Nov 23:30</Text>
-                            <ScrollView horizontal={true}>
-                                <View>
-                                    <Table borderStyle={{borderColor: '#C1C0B9'}}>
-                                        <Row data={state.tableHead} widthArr={state.widthArr} style={styles.header} textStyle={styles.text}/>
-                                    </Table>
-                                    <ScrollView style={styles.dataWrapper}>
-                                        <Table borderStyle={{borderColor: '#C1C0B9'}}>
-                                        {
-                                            tableData.map((rowData, index) => (
-                                            <Row
-                                            key={index}
-                                            data={rowData}
-                                            widthArr={state.widthArr}
-                                            style={[styles.row, index%2 && {backgroundColor: '#F7F6E7'}]}
-                                            textStyle={styles.text}
-                                            />
-                                            ))
-                                        }
-                                        </Table>
-                                    </ScrollView>
-                                </View>
-                            </ScrollView>
+                    <Container style={{backgroundColor: '#E9E9EF'}}>
+                        <Card style={{ backgroundColor: "transparent",elevation: 0,borderColor:"transparent"}}>
+                        <CardItem style={{ backgroundColor: "transparent",elevation: 0 ,borderColor:"transparent"}}>
+                            <View>
+                            <IconEvil name="location" size={30}/> 
+                            </View>            
+                            <View>
+                                <Body>
+                                    <Text>
+                                        {event.address} {event.city} {event.country}
+                                    </Text>
+                                </Body>
+                            </View>
+                        </CardItem>
+                        </Card>
+                        <Card style={{ backgroundColor: "transparent",elevation: 0,borderColor:"transparent"}}>
+                        <CardItem style={{ backgroundColor: "transparent",elevation: 0 ,borderColor:"transparent"}}>
+                            <View>
+                            <IconEvil name="calendar" size={30}/> 
+                            </View>            
+                            <View>
+                                <Body>
+                                    <Text>
+                                        {time}
+                                    </Text>
+                                </Body>
+                            </View>
+                        </CardItem>
+                        </Card>
                         </Container>
                     </Tab>
-                    <Tab tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
+                    <Tab  style={{backgroundColor: '#E9E9EF'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
                     heading="Geusts">
-                        <Text>2</Text>
+                        <Card transparent>
+                        <CardItem>
+                            <View>
+                            <Icon name="calendar" size={25}/> 
+                            </View>            
+                            <View>
+                                <Body>
+                                    <Text>
+                                        {event.address} {event.city} {event.country}
+                                    </Text>
+                                </Body>
+                            </View>
+                        </CardItem>
+                        </Card>
                     </Tab>
-                    <Tab tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
+                    <Tab  style={{backgroundColor: '#E9E9EF'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
                     heading="Comments">
                         <Text>3</Text>
                     </Tab>
                     </Tabs>
-                    <TouchableWithoutFeedback  onPress={() => this.notGoingToEvent()}>
+                    {/* <TouchableWithoutFeedback  onPress={() => this.notGoingToEvent()}>
                         <View>
                             <Icon name="close" size={30} />
                         </View>
@@ -126,7 +146,7 @@ class EventScreen extends React.Component {
                         <View>
                             <Icon name="close" size={30}  />
                         </View>
-                    </TouchableWithoutFeedback>
+                    </TouchableWithoutFeedback> */}
                    </Container>
             </AuthenticatedComponent>
         );
