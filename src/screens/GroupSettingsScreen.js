@@ -3,7 +3,7 @@ import { Text, Button, View, TextInput, Alert, Clipboard } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
-import { fetchGroup } from '../actions/GroupActions';
+import { fetchGroup, fetchGroups } from '../actions/GroupActions';
 import ValidationComponent from '../components/ValidationComponent';
 import loginregisterStyles from '../styles/loginregister';
 import groupStyles from '../styles/groupStyles';
@@ -53,11 +53,13 @@ class GroupSettingsScreen extends ValidationComponent {
         )
 
         if (response !== false) {
-            this.showSnackBar('Group updated');
             // TODO refresh state with group info
-            // this.props.fetchGroup(this.props.navigation.state.params.id)
-            // .then(() => this.setState({ ...this.props.group}));
-            // this.props.navigation.push('Group', { id: this.props.group.id });
+            this.props.fetchGroup(response.id)
+            .then(() => this.setState({ ...this.props.group }))
+            .then(() => this.props.fetchGroups())
+            .then(() => this.props.navigation.navigate('Group', { id: response.id }));
+
+            this.showSnackBar('Group updated');
         }
     }
 
@@ -196,7 +198,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => (
     bindActionCreators({
-        fetchGroup
+        fetchGroup, fetchGroups
     }, dispatch)
 );
 
