@@ -1,13 +1,14 @@
 import React from 'react';
-import { Text, Button, View, TextInput, Alert, Clipboard } from 'react-native';
+import { Text, Button, View, TextInput, Alert, Clipboard, FlatList } from 'react-native';
 import { Container, Tab, Tabs } from 'native-base';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
-import { fetchGroup, fetchGroups } from '../actions/GroupActions';
+import { fetchGroup, fetchGroups, fetchMembers } from '../actions/GroupActions';
 import ValidationComponent from '../components/ValidationComponent';
 import loginregisterStyles from '../styles/loginregister';
 import groupStyles from '../styles/groupStyles';
+import GroupMemberComponent from '../components/GroupMemberComponent';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ColorPalette from 'react-native-color-palette';
 import { putGroup, putGenerateInviteCode, deleteGroup } from '../network/group';
@@ -31,6 +32,7 @@ class GroupSettingsScreen extends ValidationComponent {
     onLoad() {
         this.props.fetchGroup(this.props.navigation.state.params.id)
             .then(() => {
+                this.props.fetchMembers(this.props.group.id)
                 this.updateState({ showActivityIndicator: false });
                 if (this.props.error) return;
                 this.updateHeader();
@@ -199,10 +201,14 @@ class GroupSettingsScreen extends ValidationComponent {
                             </KeyboardAwareScrollView>
                         </Tab>
                         <Tab heading="Members">
-                            <Text>Members</Text>
+                            <FlatList
+                                data={this.props.members}
+                                renderItem={({ item }) => <GroupMemberComponent member={item} />}
+                                keyExtractor={(member, index) => String(member.username)}
+                            />
                         </Tab>
                         <Tab heading="Banned">
-                        <Text>Banned members</Text>
+                            <Text>Banned members</Text>
                         </Tab>
                     </Tabs>
                 </Container>
@@ -215,13 +221,14 @@ const mapStateToProps = state => {
     return {
         group: state.group.group,
         loading: state.group.loading,
-        error: state.group.error
+        error: state.group.error,
+        members: state.group.members
     };
 };
 
 const mapDispatchToProps = dispatch => (
     bindActionCreators({
-        fetchGroup, fetchGroups
+        fetchGroup, fetchGroups, fetchMembers
     }, dispatch)
 );
 
