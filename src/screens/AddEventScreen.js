@@ -20,10 +20,7 @@ class AddEventScreen extends ValidationComponent {
                 { id: 3, startTime: new Date(2019, 0, 20, 18, 0, 0), endTime: new Date(2019, 0, 20, 21, 0, 0), votes: 1 },
                 { id: 2, startTime: new Date(2019, 0, 20, 14, 30, 0), endTime: new Date(2019, 0, 20, 17, 30, 0), votes: 0 },
             ],
-            pollDateVotes: [1, 3], // hardcoded, to be loaded in with redux
-            selectedPollDateId: null, // id of pd which is selected, needed for ending poll & choosing pd
-            // (when saving form and changes are made AND poll is ended: first do one, then the other (end poll / PUT event), not at the same time)
-            pollDateFixed: false, // if true, user can not deselect chosen pd or select another
+            pollDateVotes: [], // hardcoded, to be loaded in with redux
             type: 'event',
             startTime: null,
             endTime: null
@@ -137,7 +134,21 @@ class AddEventScreen extends ValidationComponent {
 
                             <View style={{ paddingTop: 20, marginLeft: 15 }}>
                                 {this.state.type === 'poll' &&
-                                    <Text>PollDateComponent enz hier </Text>
+                                    <View>
+                                        <Text>PollDateComponent enz hier </Text>
+
+                                        <PollTableComponent
+                                            mode='configure'
+                                            pollDates={this.state.pollDates}
+                                            pollDateVotes={this.state.pollDateVotes}
+                                            votesUpdated={this.updateVotes.bind(this)}
+                                            showAmountOfVotes={false}
+                                            newPollDateAdded={this.newPollDateAdded.bind(this)}
+                                            pollDateRemoved={this.pollDateRemoved.bind(this)}
+                                            selectable={false}
+                                        />
+
+                                    </View>
                                 }
 
                                 {this.state.type === 'event' &&
