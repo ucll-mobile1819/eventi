@@ -116,7 +116,8 @@ export default class RegisterScreen extends ValidationComponent {
                     confirmBtnText="Confirm"
                     cancelBtnText="Cancel"
                     onDateChange={ birthday => {
-                        birthday = new Date(birthday.split('-').reverse().join('-'));
+                        birthday = birthday.split('-');
+                        birthday = new Date(birthday[2].substring(0, 4), birthday[1]-1, birthday[0]);
                         this.setState({ birthday });
                     }}
                     customStyles={{ dateInput: { borderWidth: 0, alignItems: 'flex-start', paddingLeft: 2 }}}

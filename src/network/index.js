@@ -51,6 +51,24 @@ export const sendAPIRequest = async ( endpoint, method, handleErrors, checkAutho
             }
         });
         const response = await axios[method.toLowerCase()](...params);
+        let timezoneOffset = new Date().getTimezoneOffset()*60*1000;
+        let checkKeysForDates = (obj) => {
+            if (obj instanceof Array) {
+                obj.forEach(el => {
+                    if (el instanceof Object) checkKeysForDates(el);
+                });
+                return;
+            }
+            if (!(obj instanceof Object)) return;
+            Object.keys(obj).forEach(key => {
+                if (obj[key] instanceof Object || obj[key] instanceof Array) return checkKeysForDates(obj[key]); 
+                if (typeof obj[key] !== 'string') return;
+                // Regex for recognising ISO date string
+                if (!/\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/.test(obj[key])) return;
+                obj[key] = new Date(new Date(obj[key]).getTime()+timezoneOffset);
+            });
+        }
+        checkKeysForDates(response.data);
         return response.data;
     } catch (error) {
         console.log('--------- NETWORK ERROR ---------');
