@@ -14,12 +14,13 @@ class HomeScreen extends React.Component{
         // TODO: remove hard coded value & add user redux state implementation by merging with master-react-native so you can use this.props.user.user.username
         this.username = this.props.user.username;
         this.state = {
-            showToast: false
+            showActivityIndicator: true
           };
     }
 
     onLoad() {
-        this.props.fetchEvents();
+        this.props.fetchEvents()
+        .then(() => this.setState({ showActivityIndicator: false }));
     }
     sortEventsByDate(events) {
         return events.sort((a, b) => {
@@ -34,25 +35,23 @@ class HomeScreen extends React.Component{
         let events = this.sortEventsByDate(this.props.events);
         // let events = this.props.events;
         return(
-            <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
-            {/* TODO: Add activity loader */}
-
+            <AuthenticatedComponent showActivityIndicator={() => this.state.showActivityIndicator}  navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 <Container>
                     <Tabs>
-                        <Tab heading="All events">
+                        <Tab style={{backgroundColor: '#E9E9EF'}} heading="All events">
                         <FlatList
                         data={events}
                         renderItem={renderItem}
                         />
                         </Tab>
-                        <Tab heading="Going">
+                        <Tab style={{backgroundColor: '#E9E9EF'}} heading="Going">
                         
                             <FlatList
                             data={events.filter(event => event.status === 'Going')}
                             renderItem={renderItem}
                             />
                         </Tab>
-                        <Tab heading="My events">
+                        <Tab style={{backgroundColor: '#E9E9EF'}} heading="My events">
                             <FlatList
                             data={events.filter(event => event.creator.username === this.username)}
                             renderItem={renderItem}

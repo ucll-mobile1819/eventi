@@ -8,12 +8,8 @@ export const CHANGE_STATUS_EVENT_SUCCESS = 'CHANGE_STATUS_EVENT_SUCCESS';
 
 export const fetchEvents = () => dispatch => {
     dispatch(fetchEventsBegin());
-    eventAPI.getEvents()
-    .then(events => dispatch(fetchEventsSuccess(events.map(el => {
-        if (el.startTime !== null) el.startTime = new Date(el.startTime);
-        if (el.endTime !== null) el.endTime = new Date(el.endTime);
-        return el;
-    }))))
+    return eventAPI.getEvents()
+    .then(events => dispatch(fetchEventsSuccess(events)))
     .catch(error => dispatch(fetchFailure(error)));
 };
 
@@ -31,7 +27,7 @@ export const fetchEventsBegin = () => ({
 
 export const fetchEventsSuccess = events => ({
     type: FETCH_EVENTS_SUCCESS,
-    payload: { events },
+    payload:  {events} ,
 });
 
 export const changeStatusEventBegin = () => ({
