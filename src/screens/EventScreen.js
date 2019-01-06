@@ -38,7 +38,7 @@ class EventScreen extends React.Component {
 
     render() {
         return (
-            <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
+            <AuthenticatedComponent  showActivityIndicator={() => this.state.showActivityIndicator} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
             
                 <Container>
                     <Tabs tabBarUnderlineStyle={{backgroundColor:'black'}}>
