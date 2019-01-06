@@ -6,6 +6,7 @@ import { NavigationEvents } from 'react-navigation';
 import { fetchLogin, fetchUser } from '../actions/AuthenticationActions';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import MountCheckingComponent from '../components/MountCheckingComponent';
 
 class LoginScreen extends Component {
     constructor(props) {
@@ -14,6 +15,11 @@ class LoginScreen extends Component {
             username: '',
             password: '',
         };
+    }
+
+    updateState(obj, callback) {
+        if (!this._ismounted) return;
+        this.setState(obj, callback);
     }
 
     async onNavWillFocus() {
@@ -32,31 +38,33 @@ class LoginScreen extends Component {
 
     render() {
         return (
-            <View style={{alignItems: 'center', flex: 1 }}>
-                <NavigationEvents onWillFocus={() => this.onNavWillFocus()} />
-                <Text style={loginregisterStyles.bigTitle}>Eventi</Text>
-                <TextInput
-                    style={loginregisterStyles.inputField}
-                    placeholder="Username"
-                    value={this.state.username}
-                    onChangeText={username => this.setState({ username })}
-                />
-                <TextInput
-                    style={loginregisterStyles.inputField}
-                    secureTextEntry={true}
-                    placeholder="Password"
-                    value={this.state.password}
-                    onChangeText={password => this.setState({ password })}
-                />
-                <Button
-                    title="Login"
-                    onPress={() => this.login()}
-                />
-                <Text 
-                    onPress={() => this.props.navigation.navigate('Register')}
-                    style={{ color: 'darkblue', marginTop: 10 }}
-                >Not a member yet? Register here.</Text>
-            </View>
+            <MountCheckingComponent setMounted={val => { this._ismounted = val; }}>
+                <View style={{alignItems: 'center', flex: 1 }}>
+                    <NavigationEvents onWillFocus={() => this.onNavWillFocus()} />
+                    <Text style={loginregisterStyles.bigTitle}>Eventi</Text>
+                    <TextInput
+                        style={loginregisterStyles.inputField}
+                        placeholder="Username"
+                        value={this.state.username}
+                        onChangeText={username => this.updateState({ username })}
+                    />
+                    <TextInput
+                        style={loginregisterStyles.inputField}
+                        secureTextEntry={true}
+                        placeholder="Password"
+                        value={this.state.password}
+                        onChangeText={password => this.updateState({ password })}
+                    />
+                    <Button
+                        title="Login"
+                        onPress={() => this.login()}
+                    />
+                    <Text 
+                        onPress={() => this.props.navigation.navigate('Register')}
+                        style={{ color: 'darkblue', marginTop: 10 }}
+                    >Not a member yet? Register here.</Text>
+                </View>
+            </MountCheckingComponent>
         );
     }
 }
