@@ -13,14 +13,9 @@ export const FETCH_EVENT_SUCCESS = 'FETCH_EVENT_SUCCESS';
 export const fetchEvents = () => dispatch => {
     dispatch(fetchEventsBegin());
     eventAPI.getEvents()
-    .then(events => dispatch(fetchEventsSuccess(events.map(el => {
-        if (el.startTime !== null) el.startTime = new Date(el.startTime);
-        if (el.endTime !== null) el.endTime = new Date(el.endTime);
-        return el;
-    }))))
+    .then(events => dispatch(fetchEventsSuccess(events)))
     .catch(error => dispatch(fetchFailure(error)));
 };
-
 
 export const changeStatus = (id, status) => dispatch => {
     dispatch(changeStatusEventBegin());
