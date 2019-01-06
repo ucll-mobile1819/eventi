@@ -11,7 +11,7 @@ import groupStyles from '../styles/groupStyles';
 import GroupMemberComponent from '../components/GroupMemberComponent';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ColorPalette from 'react-native-color-palette';
-import { putGroup, putGenerateInviteCode, deleteGroup } from '../network/group';
+import { putGroup, putGenerateInviteCode, deleteGroup, deleteUser } from '../network/group';
 import Snackbar from 'react-native-snackbar';
 
 
@@ -105,7 +105,7 @@ class GroupSettingsScreen extends ValidationComponent {
     askDeleteGroup() {
         Alert.alert(
             'Delete group',
-            'Are you sure that you want to delete this group?',
+            'Are you sure you want to delete this group?',
             [
                 { text: 'Delete', onPress: () => this.deleteGroup() },
                 { text: 'Cancel', style: 'cancel' }
@@ -125,7 +125,8 @@ class GroupSettingsScreen extends ValidationComponent {
                 description: '',
                 color: ''
             });
-            this.props.navigation.push('Groups');
+            this.props.fetchGroups()
+            .then(() => this.props.navigation.navigate('Groups'));
         }
     }
 
@@ -143,6 +144,33 @@ class GroupSettingsScreen extends ValidationComponent {
 
     isOwner() {
         return this.props.user.username === this.props.group.creator.username;
+    }
+
+    askLeaveGroup() {
+        Alert.alert(
+            'Leave group',
+            'Are you sure you want to leave this group?',
+            [
+                { text: 'Leave', onPress: () => this.leaveGroup() },
+                { text: 'Cancel', style: 'cancel' }
+            ],
+            { cancelable: false }
+        );
+    }
+
+    leaveGroup() {
+        let response = deleteUser(this.props.group.id, this.props.user.username);
+
+        if (response !== false) {
+            Alert.alert('Group left', 'You left the group successfully.');
+            this.updateState({
+                groupname: '',
+                description: '',
+                color: ''
+            });
+            this.props.fetchGroups()
+            .then(() => this.props.navigation.navigate('Groups'));
+        }
     }
 
     render() {
@@ -207,7 +235,9 @@ class GroupSettingsScreen extends ValidationComponent {
                                 </KeyboardAwareScrollView>
                             }
                             {!this.isOwner() &&
-                                <Text>Leave group</Text>
+                                <View style={{ padding: 20 }}>
+                                    <Button title="Leave group" onPress={() => this.askLeaveGroup()}/>
+                                </View>
                             }
                         </Tab>
                         <Tab heading="Members">
