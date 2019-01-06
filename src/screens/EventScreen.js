@@ -6,7 +6,7 @@ import AuthenticatedComponent from '../components/AuthenticatedComponent';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import headerStyles from '../styles/headerStyles';
 import { Container, Tabs, Tab, Button, ActionSheet, View, Card, CardItem, Body, Footer, Left, Right, Grid, Col } from 'native-base';
-import { fetchEvent ,fetchAtt, changeStatus} from '../actions/EventActions';
+import { fetchEvent ,fetchAtt, changeStatus , fetchComments} from '../actions/EventActions';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IconEvil from 'react-native-vector-icons/EvilIcons';
 import IconMat from 'react-native-vector-icons/MaterialIcons';
@@ -39,17 +39,16 @@ class EventScreen extends React.Component {
     }
 
     onLoad() {
-        
+        //Make this
         this.props.fetchEvent(this.props.navigation.state.params.id)
             .then(() => this.props.fetchAtt(this.props.navigation.state.params.id))
-            .then(() => {
-                let attendances = this.props.status;
+                .then(() => this.props.fetchComments(this.props.navigation.state.params.id))
+                    .then(() => {
                 this.setState({
                     showActivityIndicator: false,
                     groupData: [],
                     event: this.props.events.find(e => e.id === this.props.navigation.state.params.id)
                 }, () => {
-
                     this.setGeusts();
                     // Callback: when the state has been updated, we will update the header with the new event data
                     if (this.props.error) return;
@@ -70,10 +69,7 @@ class EventScreen extends React.Component {
             });
             console.log(this.props.fetchAtt(this.props.navigation.state.params.id));
     }
-    getGeustList(){
-
-    }
-    setGeusts(){
+    async setGeusts(){
         let attendances = this.props.status;
         going = attendances.filter(el => el.status === 'Going').map(el => {return {firstname: el.user.firstname, lastname: el.user.lastname }});
         notGoing = attendances.filter(el => el.status === 'Not going').map(el => {return {firstname: el.user.firstname, lastname: el.user.lastname }});
@@ -187,12 +183,12 @@ class EventScreen extends React.Component {
                     </Tab>
                     <Tab  style={{backgroundColor: '#E9E9EF'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
                     heading="Comments">
-                        <Text>3</Text>
+                        <Text>This is going to be great</Text>
                     </Tab>
                     </Tabs>
                    </Container>
                    <Footer  style={{backgroundColor:'#E9E9EF',borderBottomWidth: 0, shadowOffset: {height: 0, width: 0}, 
-shadowOpacity: 0, elevation: 0}}>
+                    shadowOpacity: 0, elevation: 0}}>
                    <Grid>
                     <Col>
                    <TouchableWithoutFeedback onPress={() => this.goingToEvent(event.id)}>
@@ -235,6 +231,7 @@ const mapStateToProps = state => {
     return {
         events: state.event.events,
         status: state.event.status,
+        comments: state.event.comments,
         emptyEvent: state.event.emptyEvent,
         loading: state.group.loading,
         error: state.group.error
@@ -242,7 +239,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => (
-    bindActionCreators({fetchEvent , fetchAtt, changeStatus}, dispatch)
+    bindActionCreators({fetchEvent , fetchAtt, changeStatus, fetchComments}, dispatch)
 );
 
 export default connect(mapStateToProps, mapDispatchToProps)(EventScreen);

@@ -1,5 +1,6 @@
 import { fetchFailure } from '.';
 import * as eventAPI from '../network/event';
+import * as commentAPI from '../network/comment';
 
 export const FETCH_EVENTS_BEGIN = 'FETCH_EVENTS_BEGIN';
 export const FETCH_EVENTS_SUCCESS = 'FETCH_EVENTS_SUCCESS';
@@ -12,6 +13,9 @@ export const FETCH_EVENT_SUCCESS = 'FETCH_EVENT_SUCCESS';
 
 export const FETCH_ATT_BEGIN = 'FETCH_ATT_BEGIN';
 export const FETCH_ATT_SUCCESS = 'FETCH_ATT_SUCCESS';
+
+export const FETCH_COMMENT_BEGIN = 'FETCH_COMMENT_BEGIN';
+export const FETCH_COMMENT_SUCCESS = 'FETCH_COMMENT_SUCCESS';
 
 export const fetchEvents = () => dispatch => {
     dispatch(fetchEventsBegin());
@@ -84,3 +88,22 @@ export const fetchAttSuccess = status => ({
     payload: {status} ,
 });
 
+//fethc comments
+
+export const fetchComments = (id) => dispatch => {
+    dispatch(fetchCommentBegin());
+    return commentAPI.getComments(id)
+    .then(comments => {
+        dispatch(fetchCommentSuccess(comments))
+    })
+    .catch(error => dispatch(fetchFailure(error)));
+};
+
+export const fetchCommentBegin = () => ({
+    type: FETCH_COMMENT_BEGIN,
+});
+
+export const fetchCommentSuccess = comments => ({
+    type: FETCH_COMMENT_SUCCESS,
+    payload: {comments} ,
+});
