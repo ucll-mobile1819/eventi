@@ -12,14 +12,18 @@ class GroupsScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            showActivityIndicator: true,
-            back: false,
+            showActivityIndicator: true
         };
+    }
+
+    updateState(obj, callback) {
+        if (!this._ismounted) return;
+        this.setState(obj, callback);
     }
 
     onLoad() {
         this.props.fetchGroups()
-        .then(() => this.setState({ showActivityIndicator: false }));
+        .then(() => this.updateState({ showActivityIndicator: false }));
 
         this.props.navigation.setParams({
             headerRight: (
@@ -36,17 +40,12 @@ class GroupsScreen extends React.Component {
         });
     }
 
-    isBack() {
-        setTimeout(() => this.setState({ back: false }), 1);
-        return this.state.back;
-    }
-
     render() {
         return (
-            <AuthenticatedComponent isBack={() => this.isBack()} showActivityIndicator={() => this.state.showActivityIndicator} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
+            <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} showActivityIndicator={() => this.state.showActivityIndicator} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 <FlatList
                     data={this.props.groups}
-                    renderItem={({item}) => <GroupComponent onBack={() => this.setState({ back: true })} group={item} navigation={this.props.navigation} />}
+                    renderItem={({item}) => <GroupComponent group={item} navigation={this.props.navigation} />}
                     keyExtractor={(group, index) => String(group.id)}
                 />
             </AuthenticatedComponent>

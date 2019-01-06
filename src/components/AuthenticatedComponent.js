@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { DeviceEventEmitter, ActivityIndicator, View, StyleSheet } from 'react-native';
 import { isAuthenticated } from "../auth";
 import { NavigationEvents } from 'react-navigation';
+import MountCheckingComponent from "./MountCheckingComponent";
 
 export default class AuthenticatedComponent extends Component {
     constructor(props) {
@@ -56,13 +57,13 @@ export default class AuthenticatedComponent extends Component {
 
     render() {
         return (
-            <>
+            <MountCheckingComponent setMounted={this.props.setMounted}>
                 <NavigationEvents onWillFocus={() => this.onNavWillFocus()} />
                 { this.props.showActivityIndicator && this.props.showActivityIndicator() ? 
                     <View style={styles.container}><ActivityIndicator size="large" color="#757de8"></ActivityIndicator></View> :
                     this.props.children
                 }
-            </>
+            </MountCheckingComponent>
         );
     }
 }
