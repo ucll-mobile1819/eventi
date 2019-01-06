@@ -9,7 +9,7 @@ import loginregisterStyles from '../styles/loginregister';
 import groupStyles from '../styles/groupStyles';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ColorPalette from 'react-native-color-palette';
-import { putGroup } from '../network/group';
+import { putGroup, putGenerateInviteCode } from '../network/group';
 import Snackbar from 'react-native-snackbar';
 
 
@@ -47,7 +47,8 @@ class GroupSettingsScreen extends ValidationComponent {
             this.props.group.id,
             this.state.groupname,
             this.state.description,
-            this.state.color
+            this.state.color,
+            true
         )
 
         if (response !== false) {
@@ -83,8 +84,22 @@ class GroupSettingsScreen extends ValidationComponent {
         });
     }
 
-    renewInviteCode() {
-        Alert.alert('placeholder');
+    async renewInviteCode() {
+        let response = await putGenerateInviteCode(this.props.group.id, true);
+
+        if (response !== false) {
+            // TODO refresh inviteCode on screen
+            
+            Snackbar.show({
+                title: 'Invite code renewed',
+                duration: Snackbar.LENGTH_LONG,
+                action: {
+                    title: 'CLOSE',
+                    color: 'green',
+                    onPress: () => Snackbar.dismiss(),
+                }
+            });
+        }
     }
 
     render() {
