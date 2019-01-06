@@ -4,6 +4,7 @@ import { Table, Row, TableWrapper, Cell } from 'react-native-table-component';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import DatePicker from 'react-native-datepicker';
+import MountCheckingComponent from './MountCheckingComponent';
 
 const months = [ "jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
 const weekdays = [ "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" ];
@@ -73,6 +74,11 @@ export default class PollTableComponent extends Component {
         };
     }
 
+    updateState(obj, callback) {
+        if (!this._ismounted) return;
+        this.setState(obj, callback);
+    }
+
     getPollDates() {
         return this.props.pollDates || [];
     }
@@ -97,7 +103,7 @@ export default class PollTableComponent extends Component {
     }
 
     addNewPollDate() {
-        this.setState({
+        this.updateState({
             newPollDate: {
                 startTime: null,
                 endTime: null,
@@ -115,7 +121,7 @@ export default class PollTableComponent extends Component {
     saveNewPollDate() {
         if (!this.isNewPollDateValid()) return;
         if (this.props.newPollDateAdded instanceof Function) this.props.newPollDateAdded(this.state.newPollDate);
-        this.setState({
+        this.updateState({
             lastInterval: this.state.newPollDate.endTime.getTime() - this.state.newPollDate.startTime.getTime(),
             newPollDate: null,
         });
@@ -146,7 +152,7 @@ export default class PollTableComponent extends Component {
         if (this.state.lastInterval !== 0 && dateCat === 'startTime') {
             times.endTime = new Date(times.startTime.getTime() + this.state.lastInterval);
         }
-        this.setState({
+        this.updateState({
             newPollDate: times
         });
     }
@@ -154,7 +160,7 @@ export default class PollTableComponent extends Component {
     selectPollDate(id) {
         if (!this.props.selectable || (this.props.fixed instanceof Function && this.props.fixed())) return;
         if (this.state.selectedPollDateId === id) id = null;
-        this.setState({
+        this.updateState({
             selectedPollDateId: id
         });
         if (this.props.pollDateSelected instanceof Function) this.props.pollDateSelected(id);
@@ -163,13 +169,15 @@ export default class PollTableComponent extends Component {
     render() {
         let { mode, showAmountOfVotes } = this.props;
         return (
-            <View style={styles.container}>
-                <Table borderStyle={styles.border}>
-                    <Row data={this.state.tableHead} flexArr={mode == 'overview' ? [3, 3, 1, 2] : showAmountOfVotes ? [7, 7, 2, 2] : [4, 4, 1] } style={styles.head} textStyle={styles.textHeader}/>
-                    {mode === 'overview' ? this.renderRowsOverview() : this.renderRowsConfigure()}
-                </Table>
-                {mode === 'configure' ? this.renderPlusButton() : <></>}
-            </View>
+            <MountCheckingComponent setMounted={val => { this._ismounted = val; }}>
+                <View style={styles.container}>
+                    <Table borderStyle={styles.border}>
+                        <Row data={this.state.tableHead} flexArr={mode == 'overview' ? [3, 3, 1, 2] : showAmountOfVotes ? [7, 7, 2, 2] : [4, 4, 1] } style={styles.head} textStyle={styles.textHeader}/>
+                        {mode === 'overview' ? this.renderRowsOverview() : this.renderRowsConfigure()}
+                    </Table>
+                    {mode === 'configure' ? this.renderPlusButton() : <></>}
+                </View>
+            </MountCheckingComponent>
         );
     }
 
@@ -265,7 +273,7 @@ export default class PollTableComponent extends Component {
                                 confirmBtnText="Confirm"
                                 cancelBtnText="Cancel"
                                 showIcon={false}
-                                onDateChange={ () => this.setState({ newPollDate: { ...newPollDate, endTime: this.datePickerConvertDate('endTime') }})}
+                                onDateChange={ () => this.updateState({ newPollDate: { ...newPollDate, endTime: this.datePickerConvertDate('endTime') }})}
                                 customStyles={{ dateInput: { borderWidth: 0, alignItems: 'flex-start', paddingLeft: 6 }}}
                                 date={newPollDate.endTime}
                                 mode="datetime"
