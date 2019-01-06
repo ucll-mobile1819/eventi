@@ -66,7 +66,7 @@ class AddEventScreen extends React.Component {
     }
 
     changeType(typeBool) {
-        if(typeBool) {
+        if (typeBool) {
             this.updateState({
                 type: 'poll'
             });
@@ -118,18 +118,29 @@ class AddEventScreen extends React.Component {
 
                             <Textarea rowSpan={5} bordered placeholder="Description" style={{ width: undefined, marginLeft: 15 }} />
 
-                            <View style={{ flex: 1, flexDirection: 'row', marginLeft: 15, paddingTop: 20}}>
-                                <Text style={{ marginRight: 30}}>Event</Text>
+                            <View style={{ flex: 1, flexDirection: 'row', marginLeft: 15, paddingTop: 20 }}>
+                                <Text style={{ marginRight: 30 }}>Event</Text>
                                 <ToggleSwitch
                                     isOn={this.state.type === 'poll'}
                                     onColor='#3F51b5'
                                     offColor='#3F51b5'
                                     size='medium'
                                     onToggle={(type) => this.changeType(type)}
-                                    
+
                                 />
-                                <Text style={{ marginLeft: 30}}>Poll</Text>
+                                <Text style={{ marginLeft: 30 }}>Poll</Text>
                             </View>
+
+                            <View style={{ paddingTop: 20, marginLeft: 15}}>
+                                {this.state.type === 'poll' &&
+                                    <Text>PollDateComponent enz hier </Text>
+                                }
+
+                                {this.state.type === 'event' &&
+                                    <Text>Start time & end time date pickers hier</Text>
+                                }
+                            </View>
+
 
 
                             <Button style={{ margin: 15, width: undefined }} block primary >
