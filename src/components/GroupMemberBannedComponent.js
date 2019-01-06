@@ -9,7 +9,7 @@ export default class GroupMemberBannedComponent extends React.Component {
             'Unban member',
             'Are you sure you want to unban ' + this.props.member.username + '?',
             [
-                { text: 'Unban', onPress: () => this.banMember() },
+                { text: 'Unban', onPress: () => this.unbanMember() },
                 { text: 'Cancel', style: 'cancel' }
             ],
             { cancelable: false }
