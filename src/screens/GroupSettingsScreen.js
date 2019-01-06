@@ -203,8 +203,9 @@ class GroupSettingsScreen extends ValidationComponent {
                         <Tab heading="Members">
                             <FlatList
                                 data={this.props.members}
-                                renderItem={({ item }) => <GroupMemberComponent member={item} />}
+                                renderItem={({ item }) => <GroupMemberComponent member={item} groupId={this.props.group.id} />}
                                 keyExtractor={(member, index) => String(member.username)}
+                                style={{ padding: 20 }}
                             />
                         </Tab>
                         <Tab heading="Banned">
