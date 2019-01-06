@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, Button, View, TextInput, Alert } from 'react-native';
+import { Text, Button, View, TextInput, Alert, Clipboard } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
@@ -10,6 +10,7 @@ import groupStyles from '../styles/groupStyles';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ColorPalette from 'react-native-color-palette';
 import { putGroup } from '../network/group';
+import Snackbar from 'react-native-snackbar';
 
 
 class GroupSettingsScreen extends ValidationComponent {
@@ -69,6 +70,23 @@ class GroupSettingsScreen extends ValidationComponent {
         return true;
     }
 
+    async copyToClipboard() {
+        await Clipboard.setString(this.props.group.inviteCode);
+        Snackbar.show({
+            title: 'Invite code copied to clipboard',
+            duration: Snackbar.LENGTH_LONG,
+            action: {
+                title: 'CLOSE',
+                color: 'green',
+                onPress: () => Snackbar.dismiss(),
+            }
+        });
+    }
+
+    renewInviteCode() {
+        Alert.alert('placeholder');
+    }
+
     render() {
         return (
             <AuthenticatedComponent
@@ -81,6 +99,13 @@ class GroupSettingsScreen extends ValidationComponent {
                     style={{ padding: 20 }}
                 >
                     <Text style={groupStyles.subtitle}>Invite code</Text>
+                    <View style={{ flexDirection: 'row', marginBottom: 20, alignItems: 'center' }}>
+                        <Text>{this.props.group.inviteCode}</Text>
+                        <View style={{ marginLeft: 20, marginRight: 20 }}>
+                            <Button title="Copy" onPress={() => this.copyToClipboard()} />
+                        </View>
+                        <Button title="Renew" onPress={() => this.renewInviteCode()} />
+                    </View>
 
                     <Text style={groupStyles.subtitle}>Change group info</Text>
                     {this.isFieldInError('groupname') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('groupname')[0]}</Text>}
