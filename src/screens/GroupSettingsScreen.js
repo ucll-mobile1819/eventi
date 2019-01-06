@@ -33,13 +33,17 @@ class GroupSettingsScreen extends ValidationComponent {
             .then(() => {
                 this.setState({ showActivityIndicator: false });
                 if (this.props.error) return;
-                this.props.navigation.setParams({
-                    title: 'Settings',
-                    customHeaderBackgroundColor: this.props.group.color,
-                    headerTintColor: 'white', // Back arrow color
-                    headerTitleStyle: { color: 'white' }, // Title color
-                });
+                this.updateHeader();
             });
+    }
+
+    updateHeader() {
+        this.props.navigation.setParams({
+            title: 'Settings',
+            customHeaderBackgroundColor: this.state.color,
+            headerTintColor: 'white', // Back arrow color
+            headerTitleStyle: { color: 'white' }, // Title color
+        });
     }
 
     async updateGroup() {
