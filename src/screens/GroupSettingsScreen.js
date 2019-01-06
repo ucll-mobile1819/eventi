@@ -22,7 +22,8 @@ class GroupSettingsScreen extends ValidationComponent {
             showActivityIndicator: true,
             groupname: this.props.group.name,
             description: this.props.group.description,
-            color: this.props.group.color
+            color: this.props.group.color,
+            inviteCode: this.props.group.inviteCode
         };
     }
 
@@ -89,6 +90,8 @@ class GroupSettingsScreen extends ValidationComponent {
 
         if (response !== false) {
             // TODO refresh inviteCode on screen
+            this.props.fetchGroup(this.props.group.id)
+                .then(() => this.setState({ ...this.props.group }));
 
             Snackbar.show({
                 title: 'Invite code renewed',
@@ -134,10 +137,6 @@ class GroupSettingsScreen extends ValidationComponent {
             });
             this.props.navigation.push('Groups');
         }
-    }
-
-    showSnackBar(message) {
-        
     }
 
     render() {
