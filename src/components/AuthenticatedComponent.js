@@ -9,6 +9,7 @@ export default class AuthenticatedComponent extends Component {
         if (!this.props.showActivityIndicator) this.props.showActivityIndicator = () => false;
         this.checkingAuth = false;
         this.onLoadExecuted = false;
+        this.isBackPause = false;
     }
 
     async componentDidMount() {
@@ -20,6 +21,7 @@ export default class AuthenticatedComponent extends Component {
 
     componentWillUnmount() {
         this.routeSubscription.remove();
+        if (this.props.onBack instanceof Function) this.props.onBack();
     }
 
     onRouteStateChanged = () => {
@@ -27,7 +29,11 @@ export default class AuthenticatedComponent extends Component {
     };
 
     async onNavWillFocus() {
-        if (!this.onLoadExecuted) {
+        let exec = false;
+        let back = this.props.isBack instanceof Function && this.props.isBack() && !this.isBackPause;
+        if (!this.onLoadExecuted || back) {
+            if (back) this.isBackPause = true;
+            setTimeout(() => { this.isBackPause = false; }, 1000);
             this.onLoadExecuted = true;
             // Will only run once for each component
             if (this.checkingAuth) return;
