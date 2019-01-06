@@ -81,6 +81,6 @@ export const fetchAttBegin = () => ({
 
 export const fetchAttSuccess = status => ({
     type: FETCH_ATT_SUCCESS,
-    payload: { status },
+    payload: {status} ,
 });
 

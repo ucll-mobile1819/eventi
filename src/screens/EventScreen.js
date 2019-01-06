@@ -20,6 +20,7 @@ const red = '#DD1111';
 const green = '#11DD52';
 const grey = '#a8aeb7';
 
+
 class EventScreen extends React.Component {
     constructor(props) {
         super(props);
@@ -35,6 +36,13 @@ class EventScreen extends React.Component {
         this.props.fetchEvent(this.props.navigation.state.params.id)
             .then(this.props.fetchAtt(this.props.navigation.state.params.id))
             .then(() => {
+                let attendances = this.props.status;
+                let going = attendances.filter(el => el.status === 'Going').map(el => { firstname: el.firstname});
+                let notGoing = attendances.filter(el => el.status === 'Not going').map(el => { firstname: el.firstname});
+                
+                console.log(going);
+                console.log(notGoing);
+
                 this.setState({
                     showActivityIndicator: false,
                     event: this.props.events.find(e => e.id === this.props.navigation.state.params.id)
@@ -89,7 +97,7 @@ class EventScreen extends React.Component {
     }
 
     render() {
-
+        
         let event = this.state.event;
         let time = "No date yet";
         if(event.startTime !== null){
@@ -144,7 +152,7 @@ class EventScreen extends React.Component {
                             <View>
                                 <Body>
                                     <Text>
-                                        {event.address} {event.city} {event.country}
+                                        
                                     </Text>
                                 </Body>
                             </View>
@@ -199,7 +207,6 @@ shadowOpacity: 0, elevation: 0}}>
   });
 
 const mapStateToProps = state => {
-    console.log(state.event.status);
     return {
         events: state.event.events,
         status: state.event.status,
