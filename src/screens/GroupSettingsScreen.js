@@ -143,7 +143,7 @@ class GroupSettingsScreen extends ValidationComponent {
     }
 
     isOwner() {
-        return this.props.user.username === this.props.group.creator.username;
+        return this.props.user.username === this.props.group.creator;
     }
 
     askLeaveGroup() {
