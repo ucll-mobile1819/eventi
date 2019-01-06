@@ -13,6 +13,7 @@ export default class AuthenticatedComponent extends Component {
     }
 
     async componentDidMount() {
+        if (this.props.setMounted instanceof Function) this.props.setMounted(true);
         this.onNavWillFocus();
         this.routeSubscription = DeviceEventEmitter.addListener('routeStateChanged', this.onRouteStateChanged);
         this.checkingAuth = true;
@@ -20,6 +21,7 @@ export default class AuthenticatedComponent extends Component {
     }
 
     componentWillUnmount() {
+        if (this.props.setMounted instanceof Function) this.props.setMounted(false);
         this.routeSubscription.remove();
         if (this.props.onBack instanceof Function) this.props.onBack();
     }
