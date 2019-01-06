@@ -23,6 +23,7 @@ PROPS:
     fixed: function which returns boolean, i.e.: () => { ... return true||false; }
     newPollDateAdded: function, i.e.: (newPollDate) => { ... }
     pollDateRemoved: function, i.e.: (pollDateId) => { ... }
+    pollDateSelected: function, i.e.: (id) => { ... } (id can be null for deselecting)
 */
 
 export default class PollTableComponent extends Component {
@@ -68,6 +69,7 @@ export default class PollTableComponent extends Component {
             tableData,
             newPollDate: null,
             lastInterval: 0,
+            selectedPollDateId: null,
         };
     }
 
@@ -149,6 +151,15 @@ export default class PollTableComponent extends Component {
         });
     }
 
+    selectPollDate(id) {
+        if (!this.props.selectable || (this.props.fixed instanceof Function && this.props.fixed())) return;
+        if (this.state.selectedPollDateId === id) id = null;
+        this.setState({
+            selectedPollDateId: id
+        });
+        if (this.props.pollDateSelected instanceof Function) this.props.pollDateSelected(id);
+    }
+
     render() {
         let { mode, showAmountOfVotes } = this.props;
         return (
@@ -194,15 +205,30 @@ export default class PollTableComponent extends Component {
 
     renderRowsConfigure() {
         let pollDates = this.getPollDates();
-        let newPollDate = this.state.newPollDate;
-        let { pollDateVotes, showAmountOfVotes } = this.props;
+        let { newPollDate, selectedPollDateId } = this.state;
+        let { pollDateVotes, showAmountOfVotes, fixed } = this.props;
         return (
             <>
                 {this.sortPollDates(pollDates).map((item, index) => 
-                    <TableWrapper key={index} flexArr={showAmountOfVotes ? [7, 7, 2, 2] : [4, 4, 1]} style={styles.row} borderStyle={styles.border}>
-                        <Cell key={0} flex={showAmountOfVotes ? 7 : 4} data={this.formatDate(item.startTime)} textStyle={styles.date}/>
-                        <Cell key={1} flex={showAmountOfVotes ? 7 : 4} data={this.formatDate(item.endTime)} textStyle={styles.date}/>
-                        {showAmountOfVotes ? <Cell key={2} flex={2} data={item.votes} textStyle={styles.votes}/> : <></>}
+                    <TableWrapper
+                    key={index}
+                    flexArr={showAmountOfVotes ? [7, 7, 2, 2] : [4, 4, 1]}
+                    style={item.id !== selectedPollDateId ? styles.row : fixed instanceof Function && fixed() ? styles.rowFixed : styles.rowSelected}
+                    borderStyle={styles.border}
+                    >
+                        <TouchableWithoutFeedback onPress={() => this.selectPollDate(item.id)}>
+                            <Cell key={0} flex={showAmountOfVotes ? 7 : 4} data={this.formatDate(item.startTime)} textStyle={styles.date}/>
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback onPress={() => this.selectPollDate(item.id)}>
+                            <Cell key={1} flex={showAmountOfVotes ? 7 : 4} data={this.formatDate(item.endTime)} textStyle={styles.date}/>
+                        </TouchableWithoutFeedback>
+                        {showAmountOfVotes ?
+                            <TouchableWithoutFeedback onPress={() => this.selectPollDate(item.id)}>
+                                <Cell key={2} flex={2} data={item.votes} textStyle={styles.votes}/>
+                            </TouchableWithoutFeedback> : 
+                            <></>
+                        }
+                        <TouchableWithoutFeedback onPress={() => this.selectPollDate(item.id)}>
                         <Cell key={showAmountOfVotes ? 3 : 2} flex={showAmountOfVotes ? 2 : 1} data={
                             <View style={styles.buttonContainer}>
                                 <TouchableWithoutFeedback onPress={() => this.removePollDate(item.id)}>
@@ -210,6 +236,7 @@ export default class PollTableComponent extends Component {
                                 </TouchableWithoutFeedback>
                             </View>
                         }/>
+                        </TouchableWithoutFeedback>
                     </TableWrapper>
                 )}
                 {newPollDate != null &&
@@ -296,6 +323,14 @@ const styles = StyleSheet.create({
     row: {
         flexDirection: 'row',
         backgroundColor: 'white',
+    },
+    rowSelected: {
+        flexDirection: 'row',
+        backgroundColor: '#CDD0FB',
+    },
+    rowFixed: {
+        flexDirection: 'row',
+        backgroundColor: '#9FF69A',
     },
     text: {
         marginLeft: 6,
