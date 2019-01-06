@@ -34,7 +34,7 @@ class GroupSettingsScreen extends ValidationComponent {
         this.props.fetchGroup(this.props.navigation.state.params.id)
             .then(() => {
                 this.props.fetchMembers(this.props.group.id);
-                this.props.fetchBannedUsers(this.props.group.id);
+                if (this.isOwner()) this.props.fetchBannedUsers(this.props.group.id);
                 this.updateState({ showActivityIndicator: false });
                 if (this.props.error) return;
                 this.updateHeader();
