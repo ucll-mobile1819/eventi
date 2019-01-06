@@ -23,6 +23,11 @@ class ProfileScreen extends ValidationComponent {
         this.state = this.getClearedState();
     }
 
+    updateState(obj, callback) {
+        if (!this._ismounted) return;
+        this.setState(obj, callback);
+    }
+
     getClearedState() {
         return {
             password: '',
@@ -39,7 +44,7 @@ class ProfileScreen extends ValidationComponent {
         });
 
         this.props.fetchUser()
-            .then(() => this.setState({ ...this.props.user }));
+            .then(() => this.updateState({ ...this.props.user }));
     }
 
     async logout() {
@@ -67,7 +72,7 @@ class ProfileScreen extends ValidationComponent {
                 }
             });
             this.props.fetchUser()
-                .then(() => this.setState({ ...this.props.user }));
+                .then(() => this.updateState({ ...this.props.user }));
         }
     }
 
@@ -91,7 +96,7 @@ class ProfileScreen extends ValidationComponent {
                 }
             });
             this.props.fetchUser()
-                .then(() => this.setState({ ...this.props.user }))
+                .then(() => this.updateState({ ...this.props.user }))
                 .then(() => this.props.navigation.setParams({
                     title: this.state.firstname + ' ' + this.state.lastname,
                 }));
@@ -128,20 +133,20 @@ class ProfileScreen extends ValidationComponent {
 
     render() {
         return (
-            <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
+            <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 <KeyboardAwareScrollView resetScrollToCoords={{ x: 0, y: 0 }} style={{ padding: 20 }}  >
                     <Text style={profileStyles.title}> Change User Info</Text>
                     {this.isFieldInError('firstname') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('firstname')[0]}</Text>}
                     <TextInput
                         style={[groupStyles.inputField, { flex: 1 }]}
-                        onChangeText={firstname => this.setState({ firstname })}
+                        onChangeText={firstname => this.updateState({ firstname })}
                         value={this.state.firstname}
                         placeholder='First name'
                     />
                     {this.isFieldInError('lastname') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('lastname')[0]}</Text>}
                     <TextInput
                         style={[groupStyles.inputField, { flex: 1 }]}
-                        onChangeText={lastname => this.setState({ lastname })}
+                        onChangeText={lastname => this.updateState({ lastname })}
                         value={this.state.lastname}
                         placeholder='Last name'
                     />
@@ -156,7 +161,7 @@ class ProfileScreen extends ValidationComponent {
                         onDateChange={birthday => {
                             birthday = birthday.split('-');
                             birthday = new Date(birthday[2].substring(0, 4), birthday[1]-1, birthday[0]);
-                            this.setState({ birthday });
+                            this.updateState({ birthday });
                         }}
                         customStyles={{ dateInput: { borderWidth: 0, alignItems: 'flex-start', paddingLeft: 2 } }}
                         date={this.state.birthday}
@@ -170,7 +175,7 @@ class ProfileScreen extends ValidationComponent {
                     <TextInput
                         style={[groupStyles.inputField, { flex: 1 }]}
                         secureTextEntry={true}
-                        onChangeText={password => this.setState({ password })}
+                        onChangeText={password => this.updateState({ password })}
                         value={this.state.password}
                         placeholder='Password'
                     />
@@ -178,7 +183,7 @@ class ProfileScreen extends ValidationComponent {
                     <TextInput
                         style={[groupStyles.inputField, { flex: 1 }]}
                         secureTextEntry={true}
-                        onChangeText={passwordConfirmation => this.setState({ passwordConfirmation })}
+                        onChangeText={passwordConfirmation => this.updateState({ passwordConfirmation })}
                         value={this.state.passwordConfirmation}
                         placeholder='Password confirmation'
                     />

@@ -9,11 +9,17 @@ import ColorPalette from 'react-native-color-palette';
 import Snackbar from 'react-native-snackbar';
 import groupStyles from '../styles/groupStyles';
 import loginregisterStyles from '../styles/loginregister';
+import AuthenticatedComponent from '../components/AuthenticatedComponent';
 
 export default class CreateGroupScreen extends ValidationComponent {
     constructor(props) {
         super(props);
         this.state = this.getClearedState();
+    }
+
+    updateState(obj, callback) {
+        if (!this._ismounted) return;
+        this.setState(obj, callback);
     }
 
     getClearedState() {
@@ -62,7 +68,7 @@ export default class CreateGroupScreen extends ValidationComponent {
             //     }
             // });
         }
-        this.setState(this.getClearedState());
+        this.updateState(this.getClearedState());
         this.props.navigation.push('Groups');
     }
 
@@ -79,7 +85,7 @@ export default class CreateGroupScreen extends ValidationComponent {
 
     async onNavWillFocus() {
         this._resetErrors();
-        this.setState(this.getClearedState());
+        this.updateState(this.getClearedState());
         if (await isAuthenticated()) {
             this.props.navigation.navigate('Groups'); // ?
         }
@@ -87,38 +93,40 @@ export default class CreateGroupScreen extends ValidationComponent {
 
     render() {
         return (
-            <KeyboardAwareScrollView resetScrollToCoords={{ x: 0, y: 0 }} contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }} >
-                {/* <NavigationEvents onWillFocus={() => this.onNavWillFocus()} /> */}
-                <View style={{ flex: 1, padding: 20 }} >
-                    {this.isFieldInError('groupname') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('groupname')[0]}</Text>}
-                    <TextInput
-                        style={groupStyles.inputField}
-                        placeholder="Group name"
-                        value={this.state.groupname}
-                        onChangeText={groupname => this.setState({ groupname })}
-                    />
-                    {this.isFieldInError('description') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('description')[0]}</Text>}
-                    <TextInput
-                        style={groupStyles.inputField}
-                        placeholder="Description"
-                        value={this.state.description}
-                        onChangeText={description => this.setState({ description })}
-                    />
-                    <Text style={groupStyles.subtitle}>Pick a group color</Text>
-                    {this.isFieldInError('color') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('color')[0]}</Text>}
-                    <ColorPalette
-                        onChange={color => this.setState({ color })}
-                        colors={['#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4', '#009688', '#4CAF50',
-                            '#8BC34A', '#CDDC39', /*'#FFE105'*/, '#FFC107', '#FF9800', '#FF5722', '#795548', '#9E9E9E', '#607D8B', '#000000']}
-                        icon={<Text style={{ color: 'white' }}>✔</Text>}
-                        title={''}
-                    />
-                    <Button
-                        title="Create group"
-                        onPress={() => this.createGroup()}
-                    />
-                </View>
-            </KeyboardAwareScrollView>
+            <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} navigate={this.props.navigation.navigate}>
+                <KeyboardAwareScrollView resetScrollToCoords={{ x: 0, y: 0 }} contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }} >
+                    {/* <NavigationEvents onWillFocus={() => this.onNavWillFocus()} /> */}
+                    <View style={{ flex: 1, padding: 20 }} >
+                        {this.isFieldInError('groupname') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('groupname')[0]}</Text>}
+                        <TextInput
+                            style={groupStyles.inputField}
+                            placeholder="Group name"
+                            value={this.state.groupname}
+                            onChangeText={groupname => this.updateState({ groupname })}
+                        />
+                        {this.isFieldInError('description') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('description')[0]}</Text>}
+                        <TextInput
+                            style={groupStyles.inputField}
+                            placeholder="Description"
+                            value={this.state.description}
+                            onChangeText={description => this.updateState({ description })}
+                        />
+                        <Text style={groupStyles.subtitle}>Pick a group color</Text>
+                        {this.isFieldInError('color') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('color')[0]}</Text>}
+                        <ColorPalette
+                            onChange={color => this.updateState({ color })}
+                            colors={['#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4', '#009688', '#4CAF50',
+                                '#8BC34A', '#CDDC39', /*'#FFE105'*/, '#FFC107', '#FF9800', '#FF5722', '#795548', '#9E9E9E', '#607D8B', '#000000']}
+                            icon={<Text style={{ color: 'white' }}>✔</Text>}
+                            title={''}
+                        />
+                        <Button
+                            title="Create group"
+                            onPress={() => this.createGroup()}
+                        />
+                    </View>
+                </KeyboardAwareScrollView>
+            </AuthenticatedComponent>
         );
     }
 }

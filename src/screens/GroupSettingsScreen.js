@@ -31,10 +31,15 @@ class GroupSettingsScreen extends ValidationComponent {
     onLoad() {
         this.props.fetchGroup(this.props.navigation.state.params.id)
             .then(() => {
-                this.setState({ showActivityIndicator: false });
+                this.updateState({ showActivityIndicator: false });
                 if (this.props.error) return;
                 this.updateHeader();
             });
+    }
+
+    updateState(obj, callback) {
+        if (!this._ismounted) return;
+        this.setState(obj, callback);
     }
 
     updateHeader() {
@@ -60,7 +65,7 @@ class GroupSettingsScreen extends ValidationComponent {
         if (response !== false) {
             // TODO refresh state with group info
             this.props.fetchGroup(response.id)
-                .then(() => this.setState({ ...this.props.group }))
+                .then(() => this.updateState({ ...this.props.group }))
                 .then(() => this.props.fetchGroups())
                 .then(() => this.props.navigation.navigate('Group', { id: response.id }));
 
@@ -89,7 +94,7 @@ class GroupSettingsScreen extends ValidationComponent {
 
         if (response !== false) {
             this.props.fetchGroup(this.props.group.id)
-                .then(() => this.setState({ ...this.props.group }));
+                .then(() => this.updateState({ ...this.props.group }));
 
             this.showSnackBar('Invite code renewed');
         }
@@ -113,7 +118,7 @@ class GroupSettingsScreen extends ValidationComponent {
         if (response !== false) {
             // this.showSnackBar('Group deleted'); // Not working
             Alert.alert('Group deleted', 'The group was successfully deleted.');
-            this.setState({
+            this.updateState({
                 groupname: '',
                 description: '',
                 color: ''
@@ -140,6 +145,7 @@ class GroupSettingsScreen extends ValidationComponent {
                 showActivityIndicator={() => this.state.showActivityIndicator}
                 navigate={this.props.navigation.navigate}
                 onLoad={this.onLoad.bind(this)}
+                setMounted={val => { this._ismounted = val; }}
             >
                 <Container>
                     <Tabs>
@@ -163,18 +169,18 @@ class GroupSettingsScreen extends ValidationComponent {
                                     style={groupStyles.inputField}
                                     placeholder="Group name"
                                     value={this.state.groupname}
-                                    onChangeText={groupname => this.setState({ groupname })}
+                                    onChangeText={groupname => this.updateState({ groupname })}
                                 />
                                 {this.isFieldInError('description') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('description')[0]}</Text>}
                                 <TextInput
                                     style={groupStyles.inputField}
                                     placeholder="Description"
                                     value={this.state.description}
-                                    onChangeText={description => this.setState({ description })}
+                                    onChangeText={description => this.updateState({ description })}
                                 />
                                 {this.isFieldInError('color') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('color')[0]}</Text>}
                                 <ColorPalette
-                                    onChange={color => this.setState({ color })}
+                                    onChange={color => this.updateState({ color })}
                                     value={this.props.group.color}
                                     colors={['#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4', '#009688', '#4CAF50',
                                         '#8BC34A', '#CDDC39', '#FFC107', '#FF9800', '#FF5722', '#795548', '#9E9E9E', '#607D8B', '#000000']}
