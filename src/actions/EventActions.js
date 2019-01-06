@@ -12,7 +12,7 @@ export const FETCH_EVENT_SUCCESS = 'FETCH_EVENT_SUCCESS';
 
 export const fetchEvents = () => dispatch => {
     dispatch(fetchEventsBegin());
-    eventAPI.getEvents()
+    return eventAPI.getEvents()
     .then(events => dispatch(fetchEventsSuccess(events)))
     .catch(error => dispatch(fetchFailure(error)));
 };
@@ -30,7 +30,7 @@ export const fetchEventsBegin = () => ({
 
 export const fetchEventsSuccess = events => ({
     type: FETCH_EVENTS_SUCCESS,
-    payload: { events },
+    payload:  {events} ,
 });
 
 export const changeStatusEventBegin = () => ({

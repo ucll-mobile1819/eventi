@@ -114,7 +114,11 @@ export default class RegisterScreen extends ValidationComponent {
                     maxDate={new Date()}
                     confirmBtnText="Confirm"
                     cancelBtnText="Cancel"
-                    onDateChange={birthday => {this.setState({ birthday })}}
+                    onDateChange={ birthday => {
+                        birthday = birthday.split('-');
+                        birthday = new Date(birthday[2].substring(0, 4), birthday[1]-1, birthday[0]);
+                        this.setState({ birthday });
+                    }}
                     customStyles={{ dateInput: { borderWidth: 0, alignItems: 'flex-start', paddingLeft: 2 }}}
                     date={this.state.birthday}
                 />
