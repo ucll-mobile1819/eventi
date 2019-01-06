@@ -22,6 +22,7 @@ class AddEventScreen extends React.Component {
             selectedPollDateId: null, // id of pd which is selected, needed for ending poll & choosing pd
             // (when saving form and changes are made AND poll is ended: first do one, then the other (end poll / PUT event), not at the same time)
             pollDateFixed: false, // if true, user can not deselect chosen pd or select another
+            type: 'event',
         };
     }
 
@@ -62,6 +63,19 @@ class AddEventScreen extends React.Component {
 
     pollDateSelected(selectedPollDateId) {
         this.updateState({ selectedPollDateId });
+    }
+
+    changeType(typeBool) {
+        if(typeBool) {
+            this.updateState({
+                type: 'poll'
+            });
+        }
+        else {
+            this.updateState({
+                type: 'event'
+            });
+        }
     }
 
     render() {
@@ -107,12 +121,12 @@ class AddEventScreen extends React.Component {
                             <View style={{ flex: 1, flexDirection: 'row', marginLeft: 15, paddingTop: 20}}>
                                 <Text style={{ marginRight: 30}}>Event</Text>
                                 <ToggleSwitch
-                                    isOn={false}
+                                    isOn={this.state.type === 'poll'}
                                     onColor='green'
                                     offColor='red'
                                     labelStyle={{ color: 'black', fontWeight: '900' }}
                                     size='medium'
-                                    onToggle={(isOn) => console.log('changed to : ', isOn)}
+                                    onToggle={(type) => this.changeType(type)}
                                     
                                 />
                                 <Text style={{ marginLeft: 30}}>Poll</Text>
