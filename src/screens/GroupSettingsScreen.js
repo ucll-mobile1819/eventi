@@ -4,11 +4,12 @@ import { Container, Tab, Tabs } from 'native-base';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
-import { fetchGroup, fetchGroups, fetchMembers } from '../actions/GroupActions';
+import { fetchGroup, fetchGroups, fetchMembers, fetchBannedUsers } from '../actions/GroupActions';
 import ValidationComponent from '../components/ValidationComponent';
 import loginregisterStyles from '../styles/loginregister';
 import groupStyles from '../styles/groupStyles';
 import GroupMemberComponent from '../components/GroupMemberComponent';
+import GroupMemberBannedComponent from '../components/GroupMemberBannedComponent';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ColorPalette from 'react-native-color-palette';
 import { putGroup, putGenerateInviteCode, deleteGroup, deleteUser } from '../network/group';
@@ -32,7 +33,8 @@ class GroupSettingsScreen extends ValidationComponent {
     onLoad() {
         this.props.fetchGroup(this.props.navigation.state.params.id)
             .then(() => {
-                this.props.fetchMembers(this.props.group.id)
+                this.props.fetchMembers(this.props.group.id);
+                this.props.fetchBannedUsers(this.props.group.id);
                 this.updateState({ showActivityIndicator: false });
                 if (this.props.error) return;
                 this.updateHeader();
@@ -250,7 +252,12 @@ class GroupSettingsScreen extends ValidationComponent {
                         </Tab>
                         {this.isOwner() &&
                         <Tab heading="Banned">
-                            <Text>Banned members</Text>
+                            <FlatList
+                                data={this.props.bannedUsers}
+                                renderItem={({ item }) => <GroupMemberBannedComponent member={item} groupId={this.props.group.id}/>}
+                                keyExtractor={(member, index) => String(member.username)}
+                                style={{ padding: 20 }}
+                            />
                         </Tab>
                         }
                     </Tabs>
@@ -266,13 +273,14 @@ const mapStateToProps = state => {
         loading: state.group.loading,
         error: state.group.error,
         members: state.group.members,
+        bannedUsers: state.group.bannedUsers,
         user: state.user.user
     };
 };
 
 const mapDispatchToProps = dispatch => (
     bindActionCreators({
-        fetchGroup, fetchGroups, fetchMembers
+        fetchGroup, fetchGroups, fetchMembers, fetchBannedUsers
     }, dispatch)
 );
 
