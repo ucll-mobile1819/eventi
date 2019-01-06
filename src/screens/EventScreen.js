@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, TouchableWithoutFeedback, StyleSheet, ActivityIndicator } from 'react-native';
+import { Text, TouchableWithoutFeedback, StyleSheet, ActivityIndicator, SectionList } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
@@ -13,13 +13,14 @@ import IconMat from 'react-native-vector-icons/MaterialIcons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import groupStyles from '../styles/groupStyles';
 import { Table, TableWrapper, Row } from 'react-native-table-component';
-
 const months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
 
 const red = '#DD1111';
 const green = '#11DD52';
 const grey = '#a8aeb7';
 
+let going = [];
+let notGoing = [];
 
 class EventScreen extends React.Component {
     constructor(props) {
@@ -27,6 +28,7 @@ class EventScreen extends React.Component {
         this.state = {
             showActivityIndicator: true,
             event: this.props.emptyEvent,
+            groupData: ["items", "lol"],
         };
     }
     static navigationOptions = obj => obj.navigation.state.params;
@@ -39,19 +41,16 @@ class EventScreen extends React.Component {
     onLoad() {
         
         this.props.fetchEvent(this.props.navigation.state.params.id)
-            .then(this.props.fetchAtt(this.props.navigation.state.params.id))
+            .then(() => this.props.fetchAtt(this.props.navigation.state.params.id))
             .then(() => {
                 let attendances = this.props.status;
-                let going = attendances.filter(el => el.status === 'Going').map(el => { firstname: el.firstname, lastname: el.lastname});
-                let notGoing = attendances.filter(el => el.status === 'Not going').map(el => { firstname: el.firstname});
-                console.log("Status begin");
-                console.log(attendances);
-                console.log("Status end");
-                console.log(going);
                 this.setState({
                     showActivityIndicator: false,
+                    groupData: [],
                     event: this.props.events.find(e => e.id === this.props.navigation.state.params.id)
                 }, () => {
+
+                    this.setGeusts();
                     // Callback: when the state has been updated, we will update the header with the new event data
                     if (this.props.error) return;
                     this.props.navigation.setParams({
@@ -74,6 +73,20 @@ class EventScreen extends React.Component {
     getGeustList(){
 
     }
+    setGeusts(){
+        let attendances = this.props.status;
+        going = attendances.filter(el => el.status === 'Going').map(el => {return {firstname: el.user.firstname, lastname: el.user.lastname }});
+        notGoing = attendances.filter(el => el.status === 'Not going').map(el => {return {firstname: el.user.firstname, lastname: el.user.lastname }});
+        console.log(going);
+        console.log(notGoing);
+        going = going.map(el => {return(el.firstname+" "+el.lastname)});
+        notGoing = notGoing.map(el => {return(el.firstname+" "+el.lastname)});
+        this.setState({
+            showActivityIndicator: false,
+            groupData: going,
+            event: this.props.events.find(e => e.id === this.props.navigation.state.params.id)
+        })
+    }
     getDateDisplayFormat(date) {
         return date.getDate() + ' ' + months[date.getMonth()];
     }
@@ -90,7 +103,11 @@ class EventScreen extends React.Component {
     }
     notGoingToEvent(id){
         //Set event on not going
-        this.props.changeStatus(id , "Not going");
+        this.props.changeStatus(id , "Not going")
+        .then(() => {
+            this.props.fetchAtt(id)
+            .then(()=> this.setGeusts())
+        })
         
     }
 
@@ -98,7 +115,12 @@ class EventScreen extends React.Component {
         console.log(id);
         //Set event on going
         // if()
-        this.props.changeStatus(id , "Going");
+        // this.props.changeStatus(id , "Going")
+        this.props.changeStatus(id , "Going")
+        .then(() => {
+            this.props.fetchAtt(id)
+            .then(()=> this.setGeusts())
+        })
     }
 
     render() {
@@ -150,20 +172,17 @@ class EventScreen extends React.Component {
                     <Tab  style={{backgroundColor: '#E9E9EF'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
                     heading="Geusts">
                         <Container style={{backgroundColor: '#E9E9EF'}}>
-                        <Card style={{ backgroundColor: "transparent",elevation: 0,borderColor:"transparent"}}>
-                        <CardItem style={{ backgroundColor: "transparent",elevation: 0 ,borderColor:"transparent"}}>
-                            <View>
-                            <IconEvil name="location" size={30}/> 
-                            </View>            
-                            <View>
-                                <Body>
-                                    <Text>
-                                        
-                                    </Text>
-                                </Body>
-                            </View>
-                        </CardItem>
-                        </Card>
+                        <SectionList
+                            renderItem={({item, index, section}) => <Text style={{margin: 8,fontSize: 15}} key={index}>{item}</Text>}
+                            renderSectionHeader={({section: {title}}) => (
+                                <Text style={{fontWeight: 'bold',margin: 8,fontSize: 25}}>{title}</Text>
+                            )}
+                            sections={[
+                                {title: 'Going', data: this.state.groupData},
+                                {title: 'Not going', data: notGoing},
+                            ]}
+                            keyExtractor={(item, index) => item + index}
+                        />
                         </Container>
                     </Tab>
                     <Tab  style={{backgroundColor: '#E9E9EF'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 

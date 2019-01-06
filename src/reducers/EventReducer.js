@@ -53,7 +53,6 @@ const eventReducer = (state = INITIAL_STATE, action) => {
                 error: null // Needed to reset any previous errors
             };
         case FETCH_ATT_SUCCESS:
-            console.log(1);
             return {
                 ...state,
                 loading: false,
