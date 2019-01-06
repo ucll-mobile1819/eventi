@@ -77,7 +77,7 @@ router.post('/:id/attendance', middleware.auth.loggedIn, (req, res, next) => {
 });
 
 router.put('/:id', middleware.auth.loggedIn, (req, res, next) => {
-    eventService.updateEvent(req.user, req.params.id, req.body.name, req.body.description, req.body.startTime, req.body.endTime, req.body.locationName, req.body.zipcode, req.body.city, req.body.address, req.body.country)
+    eventService.updateEvent(req.user, req.params.id, req.body.name, req.body.description, req.body.startTime, req.body.endTime, req.body.locationName, req.body.zipcode, req.body.city, req.body.address, req.body.country, req.body.pollDates)
     .then(event => res.send(event))
     .catch(next);
 });

@@ -67,10 +67,12 @@ function createPoll(currentUser, groupId, name, description, startTime, endTime,
     });
 }
 
-function updateEvent(currentUser, eventId, name, description, startTime, endTime, locationName, address, zipcode, city, country) {
+function updateEvent(currentUser, eventId, name, description, startTime, endTime, locationName, address, zipcode, city, country, newPollDates) {
     return new Promise((res, rej) => {
         [ name, description, locationName, address, zipcode, city, country ] = trimStrings([ name, description, locationName, address, zipcode, city, country ]);
         let tmpEvent;
+        let pds = [];
+        let pdsDestroy = [];
         Event.Event.findById(eventId)
         .then(event => {
             if (!event) return Promise.reject(new Error('This event does not exist.'));
@@ -91,6 +93,32 @@ function updateEvent(currentUser, eventId, name, description, startTime, endTime
             tmpEvent.city = city;
             tmpEvent.country = country;
             return tmpEvent.save();
+        })
+        .then(() => tmpEvent.getPollDates())
+        .then(pollDates => {
+            let promisesCreate = [];
+            let promisesDestroy = [];
+            console.log(newPollDates);
+            if (newPollDates instanceof Array) {
+                newPollDates.forEach(newPollDate => {
+                    if (newPollDate.id === undefined || newPollDate.id === null) {
+                        promisesCreate.push(PollDate.PollDate.create({ start_time: newPollDate.startTime, end_time: newPollDate.endTime }));
+                    }
+                });
+                pollDates.forEach(pollDate => {
+                    if (!newPollDates.map(el => el.id).filter(el => el !== undefined && el !== null).includes(pollDate.id)) {
+                        pdsDestroy.push(pollDate);
+                        promisesDestroy.push(pollDate.setUsers([]));
+                    } else {
+                        pds.push(pollDate);
+                    }
+                });
+            }
+            return Promise.all([ promisesCreate.length, ...promisesCreate, ...promisesDestroy ]);
+        })
+        .then(results => {
+            if (!(newPollDates instanceof Array)) return;
+            return Promise.all([ tmpEvent.setPollDates(results.slice(1, results[0]+1).concat(pds)), ...pdsDestroy.map(el => el.destroy()) ]);
         })
         .then(() => essentialisizer.essentializyEvent(tmpEvent, currentUser.username))
         .then(res)
@@ -206,6 +234,7 @@ function getEvent(currentUser, eventId, essentializyResponse = true, addVotes = 
         .then(event => {
             if (!event) return Promise.reject(new Error('This event does not exist.'));
             tmpEvent = event;
+            if (event.type !== 'poll') addVotes = false;
             return event.getGroup();
         })
         .then(group => Promise.all([ group.getUsers({ where: { username: currentUser.username } }), getVotesFunc() ]))
