@@ -11,6 +11,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import ColorPalette from 'react-native-color-palette';
 import { putGroup } from '../network/group';
 
+
 class GroupSettingsScreen extends ValidationComponent {
     static navigationOptions = obj => obj.navigation.state.params;
 
@@ -50,7 +51,10 @@ class GroupSettingsScreen extends ValidationComponent {
 
         if (response !== false) {
             Alert.alert('Group updated succesfully!');
-            this.props.navigation.navigate('Group', { id: this.props.group.id });
+            // TODO refresh state with group info
+            // this.props.fetchGroup(this.props.navigation.state.params.id)
+            // .then(() => this.setState({ ...this.props.group}));
+            // this.props.navigation.push('Group', { id: this.props.group.id });
         }
     }
 
@@ -67,47 +71,48 @@ class GroupSettingsScreen extends ValidationComponent {
 
     render() {
         return (
-            <AuthenticatedComponent 
-                showActivityIndicator={() => this.state.showActivityIndicator} 
-                navigate={this.props.navigation.navigate} 
+            <AuthenticatedComponent
+                showActivityIndicator={() => this.state.showActivityIndicator}
+                navigate={this.props.navigation.navigate}
                 onLoad={this.onLoad.bind(this)}
             >
-                <KeyboardAwareScrollView 
-                    resetScrollToCoords={{ x: 0, y: 0 }} 
-                    contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }} 
+                <KeyboardAwareScrollView
+                    resetScrollToCoords={{ x: 0, y: 0 }}
+                    style={{ padding: 20 }}
                 >
-                    <View style={{ flex: 1, padding: 20 }} >
-                        {this.isFieldInError('groupname') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('groupname')[0]}</Text>}
-                        <TextInput
-                            style={groupStyles.inputField}
-                            placeholder="Group name"
-                            value={this.state.groupname}
-                            onChangeText={groupname => this.setState({ groupname })}
-                        />
-                        {this.isFieldInError('description') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('description')[0]}</Text>}
-                        <TextInput
-                            style={groupStyles.inputField}
-                            placeholder="Description"
-                            value={this.state.description}
-                            onChangeText={description => this.setState({ description })}
-                        />
-                        <Text style={groupStyles.subtitle}>Pick a group color</Text>
-                        {this.isFieldInError('color') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('color')[0]}</Text>}
-                        <ColorPalette
-                            onChange={color => this.setState({ color })}
-                            value={this.props.group.color}
-                            colors={['#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4', '#009688', '#4CAF50',
-                                '#8BC34A', '#CDDC39', '#FFC107', '#FF9800', '#FF5722', '#795548', '#9E9E9E', '#607D8B', '#000000']}
-                            icon={<Text style={{ color: 'white' }}>✔</Text>}
-                            title={''}
-                        />
-                        <Button
-                            title="Save changes"
-                            onPress={() => this.updateGroup()}
-                        />
-                    </View>
+                    <Text style={groupStyles.subtitle}>Invite code</Text>
+
+                    <Text style={groupStyles.subtitle}>Change group info</Text>
+                    {this.isFieldInError('groupname') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('groupname')[0]}</Text>}
+                    <TextInput
+                        style={groupStyles.inputField}
+                        placeholder="Group name"
+                        value={this.state.groupname}
+                        onChangeText={groupname => this.setState({ groupname })}
+                    />
+                    {this.isFieldInError('description') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('description')[0]}</Text>}
+                    <TextInput
+                        style={groupStyles.inputField}
+                        placeholder="Description"
+                        value={this.state.description}
+                        onChangeText={description => this.setState({ description })}
+                    />
+                    {this.isFieldInError('color') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('color')[0]}</Text>}
+                    <ColorPalette
+                        onChange={color => this.setState({ color })}
+                        value={this.props.group.color}
+                        colors={['#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4', '#009688', '#4CAF50',
+                            '#8BC34A', '#CDDC39', '#FFC107', '#FF9800', '#FF5722', '#795548', '#9E9E9E', '#607D8B', '#000000']}
+                        icon={<Text style={{ color: 'white' }}>✔</Text>}
+                        title={''}
+                    />
+                    <Button
+                        title="Save changes"
+                        onPress={() => this.updateGroup()}
+                    />
+                    <Text style={[groupStyles.subtitle, { marginTop: 15 }]}>Delete group</Text>
                 </KeyboardAwareScrollView>
-            </AuthenticatedComponent>
+            </AuthenticatedComponent >
         );
     }
 }
