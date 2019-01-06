@@ -53,7 +53,7 @@ class GroupSettingsScreen extends ValidationComponent {
         )
 
         if (response !== false) {
-            Alert.alert('Group updated succesfully!');
+            this.showSnackBar('Group updated');
             // TODO refresh state with group info
             // this.props.fetchGroup(this.props.navigation.state.params.id)
             // .then(() => this.setState({ ...this.props.group}));
@@ -74,34 +74,17 @@ class GroupSettingsScreen extends ValidationComponent {
 
     async copyToClipboard() {
         await Clipboard.setString(this.props.group.inviteCode);
-        Snackbar.show({
-            title: 'Invite code copied to clipboard',
-            duration: Snackbar.LENGTH_LONG,
-            action: {
-                title: 'CLOSE',
-                color: 'green',
-                onPress: () => Snackbar.dismiss(),
-            }
-        });
+        this.showSnackBar('Invite code copied to clipboard');
     }
 
     async renewInviteCode() {
         let response = await putGenerateInviteCode(this.props.group.id, true);
 
         if (response !== false) {
-            // TODO refresh inviteCode on screen
             this.props.fetchGroup(this.props.group.id)
                 .then(() => this.setState({ ...this.props.group }));
 
-            Snackbar.show({
-                title: 'Invite code renewed',
-                duration: Snackbar.LENGTH_LONG,
-                action: {
-                    title: 'CLOSE',
-                    color: 'green',
-                    onPress: () => Snackbar.dismiss(),
-                }
-            });
+            this.showSnackBar('Invite code renewed');
         }
     }
 
@@ -121,15 +104,8 @@ class GroupSettingsScreen extends ValidationComponent {
         let response = deleteGroup(this.props.group.id, true);
 
         if (response !== false) {
-            Snackbar.show({
-                title: 'Group deleted',
-                duration: Snackbar.LENGTH_LONG,
-                action: {
-                    title: 'CLOSE',
-                    color: 'green',
-                    onPress: () => Snackbar.dismiss(),
-                }
-            });
+            // this.showSnackBar('Group deleted'); // Not working
+            Alert.alert('Group deleted', 'The group was successfully deleted.');
             this.setState({
                 groupname: '',
                 description: '',
@@ -137,6 +113,18 @@ class GroupSettingsScreen extends ValidationComponent {
             });
             this.props.navigation.push('Groups');
         }
+    }
+
+    showSnackBar(message) {
+        Snackbar.show({
+            title: message,
+            duration: Snackbar.LENGTH_LONG,
+            action: {
+                title: 'CLOSE',
+                color: 'green',
+                onPress: () => Snackbar.dismiss(),
+            }
+        });
     }
 
     render() {
