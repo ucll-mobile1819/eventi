@@ -122,9 +122,8 @@ class AddEventScreen extends React.Component {
                                 <Text style={{ marginRight: 30}}>Event</Text>
                                 <ToggleSwitch
                                     isOn={this.state.type === 'poll'}
-                                    onColor='green'
-                                    offColor='red'
-                                    labelStyle={{ color: 'black', fontWeight: '900' }}
+                                    onColor='#3F51b5'
+                                    offColor='#3F51b5'
                                     size='medium'
                                     onToggle={(type) => this.changeType(type)}
                                     
