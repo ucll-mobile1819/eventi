@@ -1,9 +1,9 @@
 import React from 'react';
-import { Text, View, Button } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
 import PollTableComponent from '../components/PollTableComponent';
+import { Container, Content, Button, Text, Form, Item, Input, Label, Textarea, Picker, Icon } from 'native-base';
 
 // pd === pollDate
 
@@ -16,7 +16,7 @@ class AddEventScreen extends React.Component {
                 { id: 3, startTime: new Date(2019, 0, 20, 18, 0, 0), endTime: new Date(2019, 0, 20, 21, 0, 0), votes: 1 },
                 { id: 2, startTime: new Date(2019, 0, 20, 14, 30, 0), endTime: new Date(2019, 0, 20, 17, 30, 0), votes: 0 },
             ],
-            pollDateVotes: [ 1, 3 ], // hardcoded, to be loaded in with redux
+            pollDateVotes: [1, 3], // hardcoded, to be loaded in with redux
             selectedPollDateId: null, // id of pd which is selected, needed for ending poll & choosing pd
             // (when saving form and changes are made AND poll is ended: first do one, then the other (end poll / PUT event), not at the same time)
             pollDateFixed: false, // if true, user can not deselect chosen pd or select another
@@ -48,7 +48,7 @@ class AddEventScreen extends React.Component {
         let id = Math.min(...this.state.pollDates.map(el => el.id)) - 1;
         newPollDate.id = id;
         this.updateState({
-            pollDates: [ ...this.state.pollDates, newPollDate ],
+            pollDates: [...this.state.pollDates, newPollDate],
         });
     }
 
@@ -66,7 +66,55 @@ class AddEventScreen extends React.Component {
         return (
             <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} navigate={this.props.navigation.navigate}>
                 <Text>AddEventScreen</Text>
-                <View style={{ margin: 20 }}>
+                <Container style={{ backgroundColor: '#E9E9EF' }}>
+                    <Content padder>
+                        <Form>
+                            <Item floatingLabel>
+                                <Label>Name</Label>
+                                <Input />
+                            </Item>
+
+                            <Item floatingLabel>
+                                <Label>Location Name</Label>
+                                <Input />
+                            </Item>
+
+                            <Item floatingLabel>
+                                <Label>Address</Label>
+                                <Input />
+                            </Item>
+
+                            <Item>
+                                <Textarea rowSpan={5} placeholder="Description" />
+                            </Item>
+
+                            <Item picker>
+                                <Picker
+                                    mode="dropdown"
+                                    iosIcon={<Icon name="ios-arrow-down-outline" />}
+                                    placeholder="Group"
+                                    placeholderStyle={{ color: "#bfc6ea" }}
+                                    placeholderIconColor="#007aff"
+                                    style={{ width: undefined }}
+                                //selectedValue={this.state.selected}
+                                //onValueChange={this.onValueChange.bind(this)}
+                                >
+                                    <Picker.Item label="Group1" value="key0" />
+                                    <Picker.Item label="Group2" value="key1" />
+                                    <Picker.Item label="Group3" value="key2" />
+                                </Picker>
+                            </Item>
+
+
+
+                        </Form>
+
+                        <Button style={{ margin: 10 }} block primary >
+                            <Text>Submit</Text>
+                        </Button>
+                    </Content>
+                </Container>
+                {/* <View style={{ margin: 20 }}>
                     <PollTableComponent
                         // See top of file PollTableComponent.js for prop information
                         mode='configure'
@@ -85,7 +133,7 @@ class AddEventScreen extends React.Component {
                     onPress={() => this.updateState({ pollDateFixed: !this.state.pollDateFixed })}
                     title={this.state.pollDateFixed ? "Deselect final time" : "Pick final time"}
                     />
-                </View>
+                </View> */}
             </AuthenticatedComponent>
         );
     }
