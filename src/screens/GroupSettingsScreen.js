@@ -32,13 +32,17 @@ class GroupSettingsScreen extends ValidationComponent {
             .then(() => {
                 this.setState({ showActivityIndicator: false });
                 if (this.props.error) return;
-                this.props.navigation.setParams({
-                    title: 'Settings',
-                    customHeaderBackgroundColor: this.props.group.color,
-                    headerTintColor: 'white', // Back arrow color
-                    headerTitleStyle: { color: 'white' }, // Title color
-                });
+                this.updateHeader();
             });
+    }
+
+    updateHeader() {
+        this.props.navigation.setParams({
+            title: 'Settings',
+            customHeaderBackgroundColor: this.state.color,
+            headerTintColor: 'white', // Back arrow color
+            headerTitleStyle: { color: 'white' }, // Title color
+        });
     }
 
     async updateGroup() {
@@ -166,7 +170,7 @@ class GroupSettingsScreen extends ValidationComponent {
                     />
                     {this.isFieldInError('color') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('color')[0]}</Text>}
                     <ColorPalette
-                        onChange={color => this.setState({ color })}
+                        onChange={color => { this.setState({ color }, () => this.updateHeader()); }}
                         value={this.props.group.color}
                         colors={['#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4', '#009688', '#4CAF50',
                             '#8BC34A', '#CDDC39', '#FFC107', '#FF9800', '#FF5722', '#795548', '#9E9E9E', '#607D8B', '#000000']}
