@@ -128,7 +128,14 @@ export default class PollTableComponent extends Component {
     }
 
     removePollDate(id) {
+        if (this.props.fixed instanceof Function && this.props.fixed()) return;
         if (this.props.pollDateRemoved instanceof Function) this.props.pollDateRemoved(id);
+        if (id === this.state.selectedPollDateId) {
+            this.updateState({
+                selectedPollDateId: null
+            });
+            if (this.props.pollDateSelected instanceof Function) this.props.pollDateSelected(null);
+        }
     }
 
     datePickerConvertDate(dateCat) {
