@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Button, TextInput } from 'react-native';
+import { View, Text, Button, TextInput, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
@@ -8,6 +8,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import ValidationComponent from '../components/ValidationComponent';
 import loginregisterStyles from '../styles/loginregister';
 import groupStyles from '../styles/groupStyles';
+import profileStyles from '../styles/profileStyles';
 import DatePicker from 'react-native-datepicker';
 import { fetchUser } from '../actions/AuthenticationActions';
 import { putUser } from '../network/user';
@@ -57,7 +58,7 @@ class ProfileScreen extends ValidationComponent {
         );
         if (response !== false) {
             Snackbar.show({
-                title: 'Password succesfully updated',
+                title: 'Password successfully updated',
                 duration: Snackbar.LENGTH_LONG,
                 action: {
                     title: 'CLOSE',
@@ -81,7 +82,7 @@ class ProfileScreen extends ValidationComponent {
         );
         if (response !== false) {
             Snackbar.show({
-                title: 'Account succesfully updated',
+                title: 'Account successfully updated',
                 duration: Snackbar.LENGTH_LONG,
                 action: {
                     title: 'CLOSE',
@@ -129,18 +130,20 @@ class ProfileScreen extends ValidationComponent {
         return (
             <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 <KeyboardAwareScrollView resetScrollToCoords={{ x: 0, y: 0 }} style={{ padding: 20 }}  >
-                    <Text style={groupStyles.title}> Change User Info</Text>
+                    <Text style={profileStyles.title}> Change User Info</Text>
                     {this.isFieldInError('firstname') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('firstname')[0]}</Text>}
                     <TextInput
                         style={[groupStyles.inputField, { flex: 1 }]}
                         onChangeText={firstname => this.setState({ firstname })}
                         value={this.state.firstname}
+                        placeholder='First name'
                     />
                     {this.isFieldInError('lastname') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('lastname')[0]}</Text>}
                     <TextInput
                         style={[groupStyles.inputField, { flex: 1 }]}
                         onChangeText={lastname => this.setState({ lastname })}
                         value={this.state.lastname}
+                        placeholder='Last name'
                     />
                     <DatePicker
                         style={[groupStyles.inputField, { flex: 1, width: undefined }]}
@@ -151,21 +154,25 @@ class ProfileScreen extends ValidationComponent {
                         confirmBtnText="Confirm"
                         cancelBtnText="Cancel"
                         onDateChange={birthday => {
-                            birthday = new Date(birthday.split('-').reverse().join('-'));
+                            birthday = birthday.split('-');
+                            birthday = new Date(birthday[2].substring(0, 4), birthday[1]-1, birthday[0]);
                             this.setState({ birthday });
                         }}
                         customStyles={{ dateInput: { borderWidth: 0, alignItems: 'flex-start', paddingLeft: 2 } }}
                         date={this.state.birthday}
                     />
-                    <Button title="Change Info" onPress={() => this.changeInfo()} />
+                    <View style={profileStyles.button}>
+                        <Button title="Change Info" onPress={() => this.changeInfo()}/>
+                    </View>
 
-                    <Text style={groupStyles.title}>Change Password</Text>
+                    <Text style={profileStyles.title}>Change Password</Text>
                     { this.isFieldInError('password') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('password')[0]}</Text> }
                     <TextInput
                         style={[groupStyles.inputField, { flex: 1 }]}
                         secureTextEntry={true}
                         onChangeText={password => this.setState({ password })}
                         value={this.state.password}
+                        placeholder='Password'
                     />
                     { this.isFieldInError('passwordConfirmation') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('passwordConfirmation')[0]}</Text> }
                     <TextInput
@@ -173,10 +180,13 @@ class ProfileScreen extends ValidationComponent {
                         secureTextEntry={true}
                         onChangeText={passwordConfirmation => this.setState({ passwordConfirmation })}
                         value={this.state.passwordConfirmation}
+                        placeholder='Password confirmation'
                     />
-                    <Button title="Change Password" onPress={() => this.changePassword()} />
+                    <View style={profileStyles.button}>
+                        <Button title="Change Password" onPress={() => this.changePassword()}/>
+                    </View>
 
-                    <Text style={groupStyles.title}>Logout</Text>
+                    <Text style={profileStyles.title}>Logout</Text>
                     <View style={{ paddingBottom: 70 }}>
                         <Button title="Logout" onPress={() => this.logout()} color="#f44242" />
                     </View>
