@@ -38,7 +38,7 @@ export default class GroupMemberBannedComponent extends React.Component {
             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
                 <Text>{this.props.member.firstname} {this.props.member.lastname}</Text>
                 <Text style={{ flex: 1, marginLeft: 10 }}>({this.props.member.username})</Text>
-                <Button title="Unan" onPress={() => this.askUnbanMember()} />
+                <Button title="Unban" onPress={() => this.askUnbanMember()} />
             </View>
         );
     }
