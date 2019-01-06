@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { DeviceEventEmitter, ActivityIndicator, View, StyleSheet } from 'react-native';
 import { isAuthenticated } from "../auth";
 import { NavigationEvents } from 'react-navigation';
+import MountCheckingComponent from "./MountCheckingComponent";
 
 export default class AuthenticatedComponent extends Component {
     constructor(props) {
@@ -13,7 +14,6 @@ export default class AuthenticatedComponent extends Component {
     }
 
     async componentDidMount() {
-        if (this.props.setMounted instanceof Function) this.props.setMounted(true);
         this.onNavWillFocus();
         this.routeSubscription = DeviceEventEmitter.addListener('routeStateChanged', this.onRouteStateChanged);
         this.checkingAuth = true;
@@ -21,7 +21,6 @@ export default class AuthenticatedComponent extends Component {
     }
 
     componentWillUnmount() {
-        if (this.props.setMounted instanceof Function) this.props.setMounted(false);
         this.routeSubscription.remove();
         if (this.props.onBack instanceof Function) this.props.onBack();
     }
@@ -58,13 +57,13 @@ export default class AuthenticatedComponent extends Component {
 
     render() {
         return (
-            <>
+            <MountCheckingComponent setMounted={this.props.setMounted}>
                 <NavigationEvents onWillFocus={() => this.onNavWillFocus()} />
                 { this.props.showActivityIndicator && this.props.showActivityIndicator() ? 
                     <View style={styles.container}><ActivityIndicator size="large" color="#757de8"></ActivityIndicator></View> :
                     this.props.children
                 }
-            </>
+            </MountCheckingComponent>
         );
     }
 }
