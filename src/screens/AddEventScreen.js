@@ -6,10 +6,11 @@ import PollTableComponent from '../components/PollTableComponent';
 import { Container, Content, Button, Text, Form, Item, Input, Label, Textarea, Picker, Icon } from 'native-base';
 import ToggleSwitch from 'toggle-switch-react-native';
 import { View } from 'react-native';
+import ValidationComponent from '../components/ValidationComponent';
 
 // pd === pollDate
 
-class AddEventScreen extends React.Component {
+class AddEventScreen extends ValidationComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -140,8 +141,6 @@ class AddEventScreen extends React.Component {
                                     <Text>Start time & end time date pickers hier</Text>
                                 }
                             </View>
-
-
 
                             <Button style={{ margin: 15, width: undefined }} block primary >
                                 <Text>Submit</Text>
