@@ -9,8 +9,7 @@ export default class GroupComponent extends React.Component {
             <View style={groupStyles.container}>
                 <TouchableWithoutFeedback
                     onPress={() => this.props.navigation.push('Group', {
-                        id: this.props.group.id,
-                        onBack: this.props.onBack
+                        id: this.props.group.id
                     })}
                 >
                     <View style={{ flexDirection: 'row' }}>

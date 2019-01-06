@@ -23,6 +23,11 @@ class AddEventScreen extends React.Component {
         };
     }
 
+    updateState(obj, callback) {
+        if (!this._ismounted) return;
+        this.setState(obj, callback);
+    }
+
     updateVotes(votes) {
         // hardcoded
 
@@ -31,7 +36,7 @@ class AddEventScreen extends React.Component {
             if (!this.state.pollDateVotes.includes(el.id) && votes.includes(el.id)) el.votes++; // Adding vote if pd is in new pdVotes list and not in old one
             return el;
         });
-        this.setState({
+        this.updateState({
             pollDateVotes: votes, // updating votes array, needed for POST/PUT api when form is saved
             pollDates, // updating so PollTableComponent updates the amount of votes / pd
         });
@@ -42,24 +47,24 @@ class AddEventScreen extends React.Component {
         // So we add negative ids for new items and make sure to remove these ids before doing a POST/PUT to the api
         let id = Math.min(...this.state.pollDates.map(el => el.id)) - 1;
         newPollDate.id = id;
-        this.setState({
+        this.updateState({
             pollDates: [ ...this.state.pollDates, newPollDate ],
         });
     }
 
     pollDateRemoved(id) {
-        this.setState({
+        this.updateState({
             pollDates: this.state.pollDates.filter(el => el.id !== id),
         });
     }
 
     pollDateSelected(selectedPollDateId) {
-        this.setState({ selectedPollDateId });
+        this.updateState({ selectedPollDateId });
     }
 
     render() {
         return (
-            <AuthenticatedComponent navigate={this.props.navigation.navigate}>
+            <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} navigate={this.props.navigation.navigate}>
                 <Text>AddEventScreen</Text>
                 <View style={{ margin: 20 }}>
                     <PollTableComponent
@@ -77,7 +82,7 @@ class AddEventScreen extends React.Component {
                 </View>
                 <View style={{ margin: 20 }}>
                     <Button
-                    onPress={() => this.setState({ pollDateFixed: !this.state.pollDateFixed })}
+                    onPress={() => this.updateState({ pollDateFixed: !this.state.pollDateFixed })}
                     title={this.state.pollDateFixed ? "Deselect final time" : "Pick final time"}
                     />
                 </View>

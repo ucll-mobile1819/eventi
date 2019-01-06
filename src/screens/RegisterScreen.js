@@ -9,11 +9,17 @@ import { postUser } from '../network/user';
 import Snackbar from 'react-native-snackbar';
 import ValidationComponent from '../components/ValidationComponent';
 import { fetchFailure } from '../actions';
+import MountCheckingComponent from '../components/MountCheckingComponent';
 
 export default class RegisterScreen extends ValidationComponent {
     constructor(props) {
         super(props);
         this.state = this.getClearedState();
+    }
+
+    updateState(obj, callback) {
+        if (!this._ismounted) return;
+        this.setState(obj, callback);
     }
 
     getClearedState() {
@@ -29,7 +35,7 @@ export default class RegisterScreen extends ValidationComponent {
 
     async onNavWillFocus() {
         this._resetErrors();
-        this.setState(this.getClearedState());
+        this.updateState(this.getClearedState());
         if (await isAuthenticated()) {
             this.props.navigation.navigate('Home');
         }
@@ -57,7 +63,7 @@ export default class RegisterScreen extends ValidationComponent {
                     onPress: () => Snackbar.dismiss(),
                 }
             });
-            this.setState(this.getClearedState());
+            this.updateState(this.getClearedState());
             this.props.navigation.navigate('Login');
         }
     }
@@ -81,70 +87,72 @@ export default class RegisterScreen extends ValidationComponent {
 
     render() {
         return (
-            <KeyboardAwareScrollView resetScrollToCoords={{ x: 0, y: 0 }} style={{ flex: 1 }} contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }} >
-                <NavigationEvents onWillFocus={() => this.onNavWillFocus()} />
-                <Text style={loginregisterStyles.bigTitle}>Eventi</Text>
-                <Text style={loginregisterStyles.smallTitle}>Register a new account</Text>
-                { this.isFieldInError('firstname') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('firstname')[0]}</Text> }
-                <TextInput
-                    style={loginregisterStyles.inputField}
-                    placeholder="First name"
-                    onChangeText={firstname => this.setState({ firstname })}
-                    value={this.state.firstname}
-                />
-                { this.isFieldInError('lastname') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('lastname')[0]}</Text> }
-                <TextInput
-                    style={loginregisterStyles.inputField}
-                    placeholder="Last name"
-                    onChangeText={lastname => this.setState({ lastname })}
-                    value={this.state.lastname}
-                />
-                { this.isFieldInError('username') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('username')[0]}</Text> }
-                <TextInput
-                    style={loginregisterStyles.inputField}
-                    placeholder="Username"
-                    onChangeText={username => this.setState({ username })}
-                    value={this.state.username}
-                />
-                { this.isFieldInError('birthday') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('birthday')[0]}</Text> }
-                <DatePicker
-                    style={loginregisterStyles.inputField}
-                    placeholder="Birthday"
-                    format="DD-MM-YYYY"
-                    minDate="01-01-1900"
-                    maxDate={new Date()}
-                    confirmBtnText="Confirm"
-                    cancelBtnText="Cancel"
-                    onDateChange={ birthday => {
-                        birthday = birthday.split('-');
-                        birthday = new Date(birthday[2].substring(0, 4), birthday[1]-1, birthday[0]);
-                        this.setState({ birthday });
-                    }}
-                    customStyles={{ dateInput: { borderWidth: 0, alignItems: 'flex-start', paddingLeft: 2 }}}
-                    date={this.state.birthday}
-                />
-                { this.isFieldInError('password') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('password')[0]}</Text> }
-                <TextInput
-                    style={loginregisterStyles.inputField}
-                    secureTextEntry={true}
-                    placeholder="Password"
-                    onChangeText={password => this.setState({ password })}
-                    value={this.state.password}
-                />
-                { this.isFieldInError('passwordConfirmation') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('passwordConfirmation')[0]}</Text> }
-                <TextInput
-                    style={loginregisterStyles.inputField}
-                    secureTextEntry={true}
-                    placeholder="Repeat password"
-                    onChangeText={passwordConfirmation => this.setState({ passwordConfirmation })}
-                    value={this.state.passwordConfirmation}
-                />
-                <Button title='Register' onPress={() => this.register()} />
-                <Text 
-                    onPress={() => this.props.navigation.navigate('Login')}
-                    style={{ color: 'darkblue', marginTop: 10 }}
-                >Already registered? Login here.</Text>
-            </KeyboardAwareScrollView>
+            <MountCheckingComponent setMounted={val => { this._ismounted = val; }}>
+                <KeyboardAwareScrollView resetScrollToCoords={{ x: 0, y: 0 }} style={{ flex: 1 }} contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }} >
+                    <NavigationEvents onWillFocus={() => this.onNavWillFocus()} />
+                    <Text style={loginregisterStyles.bigTitle}>Eventi</Text>
+                    <Text style={loginregisterStyles.smallTitle}>Register a new account</Text>
+                    { this.isFieldInError('firstname') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('firstname')[0]}</Text> }
+                    <TextInput
+                        style={loginregisterStyles.inputField}
+                        placeholder="First name"
+                        onChangeText={firstname => this.updateState({ firstname })}
+                        value={this.state.firstname}
+                    />
+                    { this.isFieldInError('lastname') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('lastname')[0]}</Text> }
+                    <TextInput
+                        style={loginregisterStyles.inputField}
+                        placeholder="Last name"
+                        onChangeText={lastname => this.updateState({ lastname })}
+                        value={this.state.lastname}
+                    />
+                    { this.isFieldInError('username') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('username')[0]}</Text> }
+                    <TextInput
+                        style={loginregisterStyles.inputField}
+                        placeholder="Username"
+                        onChangeText={username => this.updateState({ username })}
+                        value={this.state.username}
+                    />
+                    { this.isFieldInError('birthday') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('birthday')[0]}</Text> }
+                    <DatePicker
+                        style={loginregisterStyles.inputField}
+                        placeholder="Birthday"
+                        format="DD-MM-YYYY"
+                        minDate="01-01-1900"
+                        maxDate={new Date()}
+                        confirmBtnText="Confirm"
+                        cancelBtnText="Cancel"
+                        onDateChange={ birthday => {
+                            birthday = birthday.split('-');
+                            birthday = new Date(birthday[2].substring(0, 4), birthday[1]-1, birthday[0]);
+                            this.updateState({ birthday });
+                        }}
+                        customStyles={{ dateInput: { borderWidth: 0, alignItems: 'flex-start', paddingLeft: 2 }}}
+                        date={this.state.birthday}
+                    />
+                    { this.isFieldInError('password') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('password')[0]}</Text> }
+                    <TextInput
+                        style={loginregisterStyles.inputField}
+                        secureTextEntry={true}
+                        placeholder="Password"
+                        onChangeText={password => this.updateState({ password })}
+                        value={this.state.password}
+                    />
+                    { this.isFieldInError('passwordConfirmation') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('passwordConfirmation')[0]}</Text> }
+                    <TextInput
+                        style={loginregisterStyles.inputField}
+                        secureTextEntry={true}
+                        placeholder="Repeat password"
+                        onChangeText={passwordConfirmation => this.updateState({ passwordConfirmation })}
+                        value={this.state.passwordConfirmation}
+                    />
+                    <Button title='Register' onPress={() => this.register()} />
+                    <Text 
+                        onPress={() => this.props.navigation.navigate('Login')}
+                        style={{ color: 'darkblue', marginTop: 10 }}
+                    >Already registered? Login here.</Text>
+                </KeyboardAwareScrollView>
+            </MountCheckingComponent>
         );
     }
 }

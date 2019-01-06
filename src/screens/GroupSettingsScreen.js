@@ -7,6 +7,11 @@ import AuthenticatedComponent from '../components/AuthenticatedComponent';
 class GroupSettingsScreen extends React.Component {
     static navigationOptions = obj => obj.navigation.state.params;
 
+    updateState(obj, callback) {
+        if (!this._ismounted) return;
+        this.setState(obj, callback);
+    }
+
     onLoad() {
         this.props.navigation.setParams({
             title: this.props.navigation.state.params.id.toString(),
@@ -18,7 +23,7 @@ class GroupSettingsScreen extends React.Component {
 
     render() {
         return (
-            <AuthenticatedComponent navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
+            <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 <Text>GroupSettingsScreen</Text>
             </AuthenticatedComponent>
         );
