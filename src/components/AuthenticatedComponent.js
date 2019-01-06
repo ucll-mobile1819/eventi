@@ -29,7 +29,6 @@ export default class AuthenticatedComponent extends Component {
     };
 
     async onNavWillFocus() {
-        let exec = false;
         let back = this.props.isBack instanceof Function && this.props.isBack() && !this.isBackPause;
         if (!this.onLoadExecuted || back) {
             if (back) this.isBackPause = true;
