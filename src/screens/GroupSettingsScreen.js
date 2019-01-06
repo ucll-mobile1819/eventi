@@ -141,6 +141,10 @@ class GroupSettingsScreen extends ValidationComponent {
         });
     }
 
+    isOwner() {
+        return this.props.user.username === this.props.group.creator.username;
+    }
+
     render() {
         return (
             <AuthenticatedComponent
@@ -152,65 +156,73 @@ class GroupSettingsScreen extends ValidationComponent {
                 <Container>
                     <Tabs>
                         <Tab heading="General">
-                            <KeyboardAwareScrollView
-                                resetScrollToCoords={{ x: 0, y: 0 }}
-                                style={{ padding: 20 }}
-                            >
-                                <Text style={groupStyles.subtitle}>Invite code</Text>
-                                <View style={{ flexDirection: 'row', marginBottom: 20, alignItems: 'center' }}>
-                                    <Text>{this.props.group.inviteCode}</Text>
-                                    <View style={{ marginLeft: 20, marginRight: 20 }}>
-                                        <Button title="Copy" onPress={() => this.copyToClipboard()} />
+                            {this.isOwner() &&
+                                <KeyboardAwareScrollView
+                                    resetScrollToCoords={{ x: 0, y: 0 }}
+                                    style={{ padding: 20 }}
+                                >
+
+                                    <Text style={groupStyles.subtitle}>Invite code</Text>
+                                    <View style={{ flexDirection: 'row', marginBottom: 20, alignItems: 'center' }}>
+                                        <Text>{this.props.group.inviteCode}</Text>
+                                        <View style={{ marginLeft: 20, marginRight: 20 }}>
+                                            <Button title="Copy" onPress={() => this.copyToClipboard()} />
+                                        </View>
+                                        <Button title="Renew" onPress={() => this.renewInviteCode()} />
                                     </View>
-                                    <Button title="Renew" onPress={() => this.renewInviteCode()} />
-                                </View>
 
-                                <Text style={groupStyles.subtitle}>Change group info</Text>
-                                {this.isFieldInError('groupname') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('groupname')[0]}</Text>}
-                                <TextInput
-                                    style={groupStyles.inputField}
-                                    placeholder="Group name"
-                                    value={this.state.groupname}
-                                    onChangeText={groupname => this.updateState({ groupname })}
-                                />
-                                {this.isFieldInError('description') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('description')[0]}</Text>}
-                                <TextInput
-                                    style={groupStyles.inputField}
-                                    placeholder="Description"
-                                    value={this.state.description}
-                                    onChangeText={description => this.updateState({ description })}
-                                />
-                                {this.isFieldInError('color') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('color')[0]}</Text>}
-                                <ColorPalette
-                                    onChange={color => this.updateState({ color })}
-                                    value={this.props.group.color}
-                                    colors={['#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4', '#009688', '#4CAF50',
-                                        '#8BC34A', '#CDDC39', '#FFC107', '#FF9800', '#FF5722', '#795548', '#9E9E9E', '#607D8B', '#000000']}
-                                    icon={<Text style={{ color: 'white' }}>✔</Text>}
-                                    title={''}
-                                />
-                                <Button
-                                    title="Save changes"
-                                    onPress={() => this.updateGroup()}
-                                />
+                                    <Text style={groupStyles.subtitle}>Change group info</Text>
+                                    {this.isFieldInError('groupname') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('groupname')[0]}</Text>}
+                                    <TextInput
+                                        style={groupStyles.inputField}
+                                        placeholder="Group name"
+                                        value={this.state.groupname}
+                                        onChangeText={groupname => this.updateState({ groupname })}
+                                    />
+                                    {this.isFieldInError('description') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('description')[0]}</Text>}
+                                    <TextInput
+                                        style={groupStyles.inputField}
+                                        placeholder="Description"
+                                        value={this.state.description}
+                                        onChangeText={description => this.updateState({ description })}
+                                    />
+                                    {this.isFieldInError('color') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('color')[0]}</Text>}
+                                    <ColorPalette
+                                        onChange={color => this.updateState({ color })}
+                                        value={this.props.group.color}
+                                        colors={['#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4', '#009688', '#4CAF50',
+                                            '#8BC34A', '#CDDC39', '#FFC107', '#FF9800', '#FF5722', '#795548', '#9E9E9E', '#607D8B', '#000000']}
+                                        icon={<Text style={{ color: 'white' }}>✔</Text>}
+                                        title={''}
+                                    />
+                                    <Button
+                                        title="Save changes"
+                                        onPress={() => this.updateGroup()}
+                                    />
 
-                                <Text style={[groupStyles.subtitle, { marginTop: 15 }]}>Delete group</Text>
-                                <View style={{ marginBottom: 60 }}>
-                                    <Button title="Delete group" onPress={() => this.askDeleteGroup()} />
-                                </View>
-                            </KeyboardAwareScrollView>
+                                    <Text style={[groupStyles.subtitle, { marginTop: 15 }]}>Delete group</Text>
+                                    <View style={{ marginBottom: 60 }}>
+                                        <Button title="Delete group" onPress={() => this.askDeleteGroup()} />
+                                    </View>
+                                </KeyboardAwareScrollView>
+                            }
+                            {!this.isOwner() &&
+                                <Text>Leave group</Text>
+                            }
                         </Tab>
                         <Tab heading="Members">
                             <FlatList
                                 data={this.props.members}
-                                renderItem={({ item }) => <GroupMemberComponent member={item} groupId={this.props.group.id} />}
+                                renderItem={({ item }) => <GroupMemberComponent member={item} groupId={this.props.group.id} isOwner={this.isOwner()}/>}
                                 keyExtractor={(member, index) => String(member.username)}
                                 style={{ padding: 20 }}
                             />
                         </Tab>
+                        {this.isOwner() &&
                         <Tab heading="Banned">
                             <Text>Banned members</Text>
                         </Tab>
+                        }
                     </Tabs>
                 </Container>
             </AuthenticatedComponent >
@@ -223,7 +235,8 @@ const mapStateToProps = state => {
         group: state.group.group,
         loading: state.group.loading,
         error: state.group.error,
-        members: state.group.members
+        members: state.group.members,
+        user: state.user.user
     };
 };
 

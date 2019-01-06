@@ -38,7 +38,9 @@ export default class GroupMemberComponent extends React.Component {
             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
                 <Text>{this.props.member.firstname} {this.props.member.lastname}</Text>
                 <Text style={{ flex: 1, marginLeft: 10 }}>({this.props.member.username})</Text>
+                { this.props.isOwner &&
                 <Button title="Ban" onPress={() => this.askBanMember()} />
+                }
             </View>
         );
     }
