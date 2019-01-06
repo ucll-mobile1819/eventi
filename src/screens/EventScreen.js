@@ -42,12 +42,12 @@ class EventScreen extends React.Component {
             .then(this.props.fetchAtt(this.props.navigation.state.params.id))
             .then(() => {
                 let attendances = this.props.status;
-                let going = attendances.filter(el => el.status === 'Going').map(el => { firstname: el.firstname});
+                let going = attendances.filter(el => el.status === 'Going').map(el => { firstname: el.firstname, lastname: el.lastname});
                 let notGoing = attendances.filter(el => el.status === 'Not going').map(el => { firstname: el.firstname});
-                
+                console.log("Status begin");
+                console.log(attendances);
+                console.log("Status end");
                 console.log(going);
-                console.log(notGoing);
-
                 this.setState({
                     showActivityIndicator: false,
                     event: this.props.events.find(e => e.id === this.props.navigation.state.params.id)
