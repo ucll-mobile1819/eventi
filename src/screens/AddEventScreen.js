@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
 import PollTableComponent from '../components/PollTableComponent';
 import { Container, Content, Button, Text, Form, Item, Input, Label, Textarea, Picker, Icon } from 'native-base';
+import ToggleSwitch from 'toggle-switch-react-native'
 
 // pd === pollDate
 
@@ -102,7 +103,16 @@ class AddEventScreen extends React.Component {
 
                             <Textarea rowSpan={5} bordered placeholder="Description" style={{ width: undefined, marginLeft: 15 }} />
 
-                            
+                            <ToggleSwitch
+                                isOn={false}
+                                onColor='green'
+                                offColor='red'
+                                label='Example label'
+                                labelStyle={{ color: 'black', fontWeight: '900' }}
+                                size='large'
+                                onToggle={(isOn) => console.log('changed to : ', isOn)}
+                            />
+
                             <Button style={{ margin: 15, width: undefined }} block primary >
                                 <Text>Submit</Text>
                             </Button>
