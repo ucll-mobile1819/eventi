@@ -9,7 +9,7 @@ import loginregisterStyles from '../styles/loginregister';
 import groupStyles from '../styles/groupStyles';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ColorPalette from 'react-native-color-palette';
-import { putGroup, putGenerateInviteCode } from '../network/group';
+import { putGroup, putGenerateInviteCode, deleteGroup } from '../network/group';
 import Snackbar from 'react-native-snackbar';
 
 
@@ -28,16 +28,16 @@ class GroupSettingsScreen extends ValidationComponent {
 
     onLoad() {
         this.props.fetchGroup(this.props.navigation.state.params.id)
-        .then(() => {
-            this.setState({ showActivityIndicator: false });
-            if (this.props.error) return;
-            this.props.navigation.setParams({
-                title: 'Settings',
-                customHeaderBackgroundColor: this.props.group.color,
-                headerTintColor: 'white', // Back arrow color
-                headerTitleStyle: { color: 'white' }, // Title color
+            .then(() => {
+                this.setState({ showActivityIndicator: false });
+                if (this.props.error) return;
+                this.props.navigation.setParams({
+                    title: 'Settings',
+                    customHeaderBackgroundColor: this.props.group.color,
+                    headerTintColor: 'white', // Back arrow color
+                    headerTitleStyle: { color: 'white' }, // Title color
+                });
             });
-        });
     }
 
     async updateGroup() {
@@ -89,7 +89,7 @@ class GroupSettingsScreen extends ValidationComponent {
 
         if (response !== false) {
             // TODO refresh inviteCode on screen
-            
+
             Snackbar.show({
                 title: 'Invite code renewed',
                 duration: Snackbar.LENGTH_LONG,
@@ -100,6 +100,44 @@ class GroupSettingsScreen extends ValidationComponent {
                 }
             });
         }
+    }
+
+    askDeleteGroup() {
+        Alert.alert(
+            'Delete group',
+            'Are you sure that you want to delete this group?',
+            [
+                { text: 'Delete', onPress: () => this.deleteGroup() },
+                { text: 'Cancel', style: 'cancel' }
+            ],
+            { cancelable: false }
+        );
+    }
+
+    async deleteGroup() {
+        let response = deleteGroup(this.props.group.id, true);
+
+        if (response !== false) {
+            Snackbar.show({
+                title: 'Group deleted',
+                duration: Snackbar.LENGTH_LONG,
+                action: {
+                    title: 'CLOSE',
+                    color: 'green',
+                    onPress: () => Snackbar.dismiss(),
+                }
+            });
+            this.setState({
+                groupname: '',
+                description: '',
+                color: ''
+            });
+            this.props.navigation.push('Groups');
+        }
+    }
+
+    showSnackBar(message) {
+        
     }
 
     render() {
@@ -150,7 +188,11 @@ class GroupSettingsScreen extends ValidationComponent {
                         title="Save changes"
                         onPress={() => this.updateGroup()}
                     />
+
                     <Text style={[groupStyles.subtitle, { marginTop: 15 }]}>Delete group</Text>
+                    <View style={{ marginBottom: 60 }}>
+                        <Button title="Delete group" onPress={() => this.askDeleteGroup()} />
+                    </View>
                 </KeyboardAwareScrollView>
             </AuthenticatedComponent >
         );
