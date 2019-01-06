@@ -12,6 +12,11 @@ export default class JoinGroupScreen extends ValidationComponent {
         this.state = this.getClearedState();
     }
 
+    updateState(obj, callback) {
+        if (!this._ismounted) return;
+        this.setState(obj, callback);
+    }
+
     getClearedState() {
         return { invitecode: '' };
     }
@@ -26,7 +31,7 @@ export default class JoinGroupScreen extends ValidationComponent {
                 'Group joined',
                 'You succesfully joined ' + response.name + '.'
             );
-            this.setState(this.getClearedState());
+            this.updateState(this.getClearedState());
             this.props.navigation.navigate('Group', { id: response.id });
         }
     }
@@ -42,12 +47,12 @@ export default class JoinGroupScreen extends ValidationComponent {
 
     async pasteFromClipboard() {
         const invitecode = await Clipboard.getString();
-        this.setState({ invitecode });
+        this.updateState({ invitecode });
     }
 
     render() {
         return (
-            <AuthenticatedComponent navigate={this.props.navigation.navigate}>
+            <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} navigate={this.props.navigation.navigate}>
                 <View style={{ flex: 1, padding: 20 }} >
                     <Text style={{ marginBottom: 5 }}>Enter an invite code to join a group:</Text>
                     {this.isFieldInError('invitecode') && <Text style={{...loginregisterStyles.inputError, marginBottom: 5, marginLeft: 3}}>{this.getErrorsInField('invitecode')[0]}</Text>}
@@ -56,7 +61,7 @@ export default class JoinGroupScreen extends ValidationComponent {
                             style={[groupStyles.inputField, {marginBottom: -10, marginTop: -2, marginRight: 10, flex: 1}]}
                             placeholder="Invite code"
                             value={this.state.invitecode}
-                            onChangeText={invitecode => this.setState({ invitecode })}
+                            onChangeText={invitecode => this.updateState({ invitecode })}
                         />
                         <Button
                             title="Paste"

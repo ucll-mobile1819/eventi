@@ -19,10 +19,15 @@ class GroupScreen extends React.Component {
         };
     }
 
+    updateState(obj, callback) {
+        if (!this._ismounted) return;
+        this.setState(obj, callback);
+    }
+
     onLoad() {
         this.props.fetchGroup(this.props.navigation.state.params.id)
             .then(() => {
-                this.setState({ showActivityIndicator: false });
+                this.updateState({ showActivityIndicator: false });
                 if (this.props.error) return;
                 this.props.navigation.setParams({
                     title: this.props.group.name,
@@ -42,7 +47,7 @@ class GroupScreen extends React.Component {
     
     render() {
         return (
-            <AuthenticatedComponent showActivityIndicator={() => this.state.showActivityIndicator} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
+            <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} showActivityIndicator={() => this.state.showActivityIndicator} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 <View style={{ padding: 10 }}>
                     <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: 'lightgrey', paddingBottom: 20, marginBottom: 20 }}>
                         <Text style={{ flex: 1 }}>{this.props.group.description || "No description was provided for this group."}</Text>

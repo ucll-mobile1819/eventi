@@ -31,6 +31,11 @@ class EventScreen extends React.Component {
     }
     static navigationOptions = obj => obj.navigation.state.params;
 
+    updateState(obj, callback) {
+        if (!this._ismounted) return;
+        this.setState(obj, callback);
+    }
+
     onLoad() {
         
         this.props.fetchEvent(this.props.navigation.state.params.id)
@@ -105,7 +110,8 @@ class EventScreen extends React.Component {
         }
 
         return (
-            <AuthenticatedComponent showActivityIndicator={() => this.state.showActivityIndicator}  navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
+            <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} showActivityIndicator={() => this.state.showActivityIndicator} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
+            
                 <Container>
                     <Tabs locked tabBarUnderlineStyle={{backgroundColor:'black'}}>
                     <Tab style={{backgroundColor: '#E9E9EF'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 

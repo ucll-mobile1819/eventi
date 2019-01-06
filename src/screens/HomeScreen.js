@@ -11,7 +11,6 @@ import { color } from 'color';
 class HomeScreen extends React.Component{
     constructor(props){
         super(props);
-        // TODO: remove hard coded value & add user redux state implementation by merging with master-react-native so you can use this.props.user.user.username
         this.username = this.props.user.username;
         this.state = {
             showToast: false,
@@ -19,9 +18,14 @@ class HomeScreen extends React.Component{
         };
     }
 
+    updateState(obj, callback) {
+        if (!this._ismounted) return;
+        this.setState(obj, callback);
+    }
+
     onLoad() {
         this.props.fetchEvents()
-        .then(() => this.setState({ showActivityIndicator: false }));
+        .then(() => this.updateState({ showActivityIndicator: false }));
     }
     sortEventsByDate(events) {
         return events.sort((a, b) => {
@@ -35,9 +39,8 @@ class HomeScreen extends React.Component{
     render(){
         const renderItem = ({item}) => <EventComponent event={item} nav={this.props.navigation}/>;
         let events = this.sortEventsByDate(this.props.events);
-        // let events = this.props.events;
         return(
-            <AuthenticatedComponent showActivityIndicator={() => this.state.showActivityIndicator}  navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
+            <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} showActivityIndicator={() => this.state.showActivityIndicator}  navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 <Container>
                     <Tabs>
                         <Tab style={{backgroundColor: '#E9E9EF'}} heading="All events">

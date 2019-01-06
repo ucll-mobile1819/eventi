@@ -16,9 +16,15 @@ class GroupsScreen extends React.Component {
         };
     }
 
+    updateState(obj, callback) {
+        if (!this._ismounted) return;
+        this.setState(obj, callback);
+    }
+
     onLoad() {
         this.props.fetchGroups()
-        .then(() => this.setState({ showActivityIndicator: false }));
+        .then(() => this.updateState({ showActivityIndicator: false }));
+
         this.props.navigation.setParams({
             headerRight: (
                     <TouchableWithoutFeedback onPress={() => this.props.navigation.push('CreateGroup')}>
@@ -36,7 +42,7 @@ class GroupsScreen extends React.Component {
 
     render() {
         return (
-            <AuthenticatedComponent showActivityIndicator={() => this.state.showActivityIndicator} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
+            <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} showActivityIndicator={() => this.state.showActivityIndicator} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 <FlatList
                     data={this.props.groups}
                     renderItem={({item}) => <GroupComponent group={item} navigation={this.props.navigation} />}
