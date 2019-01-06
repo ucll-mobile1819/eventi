@@ -142,7 +142,7 @@ class AddEventScreen extends ValidationComponent {
                                 }
                             </View>
 
-                            <Button style={{ margin: 15, width: undefined }} block primary >
+                            <Button style={{ margin: 15, width: undefined, marginBottom: 40 }} block primary >
                                 <Text>Submit</Text>
                             </Button>
                         </Form>
