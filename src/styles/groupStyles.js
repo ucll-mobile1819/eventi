@@ -37,6 +37,12 @@ const groupStyles = StyleSheet.create({
         borderRadius: 10,
         height: 40,
         marginBottom: 20
+    },
+    greyBottomBorder: {
+        borderBottomWidth: 1, 
+        borderBottomColor: 'lightgrey', 
+        paddingBottom: 20, 
+        marginBottom: 20
     }
 });
 
