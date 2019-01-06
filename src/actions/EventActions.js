@@ -10,6 +10,9 @@ export const CHANGE_STATUS_EVENT_SUCCESS = 'CHANGE_STATUS_EVENT_SUCCESS';
 export const FETCH_EVENT_BEGIN = 'FETCH_EVENT_BEGIN';
 export const FETCH_EVENT_SUCCESS = 'FETCH_EVENT_SUCCESS';
 
+export const FETCH_ATT_BEGIN = 'FETCH_ATT_BEGIN';
+export const FETCH_ATT_SUCCESS = 'FETCH_ATT_SUCCESS';
+
 export const fetchEvents = () => dispatch => {
     dispatch(fetchEventsBegin());
     return eventAPI.getEvents()
@@ -59,3 +62,25 @@ export const fetchEventSuccess = event => ({
     type: FETCH_EVENT_SUCCESS,
     payload: { event },
 });
+
+//Fetch Attend
+
+
+export const fetchAtt = (id) => dispatch => {
+    dispatch(fetchAttBegin());
+    return eventAPI.getAttendances(id)
+    .then(status => {
+        dispatch(fetchAttSuccess(status))
+    })
+    .catch(error => dispatch(fetchFailure(error)));
+};
+
+export const fetchAttBegin = () => ({
+    type: FETCH_ATT_BEGIN,
+});
+
+export const fetchAttSuccess = status => ({
+    type: FETCH_ATT_SUCCESS,
+    payload: { status },
+});
+

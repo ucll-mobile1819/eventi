@@ -5,8 +5,8 @@ import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import headerStyles from '../styles/headerStyles';
-import { Container, Tabs, Tab, Button, ActionSheet, View, Card, CardItem, Body } from 'native-base';
-import { fetchEvent } from '../actions/EventActions';
+import { Container, Tabs, Tab, Button, ActionSheet, View, Card, CardItem, Body, Footer, Left, Right, Grid, Col } from 'native-base';
+import { fetchEvent ,fetchAtt, changeStatus} from '../actions/EventActions';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IconEvil from 'react-native-vector-icons/EvilIcons';
 import IconMat from 'react-native-vector-icons/MaterialIcons';
@@ -33,6 +33,7 @@ class EventScreen extends React.Component {
     onLoad() {
         
         this.props.fetchEvent(this.props.navigation.state.params.id)
+            .then(this.props.fetchAtt(this.props.navigation.state.params.id))
             .then(() => {
                 this.setState({
                     showActivityIndicator: false,
@@ -55,6 +56,10 @@ class EventScreen extends React.Component {
                     });
                 });
             });
+            console.log(this.props.fetchAtt(this.props.navigation.state.params.id));
+    }
+    getGeustList(){
+
     }
     getDateDisplayFormat(date) {
         return date.getDate() + ' ' + months[date.getMonth()];
@@ -70,6 +75,19 @@ class EventScreen extends React.Component {
             return "";
         }
     }
+    notGoingToEvent(id){
+        //Set event on not going
+        this.props.changeStatus(id , "Not going");
+        
+    }
+
+    goingToEvent(id){
+        console.log(id);
+        //Set event on going
+        // if()
+        this.props.changeStatus(id , "Going");
+    }
+
     render() {
 
         let event = this.state.event;
@@ -117,10 +135,11 @@ class EventScreen extends React.Component {
                     </Tab>
                     <Tab  style={{backgroundColor: '#E9E9EF'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
                     heading="Geusts">
-                        <Card transparent>
-                        <CardItem>
+                        <Container style={{backgroundColor: '#E9E9EF'}}>
+                        <Card style={{ backgroundColor: "transparent",elevation: 0,borderColor:"transparent"}}>
+                        <CardItem style={{ backgroundColor: "transparent",elevation: 0 ,borderColor:"transparent"}}>
                             <View>
-                            <Icon name="calendar" size={25}/> 
+                            <IconEvil name="location" size={30}/> 
                             </View>            
                             <View>
                                 <Body>
@@ -131,40 +150,59 @@ class EventScreen extends React.Component {
                             </View>
                         </CardItem>
                         </Card>
+                        </Container>
                     </Tab>
                     <Tab  style={{backgroundColor: '#E9E9EF'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
                     heading="Comments">
                         <Text>3</Text>
                     </Tab>
                     </Tabs>
-                    {/* <TouchableWithoutFeedback  onPress={() => this.notGoingToEvent()}>
-                        <View>
-                            <Icon name="close" size={30} />
+                   </Container>
+                   <Footer  style={{backgroundColor:'#E9E9EF',borderBottomWidth: 0, shadowOffset: {height: 0, width: 0}, 
+shadowOpacity: 0, elevation: 0}}>
+                   <Grid>
+                    <Col>
+                   <TouchableWithoutFeedback onPress={() => this.goingToEvent(event.id)}>
+                        <View style={{alignItems:"center"}}>
+                            <Icon name="check" size={50} color={event.status == 'Going'? green : grey}/>
                         </View>
                     </TouchableWithoutFeedback>
-                    <TouchableWithoutFeedback  onPress={() => this.notGoingToEvent()}>
-                        <View>
-                            <Icon name="close" size={30}  />
+                    </Col>
+                    <Col>
+                    <TouchableWithoutFeedback onPress={() => this.notGoingToEvent(event.id)}>
+                        <View style={{alignItems:"center"}}>
+                            <Icon name="close" size={50}  color={event.status == 'Not going'? red : grey}/>
                         </View>
-                    </TouchableWithoutFeedback> */}
-                   </Container>
+                    </TouchableWithoutFeedback>
+                    </Col>
+                    </Grid>
+                   </Footer>
             </AuthenticatedComponent>
         );
     }
 }
 
  
-const styles = StyleSheet.create({
-    container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
-    header: { height: 50, backgroundColor: '#537791' },
-    text: { textAlign: 'center', fontWeight: '100' },
-    dataWrapper: { marginTop: -1 },
-    row: { height: 40, backgroundColor: '#E7E6E1' }
+// const styles = StyleSheet.create({
+//     container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
+//     header: { height: 50, backgroundColor: '#537791' },
+//     text: { textAlign: 'center', fontWeight: '100' },
+//     dataWrapper: { marginTop: -1 },
+//     row: { height: 40, backgroundColor: '#E7E6E1' }
+//   });
+
+  const styles = StyleSheet.create({
+    tabBar: {
+        flexDirection: 'row',
+        height: 50
+      },
   });
 
 const mapStateToProps = state => {
+    console.log(state.event.status);
     return {
         events: state.event.events,
+        status: state.event.status,
         emptyEvent: state.event.emptyEvent,
         loading: state.group.loading,
         error: state.group.error
@@ -172,7 +210,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => (
-    bindActionCreators({fetchEvent}, dispatch)
+    bindActionCreators({fetchEvent , fetchAtt, changeStatus}, dispatch)
 );
 
 export default connect(mapStateToProps, mapDispatchToProps)(EventScreen);
