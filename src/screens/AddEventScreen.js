@@ -65,8 +65,7 @@ class AddEventScreen extends React.Component {
     render() {
         return (
             <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} navigate={this.props.navigation.navigate}>
-                <Text>AddEventScreen</Text>
-                <Container style={{ backgroundColor: '#E9E9EF' }}>
+                <Container>
                     <Content padder>
                         <Form>
                             <Item floatingLabel>
@@ -84,11 +83,7 @@ class AddEventScreen extends React.Component {
                                 <Input />
                             </Item>
 
-                            <Item>
-                                <Textarea rowSpan={5} placeholder="Description" />
-                            </Item>
-
-                            <Item picker>
+                            <Item picker style={{ marginLeft: 15 }}>
                                 <Picker
                                     mode="dropdown"
                                     iosIcon={<Icon name="ios-arrow-down-outline" />}
@@ -105,13 +100,15 @@ class AddEventScreen extends React.Component {
                                 </Picker>
                             </Item>
 
+                            <Textarea rowSpan={5} bordered placeholder="Description" style={{ width: undefined, marginLeft: 15 }} />
 
-
+                            
+                            <Button style={{ margin: 15, width: undefined }} block primary >
+                                <Text>Submit</Text>
+                            </Button>
                         </Form>
 
-                        <Button style={{ margin: 10 }} block primary >
-                            <Text>Submit</Text>
-                        </Button>
+
                     </Content>
                 </Container>
                 {/* <View style={{ margin: 20 }}>
