@@ -42,7 +42,7 @@ export const sendAPIRequest = async ( endpoint, method, handleErrors, checkAutho
         if (data instanceof Object && Object.keys(data).length > 0) {
             params.push(data);
         } else {
-            if (method.toLowerCase() === "post") params.push({});
+            if (method.toLowerCase() === "post" || method.toLowerCase() === 'put') params.push({});
         }
         params.push({
             headers: {

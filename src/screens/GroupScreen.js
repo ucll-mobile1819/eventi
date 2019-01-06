@@ -42,7 +42,7 @@ class GroupScreen extends React.Component {
 
     render() {
         return (
-            <AuthenticatedComponent showActivityIndicator={() => this.state.showActivityIndicator} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
+            <AuthenticatedComponent onBack={() => this.props.navigation.state.params.onBack()} showActivityIndicator={() => this.state.showActivityIndicator} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 <View style={{ padding: 10 }}>
                     <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: 'lightgrey', paddingBottom: 20, marginBottom: 20 }}>
                         <Text style={{ flex: 1 }}>{this.props.group.description || "No description was provided for this group."}</Text>

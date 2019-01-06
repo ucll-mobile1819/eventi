@@ -12,7 +12,8 @@ class GroupsScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            showActivityIndicator: true
+            showActivityIndicator: true,
+            back: false,
         };
     }
 
@@ -35,12 +36,17 @@ class GroupsScreen extends React.Component {
         });
     }
 
+    isBack() {
+        setTimeout(() => this.setState({ back: false }), 1);
+        return this.state.back;
+    }
+
     render() {
         return (
-            <AuthenticatedComponent showActivityIndicator={() => this.state.showActivityIndicator} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
+            <AuthenticatedComponent isBack={() => this.isBack()} showActivityIndicator={() => this.state.showActivityIndicator} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 <FlatList
                     data={this.props.groups}
-                    renderItem={({item}) => <GroupComponent group={item} navigation={this.props.navigation} />}
+                    renderItem={({item}) => <GroupComponent onBack={() => this.setState({ back: true })} group={item} navigation={this.props.navigation} />}
                     keyExtractor={(group, index) => String(group.id)}
                 />
             </AuthenticatedComponent>

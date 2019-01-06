@@ -11,7 +11,6 @@ import { color } from 'color';
 class HomeScreen extends React.Component{
     constructor(props){
         super(props);
-        // TODO: remove hard coded value & add user redux state implementation by merging with master-react-native so you can use this.props.user.user.username
         this.username = this.props.user.username;
         this.state = {
             showActivityIndicator: true
@@ -33,7 +32,6 @@ class HomeScreen extends React.Component{
     render(){
         const renderItem = ({item}) => <EventComponent event={item} nav={this.props.navigation}/>;
         let events = this.sortEventsByDate(this.props.events);
-        // let events = this.props.events;
         return(
             <AuthenticatedComponent showActivityIndicator={() => this.state.showActivityIndicator}  navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 <Container>
