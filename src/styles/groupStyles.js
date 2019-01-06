@@ -14,7 +14,8 @@ const groupStyles = StyleSheet.create({
     subtitle: {
         fontSize: 20, 
         fontWeight: 'bold', 
-        color: 'black'
+        color: 'black',
+        marginBottom: 15
     },
     overviewColor: {
         width: 20,
