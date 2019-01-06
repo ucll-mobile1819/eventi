@@ -41,10 +41,10 @@ export const fetchGroupSuccess = group => ({
     payload: { group }
 });
 
-export const fetchMembers = () => dispatch => {
+export const fetchMembers = groupId => dispatch => {
     dispatch(fetchMembersBegin());
 
-    return groupAPI.getGroupMembers()
+    return groupAPI.getGroupMembers(groupId)
         .then(members => dispatch(fetchMembersSuccess(members)))
         .catch(error => dispatch(fetchFailure(error)));
 };
