@@ -17,6 +17,9 @@ export const FETCH_ATT_SUCCESS = 'FETCH_ATT_SUCCESS';
 export const FETCH_COMMENT_BEGIN = 'FETCH_COMMENT_BEGIN';
 export const FETCH_COMMENT_SUCCESS = 'FETCH_COMMENT_SUCCESS';
 
+export const POST_COMMENT_BEGIN = 'POST_COMMENT_BEGIN';
+export const POST_COMMENT_SUCCESS = 'POST_COMMENT_SUCCESS';
+
 export const fetchEvents = () => dispatch => {
     dispatch(fetchEventsBegin());
     return eventAPI.getEvents()
@@ -106,4 +109,24 @@ export const fetchCommentBegin = () => ({
 export const fetchCommentSuccess = comments => ({
     type: FETCH_COMMENT_SUCCESS,
     payload: {comments} ,
+});
+
+//Post comments
+
+export const postComment = (id , content) => dispatch => {
+    dispatch(postCommentBegin());
+    return commentAPI.postComments(id,content)
+    .then(comment => {
+        dispatch(postCommentSucces(comment))
+    })
+    .catch(error => dispatch(fetchFailure(error)));
+};
+
+export const postCommentBegin = () => ({
+    type: POST_COMMENT_BEGIN,
+});
+
+export const postCommentSucces = comment => ({
+    type: POST_COMMENT_SUCCESS,
+    payload: {comment} ,
 });

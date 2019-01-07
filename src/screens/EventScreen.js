@@ -1,14 +1,16 @@
 import React from 'react';
-import { Text, TouchableWithoutFeedback, StyleSheet, ActivityIndicator, SectionList } from 'react-native';
+import { Text, TouchableWithoutFeedback, StyleSheet, ActivityIndicator, SectionList, TextInput, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import headerStyles from '../styles/headerStyles';
-import { Container, Tabs, Tab, Button, ActionSheet, View, Card, CardItem, Body, Footer, Left, Right, Grid, Col } from 'native-base';
-import { fetchEvent ,fetchAtt, changeStatus , fetchComments} from '../actions/EventActions';
+import { Container, Tabs, Tab, Button, ActionSheet, View, Card, CardItem, Body, Footer, Left, Right, Grid, Col, Content, Item, Input } from 'native-base';
+import { fetchEvent ,fetchAtt, changeStatus , fetchComments , postComment} from '../actions/EventActions';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Balloon from "react-native-balloon";
 import IconEvil from 'react-native-vector-icons/EvilIcons';
+import PollTableComponent from "../components/PollTableComponent"
 import IconMat from 'react-native-vector-icons/MaterialIcons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import groupStyles from '../styles/groupStyles';
@@ -26,9 +28,11 @@ class EventScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            text: '',
             showActivityIndicator: true,
             event: this.props.emptyEvent,
-            groupData: []
+            groupData: [],
+            pollDates:[],
         };
     }
     static navigationOptions = obj => obj.navigation.state.params;
@@ -44,11 +48,14 @@ class EventScreen extends React.Component {
             .then(() => this.props.fetchAtt(this.props.navigation.state.params.id))
                 .then(() => this.props.fetchComments(this.props.navigation.state.params.id))
                     .then(() => {
-                this.setState({
-                    showActivityIndicator: false,
-                    groupData: [],
-                    event: this.props.events.find(e => e.id === this.props.navigation.state.params.id)
-                }, () => {
+                    this.updateState({
+                        // pollDates: pollDates,
+                        showActivityIndicator: false,
+                        groupData: [],
+                        event: this.props.events.find(e => e.id === this.props.navigation.state.params.id)
+                    }, () => {
+
+                    console.log(this.state.event.pollDates);
                     this.setGeusts();
                     if (this.props.error) return;
                     console.log(this.props.comments);
@@ -82,17 +89,42 @@ class EventScreen extends React.Component {
         
         commentList = comments.map(el =>{ 
             let who = el.creator.username === this.props.user.username ? "me":"they" ;
-            return {key: el.id, who: who,what: el.content } 
+            return {key: el.id, who: who,what: el.content ,name: this.props.user.username} 
         })
         
         let commentsJSX = commentList.map(el =>{
             if(el.who === "me"){
-               return(<Text style={{color: 'red'}} key={el.key}>{el.what}</Text>);
+               return(
+                
+                <Balloon
+                key={el.key}
+                borderColor="transparent"
+                backgroundColor="#007FF7"
+                borderWidth={2}
+                borderRadius={20}
+                triangleSize={1}
+                >
+                <Text style={{color:'white'}}>{el.what}</Text>
+                </Balloon>
+               );
             }else{
-               return(<Text style={{color: 'green'}} key={el.key}>{el.what}</Text>);
+               return(
+                <View 
+                key={el.key}>
+                <Text style={{marginLeft:10, fontSize:12}}>{el.name}</Text>
+                <Balloon
+                borderColor="transparent"
+                backgroundColor="white"
+                borderWidth={2}
+                borderRadius={20}
+                triangleSize={1}
+                >
+                <Text style={{color:'black'}}>{el.what}</Text>
+                </Balloon>
+                </View>
+               );
             }
         })
-
         this.setState({
             myComments: commentsJSX,
             })
@@ -148,7 +180,41 @@ class EventScreen extends React.Component {
             .then(()=> this.setGeusts())
         })
     }
-
+    sendMessage(){
+        let content = this.state.text.trim().length === 0 ? null : this.state.text ; 
+        if(content !== null){
+            this.props.postComment(this.props.navigation.state.params.id , content)
+            .then(() =>{
+                this.updateState({text: ''});
+                console.log(this.state.text)
+            })
+        }
+    }
+    renderFooter(event){
+        if(event.type !=="poll"){
+        return(
+            <Footer  style={{backgroundColor:'#E9E9EF',borderBottomWidth: 0, shadowOffset: {height: 0, width: 0}, 
+                    shadowOpacity: 0, elevation: 0}}>
+                   <Grid>
+                    <Col>
+                   <TouchableWithoutFeedback onPress={() => this.goingToEvent(event.id)}>
+                        <View style={{alignItems:"center"}}>
+                            <Icon name="check" size={50} color={event.status == 'Going'? green : grey}/>
+                        </View>
+                    </TouchableWithoutFeedback>
+                    </Col>
+                    <Col>
+                    <TouchableWithoutFeedback onPress={() => this.notGoingToEvent(event.id)}>
+                        <View style={{alignItems:"center"}}>
+                            <Icon name="close" size={50}  color={event.status == 'Not going'? red : grey}/>
+                        </View>
+                    </TouchableWithoutFeedback>
+                    </Col>
+                    </Grid>
+                   </Footer>
+        );
+        }
+    }
     render() {
         
         let event = this.state.event;
@@ -193,7 +259,13 @@ class EventScreen extends React.Component {
                             </View>
                         </CardItem>
                         </Card>
+                        
+                        
+                        {/* <PollTableComponent mode="overview" pollDates={this.state.pollDates}></PollTableComponent> */}
+                        
+                        
                         </Container>
+                    {this.renderFooter(event)}
                     </Tab>
                     <Tab  style={{backgroundColor: '#E9E9EF'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
                     heading="Geusts">
@@ -213,41 +285,23 @@ class EventScreen extends React.Component {
                     </Tab>
                     <Tab  style={{backgroundColor: '#E9E9EF'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
                     heading="Comments">
+                    <ScrollView
+                    >
+                    <Right >
                     {this.state.myComments}
-                    <Container style={styles.they}>
-                        <Text>Senne: Hallo</Text>
-                    </Container>
-                    <Container style={styles.me}>
-                        <Text>Senne: Hallo</Text>
-                    </Container>
-                    <Container style={styles.they}>
-                        <Text>Senne: Hallo</Text>
-                    </Container>
-                        <Button onPress={() => {
-    this.setComments();
-  }}><Text>komop</Text></Button>
+                    </Right>
+                    
+                    <Item style={{backgroundColor:'#FFF'}} rounded>
+                        <Input value={this.state.text} onChangeText={(text) => this.setState({text})} style={{paddingTop: 0,paddingBottom: 0}} placeholder='Write your message!' />
+                        <TouchableWithoutFeedback onPress={this.sendMessage.bind(this)}>
+                        <Icon name='send-o' size={20} style={{marginRight:10}}/>
+                        </TouchableWithoutFeedback>
+                    </Item>
+                    </ScrollView>
                     </Tab>
                     </Tabs>
                    </Container>
-                   <Footer  style={{backgroundColor:'#E9E9EF',borderBottomWidth: 0, shadowOffset: {height: 0, width: 0}, 
-                    shadowOpacity: 0, elevation: 0}}>
-                   <Grid>
-                    <Col>
-                   <TouchableWithoutFeedback onPress={() => this.goingToEvent(event.id)}>
-                        <View style={{alignItems:"center"}}>
-                            <Icon name="check" size={50} color={event.status == 'Going'? green : grey}/>
-                        </View>
-                    </TouchableWithoutFeedback>
-                    </Col>
-                    <Col>
-                    <TouchableWithoutFeedback onPress={() => this.notGoingToEvent(event.id)}>
-                        <View style={{alignItems:"center"}}>
-                            <Icon name="close" size={50}  color={event.status == 'Not going'? red : grey}/>
-                        </View>
-                    </TouchableWithoutFeedback>
-                    </Col>
-                    </Grid>
-                   </Footer>
+                   
             </AuthenticatedComponent>
         );
     }
@@ -288,7 +342,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => (
-    bindActionCreators({fetchEvent , fetchAtt, changeStatus, fetchComments}, dispatch)
+    bindActionCreators({fetchEvent , fetchAtt, changeStatus, fetchComments, postComment}, dispatch)
 );
 
 export default connect(mapStateToProps, mapDispatchToProps)(EventScreen);

@@ -20,6 +20,7 @@
     "react": "^16.6.1",
     "react-dom": "^16.6.3",
     "react-native": "0.57.7",
+    "react-native-balloon": "0.0.2",
     "react-native-color-palette": "^2.0.1",
     "react-native-datepicker": "^1.7.2",
     "react-native-gesture-handler": "^1.0.10",

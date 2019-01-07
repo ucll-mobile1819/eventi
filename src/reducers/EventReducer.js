@@ -1,4 +1,4 @@
-import { FETCH_COMMENT_BEGIN,FETCH_COMMENT_SUCCESS,FETCH_ATT_BEGIN, FETCH_ATT_SUCCESS, FETCH_EVENTS_BEGIN, FETCH_EVENTS_SUCCESS, FETCH_EVENT_BEGIN, FETCH_EVENT_SUCCESS, CHANGE_STATUS_EVENT_BEGIN, CHANGE_STATUS_EVENT_SUCCESS } from "../actions/EventActions";
+import { POST_COMMENT_BEGIN,POST_COMMENT_SUCCESS,FETCH_COMMENT_BEGIN,FETCH_COMMENT_SUCCESS,FETCH_ATT_BEGIN, FETCH_ATT_SUCCESS, FETCH_EVENTS_BEGIN, FETCH_EVENTS_SUCCESS, FETCH_EVENT_BEGIN, FETCH_EVENT_SUCCESS, CHANGE_STATUS_EVENT_BEGIN, CHANGE_STATUS_EVENT_SUCCESS } from "../actions/EventActions";
 import { FETCH_FAILURE } from "../actions";
 
 const INITIAL_STATE = {
@@ -29,6 +29,7 @@ const INITIAL_STATE = {
     },
     status:[],
     comments:[],
+    comment:[],
 };
 
 let events;
@@ -108,6 +109,19 @@ const eventReducer = (state = INITIAL_STATE, action) => {
                 ...state,
                 loading: false,
                 comments: action.payload.comments
+            };
+
+        case POST_COMMENT_BEGIN:
+            return {
+                ...state,
+                loading: true,
+                error: null // Needed to reset any previous errors
+            };
+        case POST_COMMENT_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                comment: action.payload.comment
             };
         default:
             return state;
