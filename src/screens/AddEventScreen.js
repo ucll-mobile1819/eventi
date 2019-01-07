@@ -134,7 +134,7 @@ class AddEventScreen extends ValidationComponent {
 
                             <View style={{ paddingTop: 20, marginLeft: 15 }}>
                                 {this.state.type === 'poll' &&
-                                    <View>
+                                    <View style={{ marginBottom: 20 }}>
                                         <H3 style={{ marginBottom: 20 }}>Poll!</H3>
 
                                         <PollTableComponent
