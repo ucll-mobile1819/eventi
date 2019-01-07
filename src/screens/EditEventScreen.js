@@ -6,6 +6,17 @@ import AuthenticatedComponent from '../components/AuthenticatedComponent';
 
 class EditEventScreen extends React.Component {
 
+    constructor(props) {
+        super(props);
+        this.state = this.getClearedState();
+    }
+
+    getClearedState() {
+        return {
+            showActivityIndicator: true
+        };
+    }
+
     updateState(obj, callback) {
         if (!this._ismounted) return;
         this.setState(obj, callback);
@@ -17,8 +28,8 @@ class EditEventScreen extends React.Component {
 
     render() {
         return (
-            <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
-                
+            <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} showActivityIndicator={() => this.state.showActivityIndicator} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
+
             </AuthenticatedComponent>
         );
     }
