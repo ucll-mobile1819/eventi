@@ -2,8 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
-import { fetchEvent , putEvent} from '../actions/EventActions';
-import { Container,Content, Item, Label, Input, Textarea, Text, H3, Button , Form} from 'native-base';
+import { fetchEvent, putEvent } from '../actions/EventActions';
+import { Container, Content, Item, Label, Input, Textarea, Text, H3, Button, Form } from 'native-base';
 import ValidationComponent from '../components/ValidationComponent';
 import DatePickerComponent from '../components/DatePickerComponent';
 import PollTableComponent from '../components/PollTableComponent';
@@ -24,11 +24,15 @@ class EditEventScreen extends ValidationComponent {
         };
     }
 
-    putEvent(){
+    putEvent() {
         this.props.putEvent(...this.state.event)
-            .then(()=>{
+            .then(() => {
                 //RELOAD STATE
-        })
+            })
+    }
+
+    validateForm() {
+
     }
 
     updateState(obj, callback) {
@@ -39,9 +43,9 @@ class EditEventScreen extends ValidationComponent {
     onLoad() {
         let id = this.props.navigation.state.params.id;
         this.props.fetchEvent(id)
-            .then(()=>{
+            .then(() => {
                 let event = this.props.events.find(e => e.id === this.props.navigation.state.params.id);
-                
+
                 this.updateState({
                     event: event,
                     showActivityIndicator: false,
@@ -52,7 +56,7 @@ class EditEventScreen extends ValidationComponent {
                     headerTintColor: 'white', // Back arrow color
                     headerTitleStyle: { color: 'white' }, // Title color
                 });
-        })
+            })
     }
 
     render() {
@@ -64,25 +68,25 @@ class EditEventScreen extends ValidationComponent {
                             {this.isFieldInError('name') && <Text style={{ color: 'red', marginLeft: 15 }}>{this.getErrorsInField('name')[0]}</Text>}
                             <Item floatingLabel style={{ marginLeft: 0 }}>
                                 <Label>Name</Label>
-                                <Input  
-                                    value={this.state.event.name} 
-                                    onChangeText={name => this.updateState({ name })} 
+                                <Input
+                                    value={this.state.event.name}
+                                    onChangeText={name => this.updateState({ name })}
                                 />
                             </Item>
 
                             <Item floatingLabel style={{ marginLeft: 0 }}>
                                 <Label>Location Name</Label>
-                                <Input 
+                                <Input
                                     value={this.state.event.locationName}
-                                    onChangeText={locationName => this.updateState({ locationName })} 
+                                    onChangeText={locationName => this.updateState({ locationName })}
                                 />
                             </Item>
 
                             <Item floatingLabel style={{ marginLeft: 0 }}>
                                 <Label>Address</Label>
                                 <Input
-                                    value={this.state.event.address} 
-                                    onChangeText={address => this.updateState({ address })} 
+                                    value={this.state.event.address}
+                                    onChangeText={address => this.updateState({ address })}
                                 />
                             </Item>
 
@@ -102,7 +106,7 @@ class EditEventScreen extends ValidationComponent {
                                         {/* <PollTableComponent/> */}
                                     </View>
                                 }
-                                
+
                                 {this.state.event.type === 'event' &&
                                     <View>
                                         <H3 style={{ marginBottom: 20 }}>Event: Start time & end time</H3>
@@ -151,7 +155,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => (
     bindActionCreators({
-        fetchEvent , putEvent}, dispatch)
+        fetchEvent, putEvent
+    }, dispatch)
 );
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditEventScreen);
