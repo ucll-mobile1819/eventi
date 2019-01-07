@@ -42,20 +42,20 @@ class HomeScreen extends React.Component{
             <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} showActivityIndicator={() => this.state.showActivityIndicator}  navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 <Container>
                     <Tabs>
-                        <Tab style={{backgroundColor: '#E9E9EF'}} heading="All events">
+                        <Tab textStyle={{color: 'white'}} style={{backgroundColor: '#E9E9EF'}} heading="All events">
                         <FlatList
                         data={events}
                         renderItem={renderItem}
                         />
                         </Tab>
-                        <Tab style={{backgroundColor: '#E9E9EF'}} heading="Going">
+                        <Tab textStyle={{color: 'white'}} style={{backgroundColor: '#E9E9EF'}} heading="Going">
                         
                             <FlatList
                             data={events.filter(event => event.status === 'Going')}
                             renderItem={renderItem}
                             />
                         </Tab>
-                        <Tab style={{backgroundColor: '#E9E9EF'}} heading="My events">
+                        <Tab textStyle={{color: 'white'}} style={{backgroundColor: '#E9E9EF'}} heading="My events">
                             <FlatList
                             data={events.filter(event => event.creator.username === this.username)}
                             renderItem={renderItem}

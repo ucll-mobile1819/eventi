@@ -17,6 +17,7 @@ import { putGroup, putGenerateInviteCode, deleteGroup, deleteUser } from '../net
 import Snackbar from 'react-native-snackbar';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import headerStyles from '../styles/headerStyles';
+import Color from 'color';
 
 
 class GroupSettingsScreen extends ValidationComponent {
@@ -29,7 +30,8 @@ class GroupSettingsScreen extends ValidationComponent {
             groupname: this.props.group.name,
             description: this.props.group.description,
             color: this.props.group.color,
-            inviteCode: this.props.group.inviteCode
+            tabColor: '#3F51B5',
+            inviteCode: this.props.group.inviteCode,
         };
     }
 
@@ -42,7 +44,7 @@ class GroupSettingsScreen extends ValidationComponent {
             if (this.isOwner()) promises.push(this.props.fetchBannedUsers(this.props.navigation.state.params.id));
             Promise.all(promises)
                 .then(() => {
-                    this.updateState({ showActivityIndicator: false });
+                    this.updateState({ showActivityIndicator: false, tabColor: Color(this.props.group.color).darken(0.5) });
                     if (this.props.error) return;
                     if (updateHeader) this.updateHeader();
                 });
@@ -69,6 +71,10 @@ class GroupSettingsScreen extends ValidationComponent {
             headerTitleStyle: { color: 'white' }, // Title color
             headerRight,
         });
+    }
+
+    updateTabColors() {
+        this.updateState({ tabColor: Color(this.state.color).darken(0.5) });
     }
 
     async updateGroup() {
@@ -192,6 +198,11 @@ class GroupSettingsScreen extends ValidationComponent {
     }
 
     render() {
+        let tabStyles = {
+            tabStyle: { backgroundColor: this.state.tabColor },
+            activeTabStyle: { backgroundColor: this.state.tabColor },
+            textStyle: { color: 'white' }
+        };
         return (
             <AuthenticatedComponent
                 showActivityIndicator={() => this.state.showActivityIndicator}
@@ -202,7 +213,7 @@ class GroupSettingsScreen extends ValidationComponent {
                 <Container>
                     <Tabs>
                         {this.isOwner() &&
-                            <Tab heading="General">
+                            <Tab {...tabStyles} heading="General">
                                     <KeyboardAwareScrollView
                                         resetScrollToCoords={{ x: 0, y: 0 }}
                                         style={{ padding: 20 }}
@@ -233,7 +244,7 @@ class GroupSettingsScreen extends ValidationComponent {
                                         />
                                         {this.isFieldInError('color') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('color')[0]}</Text>}
                                         <ColorPalette
-                                            onChange={color => this.updateState({ color }, () => this.updateHeader())}
+                                            onChange={color => { this.updateState({ color }, () => { this.updateHeader(); this.updateTabColors(); }); }}
                                             value={this.props.group.color}
                                             colors={['#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4', '#009688', '#4CAF50',
                                                 '#8BC34A', '#CDDC39', '#FFC107', '#FF9800', '#FF5722', '#795548', '#9E9E9E', '#607D8B', '#000000']}
@@ -252,7 +263,7 @@ class GroupSettingsScreen extends ValidationComponent {
                                     </KeyboardAwareScrollView>
                             </Tab>
                         }
-                        <Tab heading="Members">
+                        <Tab {...tabStyles} heading="Members">
                             <FlatList
                                 data={this.props.members}
                                 renderItem={({ item, index }) => 
@@ -269,7 +280,7 @@ class GroupSettingsScreen extends ValidationComponent {
                             />
                         </Tab>
                         {this.isOwner() &&
-                            <Tab heading="Banned">
+                            <Tab {...tabStyles} heading="Banned">
                                 <FlatList
                                     data={this.props.bannedUsers}
                                     renderItem={({ item, index }) => 
