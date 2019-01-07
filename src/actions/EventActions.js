@@ -4,9 +4,12 @@ import * as commentAPI from '../network/comment';
 
 export const FETCH_EVENTS_BEGIN = 'FETCH_EVENTS_BEGIN';
 export const FETCH_EVENTS_SUCCESS = 'FETCH_EVENTS_SUCCESS';
+
+export const FETCH_EVENT_OF_GROUP_BEGIN = 'FETCH_EVENT_OF_GROUP_BEGIN';
+export const FETCH_EVENT_OF_GROUP_SUCCESS = 'FETCH_EVENT_OF_GROUP_SUCCESS';
+
 export const CHANGE_STATUS_EVENT_BEGIN = 'CHANGE_STATUS_EVENT_BEGIN';
 export const CHANGE_STATUS_EVENT_SUCCESS = 'CHANGE_STATUS_EVENT_SUCCESS';
-
 
 export const FETCH_EVENT_BEGIN = 'FETCH_EVENT_BEGIN';
 export const FETCH_EVENT_SUCCESS = 'FETCH_EVENT_SUCCESS';
@@ -53,6 +56,24 @@ export const changeStatusEventBegin = () => ({
 export const changeStatusEventSuccess = data => ({
     type: CHANGE_STATUS_EVENT_SUCCESS,
     payload: data ,
+});
+
+// Fetch events of one group
+
+export const fetchEventsOfGroup = groupId => dispatch => {
+    dispatch(fetchEventsOfGroupBegin());
+    return eventAPI.getGroupEvents(groupId)
+        .then(events => dispatch(fetchEventsOfGroupSuccess(events)))
+        .catch(error => dispatch(fetchFailure(error)));
+};
+
+export const fetchEventsOfGroupBegin = () => ({
+    type: FETCH_EVENT_OF_GROUP_BEGIN
+});
+
+export const fetchEventsOfGroupSuccess = events => ({
+    type: FETCH_EVENT_OF_GROUP_SUCCESS,
+    payload: { events }
 });
 
 //Fetch single Event code
