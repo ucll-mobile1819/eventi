@@ -121,7 +121,7 @@ class EventScreen extends React.Component {
         })
         
         let commentsJSX = commentList.map(el =>{
-            if(el.who === "me"){
+            if(el.who !== "me"){
                return(
                 <View
                 key={el.key}>
@@ -372,7 +372,7 @@ class EventScreen extends React.Component {
                             </View>            
                             <View>
                                 <Body>
-                                    <Text style={{maxWidth: 285}}>
+                                    <Text style={{flex: 285}}>
                                         {event.description || "No description" }
                                     </Text>
                                 </Body>
