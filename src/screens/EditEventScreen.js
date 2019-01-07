@@ -3,10 +3,11 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
 import { fetchEvent , putEvent} from '../actions/EventActions';
-import { Container, Content, Item, Label, Input, Textarea, Text, H3, Button,  } from 'native-base';
+import { Container,Content, Item, Label, Input, Textarea, Text, H3, Button , Form} from 'native-base';
 import ValidationComponent from '../components/ValidationComponent';
 import DatePickerComponent from '../components/DatePickerComponent';
 import PollTableComponent from '../components/PollTableComponent';
+import { View } from 'react-native';
 
 class EditEventScreen extends ValidationComponent {
 
@@ -49,6 +50,15 @@ class EditEventScreen extends ValidationComponent {
                 this.updateState({
                     event: event,
                     showActivityIndicator: false,
+                    eventId: event.id,
+                    type: event.type,
+                    name: event.name,
+                    locationName: event.locationName,
+                    address: event.address,
+                    description: event.description,
+                    groupId: event.groupId,
+                    startTime: event.startTime,
+                    endTime: event.endTime,
                 })
                 this.props.navigation.setParams({
                     title: "Edit " + this.state.event.name,
