@@ -8,7 +8,7 @@ const defaultRules = {
   required(required, value) {
     if (!required) return true;
     if (value === null || value === undefined) return false;
-    if (value instanceof String && value.trim().length === 0) return false;
+    if (typeof value === 'string' && value.trim().length === 0) return false;
     return true;
   },
   color: /^#[0-9A-Fa-f]{6}$/,
