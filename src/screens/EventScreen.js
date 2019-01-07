@@ -274,17 +274,17 @@ class EventScreen extends React.Component {
         }
     }
     renderLocation(event){
-        if(event.locationName === null && event.address === null){
+        if(!event.locationName && !event.address){
             return(
                 <Text>No location</Text>
             );
         }
-        if(event.locationName === null && event.address !== null){
+        if(!event.locationName && event.address){
             return(
                 <Text>{event.address}</Text>
             );
         }
-        if(event.locationName !== null && event.address === null){
+        if(event.locationName && !event.address){
             return(
                 <Text>{event.locationName}</Text>
             );
