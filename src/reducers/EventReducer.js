@@ -16,6 +16,7 @@ const INITIAL_STATE = {
         country: '',
         type: 'event',
         status: 'Pending',
+        pollDates:[],
         group: {
             id: -1,
             name: '',

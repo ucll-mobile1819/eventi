@@ -33,6 +33,7 @@ class EventScreen extends React.Component {
             event: this.props.emptyEvent,
             groupData: [],
             pollDates:[],
+            sendingMessage:false
         };
     }
     static navigationOptions = obj => obj.navigation.state.params;
@@ -49,7 +50,6 @@ class EventScreen extends React.Component {
                 .then(() => this.props.fetchComments(this.props.navigation.state.params.id))
                     .then(() => {
                     this.updateState({
-                        // pollDates: pollDates,
                         showActivityIndicator: false,
                         groupData: [],
                         event: this.props.events.find(e => e.id === this.props.navigation.state.params.id)
@@ -76,7 +76,7 @@ class EventScreen extends React.Component {
             });
     }
     componentDidMount() {
-        this.interval = setInterval(() => this.setState({ setComments: this.setComments() }), 1000);
+        this.interval = setInterval(() => this.updateState({ setComments: this.setComments() }), 1000);
       }
     componentWillUnmount() {
         clearInterval(this.interval);
@@ -125,7 +125,7 @@ class EventScreen extends React.Component {
                );
             }
         })
-        this.setState({
+        this.updateState({
             myComments: commentsJSX,
             })
         })
@@ -139,7 +139,7 @@ class EventScreen extends React.Component {
         console.log(notGoing);
         going = going.map(el => {return(el.firstname+" "+el.lastname)});
         notGoing = notGoing.map(el => {return(el.firstname+" "+el.lastname)});
-        this.setState({
+        this.updateState({
             showActivityIndicator: false,
             groupData: going,
             event: this.props.events.find(e => e.id === this.props.navigation.state.params.id)
@@ -181,14 +181,19 @@ class EventScreen extends React.Component {
         })
     }
     sendMessage(){
+        if(!this.state.sendingMessage){
+        this.updateState({sendingMessage: true});
         let content = this.state.text.trim().length === 0 ? null : this.state.text ; 
         if(content !== null){
             this.props.postComment(this.props.navigation.state.params.id , content)
             .then(() =>{
                 this.updateState({text: ''});
-                console.log(this.state.text)
+                console.log(this.state.text);
+
             })
         }
+        this.updateState({sendingMessage: false});
+        }   
     }
     renderFooter(event){
         if(event.type !=="poll"){
@@ -214,6 +219,26 @@ class EventScreen extends React.Component {
                    </Footer>
         );
         }
+    }
+    renderTable(event){
+        console.log(event);
+        if(event.type ==="poll"){
+            let pollDates = event.pollDates.map(el =>{return {id: el.id,startTime:el.startTime,endTime:el.endTime}});
+            let pollDateVotes = event.pollDates.map(el =>el.id);
+            console.log("pollDateVotes start");
+            console.log(pollDateVotes);
+            console.log("pollDateVotes end");
+        return(
+            <PollTableComponent 
+            selectable={true}
+            mode="overview" 
+            showAmountOfVotes={true} 
+            pollDateFixed={false}
+            pollDateVotes={pollDateVotes} 
+            pollDates={pollDates}>
+            
+            </PollTableComponent>
+        )}
     }
     render() {
         
@@ -261,8 +286,7 @@ class EventScreen extends React.Component {
                         </Card>
                         
                         
-                        {/* <PollTableComponent mode="overview" pollDates={this.state.pollDates}></PollTableComponent> */}
-                        
+                        {this.renderTable(event)}
                         
                         </Container>
                     {this.renderFooter(event)}
@@ -285,14 +309,18 @@ class EventScreen extends React.Component {
                     </Tab>
                     <Tab  style={{backgroundColor: '#E9E9EF'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
                     heading="Comments">
-                    <ScrollView
-                    >
-                    <Right >
+                    <ScrollView 
+                    ref={ref => this.scrollView = ref}
+                    onContentSizeChange={(contentWidth, contentHeight)=>{        
+                        this.scrollView.scrollToEnd({animated: true});
+                    }}>
+                    
+                    <Right>
                     {this.state.myComments}
                     </Right>
                     
                     <Item style={{backgroundColor:'#FFF'}} rounded>
-                        <Input value={this.state.text} onChangeText={(text) => this.setState({text})} style={{paddingTop: 0,paddingBottom: 0}} placeholder='Write your message!' />
+                        <Input value={this.state.text} onChangeText={(text) => this.updateState({text})} style={{paddingTop: 0,paddingBottom: 0}} placeholder='Write your message!' />
                         <TouchableWithoutFeedback onPress={this.sendMessage.bind(this)}>
                         <Icon name='send-o' size={20} style={{marginRight:10}}/>
                         </TouchableWithoutFeedback>
