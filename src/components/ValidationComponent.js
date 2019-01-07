@@ -93,19 +93,10 @@ export default class ValidationComponent extends Component {
 
   // Method to check rules on a spefific field
   _checkRules(fieldName, rules, value) {
-    let x = fieldName == "startTime"
-    if (x) {
-      console.log('found');
-      console.log(value);
-    }
     for (const key of Object.keys(rules)) {
       const isRuleFn = (typeof this.rules[key] == "function");
       const isRegExp = (this.rules[key] instanceof RegExp);
       if ((isRuleFn && !this.rules[key](rules[key], value)) || (isRegExp && !this.rules[key].test(value))) {
-        if (x) {
-
-          console.log('adding error');
-        }
         this._addError(rules.name, fieldName, key, rules[key], isRuleFn);
       }
     }
