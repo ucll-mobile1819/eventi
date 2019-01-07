@@ -84,8 +84,7 @@ class GroupSettingsScreen extends ValidationComponent {
         if (response !== false) {
             this.props.fetchGroup(response.id)
                 .then(() => this.updateState({ ...this.props.group }))
-                .then(() => this.props.fetchGroups())
-                .then(() => this.props.navigation.navigate('Group', { id: response.id }));
+                .then(() => this.props.fetchGroups());
 
             this.showSnackBar('Group updated');
         }
