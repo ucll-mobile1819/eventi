@@ -35,6 +35,7 @@ class EventScreen extends React.Component {
             showActivityIndicator: true,
             event: this.props.emptyEvent,
             groupData: [],
+            tabColor: '#3F51B5',
         };
     }
     static navigationOptions = obj => obj.navigation.state.params;
@@ -294,7 +295,7 @@ class EventScreen extends React.Component {
         )
     }
 
-    renderGeustsTab(){
+    renderGuestsTab(){
         if(this.state.event.type !== "poll")
         return(
             <Tab textStyle={{color: 'white'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
@@ -316,20 +317,21 @@ class EventScreen extends React.Component {
         )
     }
     render() {
-        
+        let tabStyles = {
+            tabStyle: { backgroundColor: this.state.tabColor },
+            activeTabStyle: { backgroundColor: this.state.tabColor },
+            textStyle: { color: 'white' }
+        };
         let event = this.state.event;
         let time = "No date yet";
         if(event.startTime !== null){
             time= this.getDateDisplayFormat(event.startTime) +" "+ this.getTimeDisplayFormat(event.startTime) +" - "+ this.getDateDisplayFormat(event.endTime) +" "+ this.getTimeDisplayFormat(event.endTime);
         }
-
         return (
             <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} showActivityIndicator={() => this.state.showActivityIndicator} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 <Container>
                     <Tabs tabBarUnderlineStyle={{backgroundColor:'black'}}>
-                    <Tab textStyle={{color: 'white'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
-
-                    heading="Info">
+                    <Tab {...tabStyles} heading="Info">
                     <Container style={{backgroundColor: '#E9E9EF'}}>
                     <ScrollView>
                         <Card style={{ backgroundColor: "transparent",elevation: 0,borderColor:"transparent"}}>
@@ -379,10 +381,8 @@ class EventScreen extends React.Component {
                         </Container>
                     {this.renderFooter(event)}
                     </Tab>
-                    {this.renderGeustsTab()}
-                    <Tab  style={{backgroundColor: '#E9E9EF'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
-
-                    heading="Comments">
+                    {this.renderGuestsTab()}
+                    <Tab {...tabStyles} heading="Comments">
                     <View style={{flex: 1}}>
                     <ScrollView style={{flex: 1}}
                     ref={ref => this.scrollView = ref}
