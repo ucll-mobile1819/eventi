@@ -17,7 +17,7 @@ class AddEventScreen extends ValidationComponent {
             pollDates: [],
             pollDateVotes: [],
             groups: [],
-            selectedGroupId: undefined,
+            selectedGroupId: '',
             type: 'event',
             name: '',
             locationName: '',
@@ -86,10 +86,9 @@ class AddEventScreen extends ValidationComponent {
     }
 
     onGroupChange(groupId) {
-        this.UpdateState({
+        this.updateState({
             selectedGroupId: groupId
         });
-        console.log("-----------" + this.state.selectedGroupId)
     }
 
     render() {
@@ -124,6 +123,8 @@ class AddEventScreen extends ValidationComponent {
                                     selectedValue={this.state.selectedGroupId}
                                     onValueChange={this.onGroupChange.bind(this)}
                                 >
+
+                                    <Picker.Item label="Choose a group" value="placeholder" key="placeholder" />
                                     {this.state.groups.map(
                                         (group) => {
                                             return <Picker.Item label={group.name} value={String(group.id)} key={String(group.id)} />
