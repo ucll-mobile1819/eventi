@@ -186,7 +186,7 @@ class EventScreen extends React.Component {
     }
     notGoingToEvent(id){
         //Set event on not going
-        this.props.changeStatus(id , this.props.event.status === 'Not going' ? null : 'Not going')
+        this.props.changeStatus(id , this.state.event.status === 'Not going' ? null : 'Not going')
         .then(() => {
             this.props.fetchAtt(id)
             .then(()=> this.setGuests())
