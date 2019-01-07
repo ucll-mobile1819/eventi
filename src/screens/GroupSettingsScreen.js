@@ -69,7 +69,6 @@ class GroupSettingsScreen extends ValidationComponent {
         )
 
         if (response !== false) {
-            // TODO refresh state with group info
             this.props.fetchGroup(response.id)
                 .then(() => this.updateState({ ...this.props.group }))
                 .then(() => this.props.fetchGroups())
