@@ -117,11 +117,11 @@ class EventScreen extends React.Component {
         
         commentList = comments.map(el =>{ 
             let who = el.creator.username === this.props.user.username ? "me":"they" ;
-            return {key: el.id, who: who,what: el.content ,name: this.props.user.username} 
+            return {key: el.id, who: who,what: el.content ,name: el.creator.username} 
         })
         
         let commentsJSX = commentList.map(el =>{
-            if(el.who !== "me"){
+            if(el.who === "me"){
                return(
                 <View
                 key={el.key}>
