@@ -17,6 +17,8 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import groupStyles from '../styles/groupStyles';
 import { Table, TableWrapper, Row, Cols } from 'react-native-table-component';
 import * as eventAPI from '../network/event';
+import Color from 'color';
+
 const months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
 
 const red = '#DD1111';
@@ -29,7 +31,7 @@ let notGoing = [];
 class EventScreen extends React.Component {
     constructor(props) {
         super(props);
-        let sendingMessage = false;
+        this.sendingMessage = false;
         this.state = {
             text: '',
             showActivityIndicator: true,
@@ -51,11 +53,13 @@ class EventScreen extends React.Component {
         this.props.fetchAtt(this.props.navigation.state.params.id),
         this.props.fetchComments(this.props.navigation.state.params.id)])
                     .then(() => {
+                    let event = this.props.events.find(e => e.id === this.props.navigation.state.params.id);
                     this.updateState({
                         showActivityIndicator: false,
                         pollDates:[],
                         votes:[],
-                        event: this.props.events.find(e => e.id === this.props.navigation.state.params.id)
+                        event,
+                        tabColor: Color(event.group.color).darken(0.5),
                     }, () => {
 
                     if(this.state.event.type === "poll"){
@@ -295,11 +299,10 @@ class EventScreen extends React.Component {
         )
     }
 
-    renderGuestsTab(){
+    renderGuestsTab(tabStyles){
         if(this.state.event.type !== "poll")
         return(
-            <Tab textStyle={{color: 'white'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
-            heading="Guests">
+            <Tab {...tabStyles} heading="Guests">
                 <Container style={{backgroundColor: '#E9E9EF'}}>
                 <SectionList
                     renderItem={({item, index, section}) => <Text style={{margin: 8,fontSize: 15}} key={index}>{item}</Text>}
@@ -381,7 +384,7 @@ class EventScreen extends React.Component {
                         </Container>
                     {this.renderFooter(event)}
                     </Tab>
-                    {this.renderGuestsTab()}
+                    {this.renderGuestsTab(tabStyles)}
                     <Tab {...tabStyles} heading="Comments">
                     <View style={{flex: 1}}>
                     <ScrollView style={{flex: 1}}

@@ -128,15 +128,12 @@ const eventReducer = (state = INITIAL_STATE, action) => {
             };
 
         case FETCH_VOTES_BEGIN:
-        console.log("fetched votes");
             return {
                 ...state,
                 loading: true,
                 error: null // Needed to reset any previous errors
             };
         case FETCH_VOTES_SUCCESS:
-        console.log("fetched votes");
-        console.log(action.payload.votes);
             return {
                 ...state,
                 loading: false,
