@@ -17,7 +17,7 @@ class AddEventScreen extends ValidationComponent {
             pollDates: [],
             pollDateVotes: [],
             groups: [],
-            selectedGroupId: '',
+            selectedGroupId: undefined,
             type: 'event',
             name: '',
             locationName: '',
@@ -85,6 +85,13 @@ class AddEventScreen extends ValidationComponent {
         }
     }
 
+    onGroupChange(groupId) {
+        this.UpdateState({
+            selectedGroupId: groupId
+        });
+        console.log("-----------" + this.state.selectedGroupId)
+    }
+
     render() {
         return (
             <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)} >
@@ -110,16 +117,20 @@ class AddEventScreen extends ValidationComponent {
                                 <Picker
                                     mode="dropdown"
                                     iosIcon={<Icon name="ios-arrow-down-outline" />}
-                                    placeholder="Group"
+                                    placeholder="Choose a group"
                                     placeholderStyle={{ color: "#bfc6ea" }}
                                     placeholderIconColor="#007aff"
                                     style={{ width: undefined }}
                                     selectedValue={this.state.selectedGroupId}
-                                //onValueChange={this.onValueChange.bind(this)}
+                                    onValueChange={this.onGroupChange.bind(this)}
                                 >
-                                    <Picker.Item label="Group1" value="key0" />
-                                    <Picker.Item label="Group2" value="key1" />
-                                    <Picker.Item label="Group3" value="key2" />
+                                    {this.state.groups.map(
+                                        (group) => {
+                                            return <Picker.Item label={group.name} value={String(group.id)} key={String(group.id)} />
+                                        }
+                                    )
+
+                                    }
                                 </Picker>
                             </Item>
 
