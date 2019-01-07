@@ -99,7 +99,23 @@ class AddEventScreen extends ValidationComponent {
             if (response !== false) {
                 this.props.navigation.navigate("Event", { id: response.id });
             }
+        }
 
+        if (this.state.type === "poll") {
+            let response = await postEventWithPoll(
+                this.state.selectedGroupId,
+                this.state.name,
+                this.state.description,
+                this.state.locationName,
+                this.state.address,
+                null, null, null, null,
+                this.state.pollDates,
+                true
+            );
+
+            if (response !== false) {
+                this.props.navigation.navigate("Event", { id: response.id });
+            }
         }
     }
 
