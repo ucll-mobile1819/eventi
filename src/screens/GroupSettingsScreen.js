@@ -31,16 +31,19 @@ class GroupSettingsScreen extends ValidationComponent {
     }
 
     onLoad(updateHeader = true) {
-        let promises = [];
-        promises.push(this.props.fetchGroup(this.props.navigation.state.params.id));
-        promises.push(this.props.fetchMembers(this.props.navigation.state.params.id));
-        if (this.isOwner()) promises.push(this.props.fetchBannedUsers(this.props.navigation.state.params.id));
-        Promise.all(promises)
-            .then(() => {
-                this.updateState({ showActivityIndicator: false });
-                if (this.props.error) return;
-                if (updateHeader) this.updateHeader();
-            });
+        // group has to be fetched first to be able to determine isOwner()
+        this.props.fetchGroup(this.props.navigation.state.params.id)
+        .then(() => {
+            let promises = [];
+            promises.push(this.props.fetchMembers(this.props.navigation.state.params.id));
+            if (this.isOwner()) promises.push(this.props.fetchBannedUsers(this.props.navigation.state.params.id));
+            Promise.all(promises)
+                .then(() => {
+                    this.updateState({ showActivityIndicator: false });
+                    if (this.props.error) return;
+                    if (updateHeader) this.updateHeader();
+                });
+        });
     }
 
     updateState(obj, callback) {
@@ -179,8 +182,6 @@ class GroupSettingsScreen extends ValidationComponent {
     }
 
     render() {
-        console.log("Banned:");
-        console.log(this.props.bannedUsers);
         return (
             <AuthenticatedComponent
                 showActivityIndicator={() => this.state.showActivityIndicator}
