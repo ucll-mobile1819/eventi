@@ -201,7 +201,8 @@ class GroupSettingsScreen extends ValidationComponent {
         let tabStyles = {
             tabStyle: { backgroundColor: this.state.tabColor },
             activeTabStyle: { backgroundColor: this.state.tabColor },
-            textStyle: { color: 'white' }
+            textStyle: { color: 'white' },
+            style: { backgroundColor: '#E9E9EF' },
         };
         return (
             <AuthenticatedComponent
