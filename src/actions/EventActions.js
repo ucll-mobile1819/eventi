@@ -137,6 +137,7 @@ export const postCommentSuccess = comment => ({
 //Fetch votes
 
 export const fetchVotes = (id) => dispatch => {
+    console.log(id)
     dispatch(fetchVotesBegin());
     return eventAPI.getVotes(id)
     .then(votes => {
