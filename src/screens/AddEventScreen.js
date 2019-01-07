@@ -161,7 +161,7 @@ class AddEventScreen extends ValidationComponent {
                                             placeholder="Start Time"
                                             mode="datetime"
                                             minDate={new Date()}
-                                            maxDate={new Date(Date.now() + 500 * 365 * 24 * 60 * 60 * 1000)}
+                                            maxDate={this.state.endTime || new Date(Date.now() + 500 * 365 * 24 * 60 * 60 * 1000)}
                                             onDateChange={startTime => {
                                                 this.updateState({ startTime });
                                             }}
@@ -171,7 +171,7 @@ class AddEventScreen extends ValidationComponent {
                                             style={{ width: 250, marginBottom: 20 }}
                                             placeholder="End Time"
                                             mode="datetime"
-                                            minDate={new Date()}
+                                            minDate={this.state.startTime || new Date()}
                                             maxDate={new Date(Date.now() + 500 * 365 * 24 * 60 * 60 * 1000)}
                                             onDateChange={endTime => {
                                                 this.updateState({ endTime });
