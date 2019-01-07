@@ -146,7 +146,7 @@ class AddEventScreen extends ValidationComponent {
                                 <Input onChangeText={address => this.updateState({ address })} />
                             </Item>
 
-                            {this.isFieldInError('selectedGroupId') && <Text style={{ color: 'red', marginLeft: 15 }}>{this.getErrorsInField('selectedGroupId')[0]}</Text>}
+                            {this.isFieldInError('selectedGroupId') && <Text style={{ color: 'red', marginLeft: 15, marginTop: 20 }}>{this.getErrorsInField('selectedGroupId')[0]}</Text>}
                             <Item picker style={{ marginLeft: 15, marginTop: 20 }}>
                                 <Picker
                                     mode="dropdown"
