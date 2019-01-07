@@ -16,7 +16,11 @@ import { postEvent, postEventWithPoll } from '../network/event'
 class AddEventScreen extends ValidationComponent {
     constructor(props) {
         super(props);
-        this.state = {
+        this.state = this.getClearedState();
+    }
+
+    getClearedState() {
+        return {
             pollDates: [],
             pollDateVotes: [], //unused but necessary
             groups: [],
@@ -29,7 +33,7 @@ class AddEventScreen extends ValidationComponent {
             startTime: null,
             endTime: null,
             showActivityIndicator: true
-        };
+        }
     }
 
     onLoad() {
@@ -98,11 +102,13 @@ class AddEventScreen extends ValidationComponent {
             );
 
             if (response !== false) {
-                this.props.navigation.navigate("Event", { id: response.id });
+                this.props.navigation.navigate("Home");
             }
         }
 
         if (this.state.type === "poll") {
+            this.up
+
             let response = await postEventWithPoll(
                 this.state.selectedGroupId,
                 this.state.name,
@@ -110,12 +116,12 @@ class AddEventScreen extends ValidationComponent {
                 this.state.locationName,
                 this.state.address,
                 null, null, null, null,
-                this.state.pollDates,
+                this.state.pollDates.map(el => ({ id: el.id < 0 ? undefined : el.id, startTime: el.startTime, endTime: el.endTime, votes: el.votes })),
                 true
             );
 
             if (response !== false) {
-                this.props.navigation.navigate("Event", { id: response.id });
+                this.props.navigation.navigate("Home");
             }
         }
     }
