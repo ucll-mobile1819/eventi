@@ -293,6 +293,28 @@ class EventScreen extends React.Component {
             <Text>{event.locationName} - {event.address}</Text>
         )
     }
+
+    renderGeustsTab(){
+        if(this.state.event.type !== "poll")
+        return(
+            <Tab textStyle={{color: 'white'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
+            heading="Guests">
+                <Container style={{backgroundColor: '#E9E9EF'}}>
+                <SectionList
+                    renderItem={({item, index, section}) => <Text style={{margin: 8,fontSize: 15}} key={index}>{item}</Text>}
+                    renderSectionHeader={({section: {title}}) => (
+                        <Text style={{fontWeight: 'bold',margin: 8,fontSize: 25}}>{title}</Text>
+                    )}
+                    sections={[
+                        {title: 'Going', data: this.state.groupData},
+                        {title: 'Not going', data: notGoing},
+                    ]}
+                    keyExtractor={(item, index) => item + index}
+                />
+                </Container>
+            </Tab>
+        )
+    }
     render() {
         
         let event = this.state.event;
@@ -357,22 +379,7 @@ class EventScreen extends React.Component {
                         </Container>
                     {this.renderFooter(event)}
                     </Tab>
-                    <Tab textStyle={{color: 'white'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
-                    heading="Guests">
-                        <Container style={{backgroundColor: '#E9E9EF'}}>
-                        <SectionList
-                            renderItem={({item, index, section}) => <Text style={{margin: 8,fontSize: 15}} key={index}>{item}</Text>}
-                            renderSectionHeader={({section: {title}}) => (
-                                <Text style={{fontWeight: 'bold',margin: 8,fontSize: 25}}>{title}</Text>
-                            )}
-                            sections={[
-                                {title: 'Going', data: this.state.groupData},
-                                {title: 'Not going', data: notGoing},
-                            ]}
-                            keyExtractor={(item, index) => item + index}
-                        />
-                        </Container>
-                    </Tab>
+                    {this.renderGeustsTab()}
                     <Tab  style={{backgroundColor: '#E9E9EF'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
 
                     heading="Comments">
