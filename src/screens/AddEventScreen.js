@@ -97,7 +97,7 @@ class AddEventScreen extends ValidationComponent {
             );
 
             if (response !== false) {
-                this.props.navigation.navigate("event", response.id);
+                this.props.navigation.navigate("Event", { id: response.id });
             }
 
         }
