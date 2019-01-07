@@ -132,7 +132,7 @@ class AddEventScreen extends ValidationComponent {
                                 <Input onChangeText={address => this.updateState({ address })} />
                             </Item>
 
-                            <Item picker style={{ marginLeft: 15 }}>
+                            <Item picker style={{ marginLeft: 15, marginTop: 20 }}>
                                 <Picker
                                     mode="dropdown"
                                     iosIcon={<Icon name="ios-arrow-down-outline" />}
@@ -155,7 +155,7 @@ class AddEventScreen extends ValidationComponent {
                                 rowSpan={5}
                                 bordered
                                 placeholder="Description"
-                                style={{ width: undefined, marginLeft: 15 }}
+                                style={{ width: undefined, marginLeft: 15, marginTop: 20 }}
                                 onChangeText={description => this.updateState({ description })} />
 
                             <View style={{ flex: 1, flexDirection: 'row', marginLeft: 15, paddingTop: 20 }}>
