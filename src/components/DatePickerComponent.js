@@ -12,6 +12,7 @@ PROPS (optional):
     maxDate: Date
     showIcon: boolean
     onDateChange: Function, i.e.: (date) => {}
+    style: Object
     customStyles: Object
     date: Date
     mode: String 'time', 'date' or 'datetime'
@@ -52,6 +53,7 @@ export default class DatePickerComponent extends Component {
     render() {
         return (
             <DatePicker
+                style={this.props.style || {}}
                 placeholder={this.props.placeholder || ""}
                 getDateStr={date => this.formatDateForDatePicker(date)}
                 minDate={this.props.minDate || new Date(1500, 0, 0)}
