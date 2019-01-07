@@ -69,7 +69,7 @@ class EventScreen extends React.Component {
                         })
                         })
                     }
-                    this.setGeusts();
+                    this.setGuests();
                     if (this.props.error) return;
                     if(this.state.event.creator.username === this.props.user.username){
 
@@ -157,7 +157,7 @@ class EventScreen extends React.Component {
         })
         
     }
-    async setGeusts(){
+    async setGuests(){
         let attendances = this.props.status;
         going = attendances.filter(el => el.status === 'Going').map(el => {return {firstname: el.user.firstname, lastname: el.user.lastname }});
         notGoing = attendances.filter(el => el.status === 'Not going').map(el => {return {firstname: el.user.firstname, lastname: el.user.lastname }});
@@ -185,22 +185,20 @@ class EventScreen extends React.Component {
     }
     notGoingToEvent(id){
         //Set event on not going
-        this.props.changeStatus(id , "Not going")
+        this.props.changeStatus(id , this.props.event.status === 'Not going' ? null : 'Not going')
         .then(() => {
             this.props.fetchAtt(id)
-            .then(()=> this.setGeusts())
+            .then(()=> this.setGuests())
         })
         
     }
 
     goingToEvent(id){
-        //Set event on going
-        // if()
-        // this.props.changeStatus(id , "Going")
-        this.props.changeStatus(id , "Going")
+
+        this.props.changeStatus(id ,  this.state.event.status === 'Going' ? null : 'Going')
         .then(() => {
             this.props.fetchAtt(id)
-            .then(()=> this.setGeusts())
+            .then(()=> this.setGuests())
         })
     }
     sendMessage(){
@@ -275,6 +273,26 @@ class EventScreen extends React.Component {
                 )
         }
     }
+    renderLocation(event){
+        if(event.locationName === null && event.address === null){
+            return(
+                <Text>No location</Text>
+            );
+        }
+        if(event.locationName === null && event.address !== null){
+            return(
+                <Text>{event.address}</Text>
+            );
+        }
+        if(event.locationName !== null && event.address === null){
+            return(
+                <Text>{event.locationName}</Text>
+            );
+        }
+        return(
+            <Text>{event.locationName} - {event.address}</Text>
+        )
+    }
     render() {
         
         let event = this.state.event;
@@ -299,9 +317,7 @@ class EventScreen extends React.Component {
                             </View>            
                             <View>
                                 <Body>
-                                    <Text>
-                                        {event.address} {event.city} {event.country}
-                                    </Text>
+                                    {this.renderLocation(event)}
                                 </Body>
                             </View>
                         </CardItem>
@@ -342,7 +358,7 @@ class EventScreen extends React.Component {
                     {this.renderFooter(event)}
                     </Tab>
                     <Tab textStyle={{color: 'white'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
-                    heading="Geusts">
+                    heading="Guests">
                         <Container style={{backgroundColor: '#E9E9EF'}}>
                         <SectionList
                             renderItem={({item, index, section}) => <Text style={{margin: 8,fontSize: 15}} key={index}>{item}</Text>}
