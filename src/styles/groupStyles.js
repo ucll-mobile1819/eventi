@@ -14,7 +14,8 @@ const groupStyles = StyleSheet.create({
     subtitle: {
         fontSize: 20, 
         fontWeight: 'bold', 
-        color: 'black'
+        color: 'black',
+        marginBottom: 15
     },
     overviewColor: {
         width: 20,
@@ -36,6 +37,12 @@ const groupStyles = StyleSheet.create({
         backgroundColor: 'white',
         borderRadius: 10,
         height: 40,
+        marginBottom: 20
+    },
+    greyBottomBorder: {
+        borderBottomWidth: 1, 
+        borderBottomColor: 'lightgrey', 
+        paddingBottom: 20, 
         marginBottom: 20
     }
 });

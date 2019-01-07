@@ -5,6 +5,7 @@ import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import DatePicker from 'react-native-datepicker';
 import MountCheckingComponent from './MountCheckingComponent';
+import DatePickerComponent from './DatePickerComponent';
 
 const months = [ "jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
 const weekdays = [ "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" ];
@@ -138,30 +139,16 @@ export default class PollTableComponent extends Component {
         }
     }
 
-    datePickerConvertDate(dateCat) {
-        return this.tmpDatePickerDates[dateCat];
-    }
-
-    formatDateForDatePicker(d, dateCat) {
-        this.tmpDatePickerDates[dateCat] = d;
-        if (!(d instanceof Date)) return null;
-        let dbl = num => num.toString().length === 1 ? '0' + num.toString() : num.toString();
-        let weekday = date => weekdays[(date.getDay()||7)-1];
-        return `${weekday(d)} ${d.getDate()} ${months[d.getMonth()]} ${dbl(d.getHours())}:${dbl(d.getMinutes())}`;
-    }
-
-    onDatePickerChange(dateCat) {
-        let times = {
-            endTime: this.state.newPollDate.endTime,
-            startTime: this.state.newPollDate.startTime,
-        };
-        times[dateCat] = this.datePickerConvertDate(dateCat);
-        if (this.state.lastInterval !== 0 && dateCat === 'startTime') {
-            times.endTime = new Date(times.startTime.getTime() + this.state.lastInterval);
+    guessEndTime(startTime) {
+        if (this.state.lastInterval !== 0) {
+            let endTime = new Date(startTime.getTime() + this.state.lastInterval);
+            this.updateState({
+                newPollDate: {
+                    startTime: this.state.newPollDate.startTime,
+                    endTime
+                }
+            });
         }
-        this.updateState({
-            newPollDate: times
-        });
     }
 
     selectPollDate(id) {
@@ -257,33 +244,23 @@ export default class PollTableComponent extends Component {
                 {newPollDate != null &&
                     <TableWrapper key={pollDates.length} flexArr={showAmountOfVotes ? [7, 7, 2, 2] : [4, 4, 1]} style={styles.row} borderStyle={styles.border}>
                         <Cell key={0} flex={showAmountOfVotes ? 7 : 4} data={
-                            <DatePicker
+                            <DatePickerComponent
                                 placeholder="Enter start time"
-                                getDateStr={date => this.formatDateForDatePicker(date, 'startTime')}
                                 minDate={new Date()}
-                                maxDate={new Date(Date.now() + 500*365*24*60*60*1000)}
-                                confirmBtnText="Confirm"
-                                cancelBtnText="Cancel"
                                 showIcon={false}
-                                onDateChange={() => this.onDatePickerChange('startTime')}
+                                onDateChange={startTime => { this.updateState({ newPollDate: { ...newPollDate, startTime } }); this.guessEndTime(startTime); }}
                                 customStyles={{ dateInput: { borderWidth: 0, alignItems: 'flex-start', paddingLeft: 6 }}}
                                 date={newPollDate.startTime}
-                                mode="datetime"
                             />
                         }/>
                         <Cell key={1} flex={showAmountOfVotes ? 7 : 4} data={
-                            <DatePicker
+                            <DatePickerComponent
                                 placeholder="Enter end time"
-                                getDateStr={date => this.formatDateForDatePicker(date, 'endTime')}
                                 minDate={new Date()}
-                                maxDate={new Date(Date.now() + 500*365*24*60*60*1000)}
-                                confirmBtnText="Confirm"
-                                cancelBtnText="Cancel"
                                 showIcon={false}
-                                onDateChange={ () => this.updateState({ newPollDate: { ...newPollDate, endTime: this.datePickerConvertDate('endTime') }})}
+                                onDateChange={endTime => this.updateState({ newPollDate: { ...newPollDate, endTime } })}
                                 customStyles={{ dateInput: { borderWidth: 0, alignItems: 'flex-start', paddingLeft: 6 }}}
                                 date={newPollDate.endTime}
-                                mode="datetime"
                             />
                         }/>
                         {showAmountOfVotes ? <Cell key={2} flex={2} data={''}/> : <></>}

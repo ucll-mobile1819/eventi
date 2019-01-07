@@ -28,6 +28,7 @@ class HomeScreen extends React.Component{
     }
     sortEventsByDate(events) {
         return events.sort((a, b) => {
+            if (!(a.startTime instanceof Date) && !(b.startTime instanceof Date)) return a.id - b.id;
             if (!(a.startTime instanceof Date)) return -1;
             if (!(b.startTime instanceof Date)) return 1;
             return a.startTime.getTime() - b.startTime.getTime();
