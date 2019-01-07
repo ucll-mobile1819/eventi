@@ -104,21 +104,36 @@ class AddEventScreen extends ValidationComponent {
     }
 
     validateForm() {
-        
 
         if (!this.validate({
             name: { name: 'Name', required: true, minlength: 2, maxlength: 50 },
-            startTime: { name: 'Start Time', required: true },
-            endTime: { name: 'End Time', required: true },
             selectedGroupId: { name: 'Group', required: true }
 
         })) {
             return false;
         }
 
-        if (this.state.startTime > this.state.endTime) {
-            fetchFailure({ status: 400, error: 'You choose an end time that is before your start time' });
-            return false;
+        if (this.state.type === "event") {
+            
+            if (!this.validate({
+                startTime: { name: 'Start Time', required: true },
+                endTime: { name: 'End Time', required: true },
+
+            })) {
+                return false;
+            }
+
+            if (this.state.startTime > this.state.endTime) {
+                fetchFailure({ status: 400, error: 'You choose an end time that is before your start time' });
+                return false;
+            }
+        }
+
+        if (this.state.type === "poll") {
+            if (this.state.pollDates.length === 0) {
+                fetchFailure({ status: 400, error: 'You must add at least 1 poll date' });
+                return false;
+            }
         }
 
         return true
