@@ -44,7 +44,7 @@ router.get('/:id/attendances', middleware.auth.loggedIn, (req, res, next) => {
 // Requires 'type' (and if poll: 'pollDates' => [{startTime:x, endTime:y}])
 router.post('/', middleware.auth.loggedIn,  (req, res, next) => {
     let promise;
-    let params = [req.user, req.body.groupId, req.body.name, req.body.description, req.body.startTime, req.body.endTime, req.body.locationName, req.body.zipcode, req.body.city, req.body.address, req.body.country];
+    let params = [req.user, req.body.groupId, req.body.name, req.body.description, req.body.startTime, req.body.endTime, req.body.locationName, req.body.address, req.body.zipcode, req.body.city, req.body.address, req.body.country];
     if (req.body.type === 'poll') {
         promise = eventService.createPoll(...params, req.body.pollDates);
     } else {
