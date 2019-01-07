@@ -26,13 +26,6 @@ export default class DatePickerComponent extends Component {
         this.tmpDate = null;
     }
 
-    formatDate(d) {
-        if (!(d instanceof Date)) return null;
-        let dbl = num => num.toString().length === 1 ? '0' + num.toString() : num.toString();
-        let weekday = date => weekdays[(date.getDay()||7)-1];
-        return `${weekday(d)} ${d.getDate()} ${months[d.getMonth()]} ${dbl(d.getHours())}:${dbl(d.getMinutes())}`;
-    }
-
     datePickerConvertDate() {
         return this.tmpDate;
     }
