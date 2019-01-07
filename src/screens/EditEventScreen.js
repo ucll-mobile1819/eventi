@@ -20,16 +20,6 @@ class EditEventScreen extends ValidationComponent {
         return {
             event: this.props.emptyEvent,
             showActivityIndicator: true,
-            eventId: undefined,
-            type: '',
-            name: '',
-            locationName: '',
-            address: '',
-            description: '',
-            groupId: undefined,
-            startTime: null,
-            endTime: null,
-
 
         };
     }
@@ -38,7 +28,6 @@ class EditEventScreen extends ValidationComponent {
         this.props.putEvent(...this.state.event)
             .then(()=>{
                 //RELOAD STATE
-                alert("PUT COMPLETE");
         })
     }
 
