@@ -10,8 +10,9 @@ import { fetchEvent ,fetchAtt, changeStatus , fetchComments , postComment ,fetch
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Balloon from "react-native-balloon";
 import IconEvil from 'react-native-vector-icons/EvilIcons';
-import PollTableComponent from "../components/PollTableComponent"
+import PollTableComponent from "../components/PollTableComponent";
 import IconMat from 'react-native-vector-icons/MaterialIcons';
+import IconEnc from 'react-native-vector-icons/MaterialIcons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import groupStyles from '../styles/groupStyles';
 import { Table, TableWrapper, Row, Cols } from 'react-native-table-component';
@@ -46,10 +47,14 @@ class EventScreen extends React.Component {
 
     onLoad() {
         //Make this
-        this.props.fetchEvent(this.props.navigation.state.params.id)
-            .then(() => this.props.fetchAtt(this.props.navigation.state.params.id))
-            .then(() => this.props.fetchComments(this.props.navigation.state.params.id))
-                .then(() => this.props.fetchVotes(this.props.navigation.state.params.id))
+        // this.props.fetchEvent(this.props.navigation.state.params.id)
+        // .then(() => this.props.fetchAtt(this.props.navigation.state.params.id))
+        // .then(() => this.props.fetchComments(this.props.navigation.state.params.id))
+        // .then(() => this.props.fetchVotes(this.props.navigation.state.params.id))
+        Promise.all(this.props.fetchEvent(this.props.navigation.state.params.id),
+        this.props.fetchAtt(this.props.navigation.state.params.id),
+        this.props.fetchComments(this.props.navigation.state.params.id),
+        this.props.fetchVotes(this.props.navigation.state.params.id))
                     .then(() => {
                     this.updateState({
                         showActivityIndicator: false,
@@ -283,9 +288,8 @@ class EventScreen extends React.Component {
 
         return (
             <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} showActivityIndicator={() => this.state.showActivityIndicator} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
-            
                 <Container>
-                    <Tabs locked tabBarUnderlineStyle={{backgroundColor:'black'}}>
+                    <Tabs tabBarUnderlineStyle={{backgroundColor:'black'}}>
                     <Tab style={{backgroundColor: '#E9E9EF'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
                     heading="Info">
                     <Container style={{backgroundColor: '#E9E9EF'}}>
@@ -317,8 +321,20 @@ class EventScreen extends React.Component {
                             </View>
                         </CardItem>
                         </Card>
-                        
-                        
+                        <Card style={{ backgroundColor: "transparent",elevation: 0,borderColor:"transparent"}}>
+                        <CardItem style={{ backgroundColor: "transparent",elevation: 0 ,borderColor:"transparent"}}>
+                            <View>
+                            <IconEvil name="tag" size={30}/> 
+                            </View>            
+                            <View>
+                                <Body>
+                                    <Text>
+                                        {event.description}
+                                    </Text>
+                                </Body>
+                            </View>
+                        </CardItem>
+                        </Card>
                         {this.renderTable(event)}
                         
                         </Container>
