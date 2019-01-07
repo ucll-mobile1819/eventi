@@ -310,7 +310,7 @@ function getBannedUsers(currentUser, groupId) {
             return group.getCreator();
         })
         .then(creator => {
-            if (creator.username !== currentUser.username) return Promise.reject(new Error('Only the user of the group can see the banned users.'));
+            if (creator.username !== currentUser.username) return Promise.reject(new Error('Only the creator of the group can see the banned users.'));
             return tmpGroup.getBannedUsers();
         })
         .then(users => Promise.all(users.map(el => essentialisizer.essentializyUser(el))))
