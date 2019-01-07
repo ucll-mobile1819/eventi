@@ -9,7 +9,7 @@ import { View } from 'react-native';
 import ValidationComponent from '../components/ValidationComponent';
 import DatePickerComponent from '../components/DatePickerComponent';
 import { fetchGroups } from '../actions/GroupActions';
-import loginregisterStyles from '../styles/loginregister';
+import { fetchFailure } from '../actions';
 
 class AddEventScreen extends ValidationComponent {
     constructor(props) {
@@ -95,18 +95,27 @@ class AddEventScreen extends ValidationComponent {
     }
 
     submit() {
-        this.validateForm();
-        console.log(this.state)
+        if (!this.validateForm()) return;
+        console.log("submit");
     }
 
     validateForm() {
         if (!this.validate({
             name: { name: 'Name', required: true, minlength: 2, maxlength: 50 },
+            startTime: { name: 'Start Time', required: true },
+            endTime: { name: 'End Time', required: true },
+            selectedGroupId: { name: 'Group', required: true },
 
         })) {
             return false;
         }
 
+        if (this.state.startTime > this.state.endTime) {
+            fetchFailure({ status: 400, error: 'You choose an end time that is before your start time' });
+            return false;
+        }
+
+        return true
 
     }
 
@@ -116,7 +125,7 @@ class AddEventScreen extends ValidationComponent {
                 <Container>
                     <Content padder>
                         <Form>
-                        {this.isFieldInError('name') && <Text style={{color: 'red', marginLeft: 15}}>{this.getErrorsInField('name')[0]}</Text>}
+                            {this.isFieldInError('name') && <Text style={{ color: 'red', marginLeft: 15 }}>{this.getErrorsInField('name')[0]}</Text>}
                             <Item floatingLabel>
                                 <Label>Name</Label>
                                 <Input onChangeText={name => this.updateState({ name })} />
@@ -132,6 +141,7 @@ class AddEventScreen extends ValidationComponent {
                                 <Input onChangeText={address => this.updateState({ address })} />
                             </Item>
 
+                            {this.isFieldInError('selectedGroupId') && <Text style={{ color: 'red', marginLeft: 15 }}>{this.getErrorsInField('selectedGroupId')[0]}</Text>}
                             <Item picker style={{ marginLeft: 15, marginTop: 20 }}>
                                 <Picker
                                     mode="dropdown"
@@ -191,6 +201,7 @@ class AddEventScreen extends ValidationComponent {
                                 {this.state.type === 'event' &&
                                     <View>
                                         <H3 style={{ marginBottom: 20 }}>Event: Start time & end time</H3>
+                                        {this.isFieldInError('startTime') && <Text style={{ color: 'red', marginLeft: 15 }}>{this.getErrorsInField('startTime')[0]}</Text>}
                                         <DatePickerComponent
                                             style={{ width: 250, marginBottom: 20 }}
                                             placeholder="Start Time"
@@ -202,6 +213,7 @@ class AddEventScreen extends ValidationComponent {
                                             }}
                                             date={this.state.startTime}
                                         />
+                                        {this.isFieldInError('endTime') && <Text style={{ color: 'red', marginLeft: 15 }}>{this.getErrorsInField('endTime')[0]}</Text>}
                                         <DatePickerComponent
                                             style={{ width: 250, marginBottom: 20 }}
                                             placeholder="End Time"
