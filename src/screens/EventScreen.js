@@ -294,7 +294,7 @@ class EventScreen extends React.Component {
         )
     }
 
-    renderGeustsTab(){
+    renderGuestsTab(){
         if(this.state.event.type !== "poll")
         return(
             <Tab textStyle={{color: 'white'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
@@ -339,7 +339,9 @@ class EventScreen extends React.Component {
                             </View>            
                             <View>
                                 <Body>
+                                    <View style={{}}>
                                     {this.renderLocation(event)}
+                                    </View>
                                 </Body>
                             </View>
                         </CardItem>
@@ -365,7 +367,7 @@ class EventScreen extends React.Component {
                             </View>            
                             <View>
                                 <Body>
-                                    <Text>
+                                    <Text style={{maxWidth: 285}}>
                                         {event.description || "No description" }
                                     </Text>
                                 </Body>
@@ -379,7 +381,7 @@ class EventScreen extends React.Component {
                         </Container>
                     {this.renderFooter(event)}
                     </Tab>
-                    {this.renderGeustsTab()}
+                    {this.renderGuestsTab()}
                     <Tab  style={{backgroundColor: '#E9E9EF'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
 
                     heading="Comments">
