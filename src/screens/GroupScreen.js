@@ -15,7 +15,8 @@ class GroupScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            showActivityIndicator: true
+            showActivityIndicator: true,
+            color: '',
         };
     }
 
@@ -27,25 +28,33 @@ class GroupScreen extends React.Component {
     onLoad() {
         this.props.fetchGroup(this.props.navigation.state.params.id)
             .then(() => {
-                this.updateState({ showActivityIndicator: false });
+                this.updateState({ showActivityIndicator: false }); 
                 if (this.props.error) return;
-                this.props.navigation.setParams({
-                    title: this.props.group.name,
-                    customHeaderBackgroundColor: this.props.group.color,
-                    headerTintColor: 'white', // Back arrow color
-                    headerTitleStyle: { color: 'white' }, // Title color
-                    headerRight: (
-                        <View>
-                            <TouchableWithoutFeedback onPress={() => this.props.navigation.push('GroupSettings', { id: this.props.group.id })}>
-                                <MaterialIcon name='settings' {...headerStyles.iconProps} />
-                            </TouchableWithoutFeedback>
-                        </View>
-                    )
-                });
+                this.updateHeader()
             });
     }
 
+    updateHeader() {
+        setTimeout(() => {
+            this.updateState({ color: this.props.group.color });
+            this.props.navigation.setParams({
+                title: this.props.group.name,
+                customHeaderBackgroundColor: this.props.group.color,
+                headerTintColor: 'white', // Back arrow color
+                headerTitleStyle: { color: 'white' }, // Title color
+                headerRight: (
+                    <View>
+                        <TouchableWithoutFeedback onPress={() => this.props.navigation.push('GroupSettings', { id: this.props.group.id })}>
+                            <MaterialIcon name='settings' {...headerStyles.iconProps} />
+                        </TouchableWithoutFeedback>
+                    </View>
+                )
+            });
+        }, 1);
+    }
+
     render() {
+        if (!this.props.error && this.state.color !== this.props.group.color) this.updateHeader();
         return (
             <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} showActivityIndicator={() => this.state.showActivityIndicator} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 <View style={{ padding: 10 }}>
