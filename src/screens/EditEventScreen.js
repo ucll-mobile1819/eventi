@@ -35,7 +35,6 @@ class EditEventScreen extends ValidationComponent {
     }
 
     putEvent(){
-
         this.props.putEvent(...this.state.event)
             .then(()=>{
                 //RELOAD STATE
