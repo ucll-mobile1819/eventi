@@ -387,7 +387,7 @@ class EventScreen extends React.Component {
                     {this.renderFooter(event)}
                     </Tab>
                     {this.renderGuestsTab(tabStyles)}
-                    <Tab {...tabStyles} heading="Comments">
+                    <Tab {...tabStyles} style={{backgroundColor: '#E9E9EF'}} heading="Comments">
                     <View style={{flex: 1}}>
                     <ScrollView style={{flex: 1}}
                     ref={ref => this.scrollView = ref}
