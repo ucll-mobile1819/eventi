@@ -63,19 +63,30 @@ class EventScreen extends React.Component {
                     }
                     this.setGeusts();
                     if (this.props.error) return;
-                    this.props.navigation.setParams({
-                        title: this.state.event.name,
-                        customHeaderBackgroundColor: this.state.event.group.color,
-                        headerTintColor: 'white', // Back arrow color
-                        headerTitleStyle: { color: 'white' }, // Title color
-                        headerRight: (
-                            <View>
-                                <TouchableWithoutFeedback onPress={() => this.props.navigation.push('EditEvent', { id: this.state.event.id })}>
-                                    <MaterialIcon name='settings' {...headerStyles.iconProps} />
-                                </TouchableWithoutFeedback>
-                            </View>
-                        )
-                    });
+                    if(this.state.event.creator.username === this.props.user.username){
+
+                        this.props.navigation.setParams({
+                            title: this.state.event.name,
+                            customHeaderBackgroundColor: this.state.event.group.color,
+                            headerTintColor: 'white', // Back arrow color
+                            headerTitleStyle: { color: 'white' }, // Title color
+                            headerRight: (
+                                <View>
+                                    <TouchableWithoutFeedback onPress={() => this.props.navigation.push('EditEvent', { id: this.state.event.id })}>
+                                        <MaterialIcon name='settings' {...headerStyles.iconProps} />
+                                    </TouchableWithoutFeedback>
+                                </View>
+                            )
+                        });
+                    }else{
+                        this.props.navigation.setParams({
+                            title: this.state.event.name,
+                            customHeaderBackgroundColor: this.state.event.group.color,
+                            headerTintColor: 'white', // Back arrow color
+                            headerTitleStyle: { color: 'white' }, // Title color
+                            
+                        });
+                    }
                 });
             });
     }
@@ -99,7 +110,9 @@ class EventScreen extends React.Component {
         let commentsJSX = commentList.map(el =>{
             if(el.who === "me"){
                return(
-                
+                <View
+                key={el.key}>
+                <Text style={{marginLeft:10, fontSize:12}}>me</Text>
                 <Balloon
                 key={el.key}
                 borderColor="transparent"
@@ -110,6 +123,7 @@ class EventScreen extends React.Component {
                 >
                 <Text style={{color:'white'}}>{el.what}</Text>
                 </Balloon>
+                </View>
                );
             }else{
                return(
@@ -242,8 +256,8 @@ class EventScreen extends React.Component {
             });
         })
 
-        console.log("Chosen votes")
-        console.log(this.state.votes);
+        // console.log("Chosen votes")
+        // console.log(this.state.votes);
     }
 
     renderTable(event){
@@ -311,7 +325,7 @@ class EventScreen extends React.Component {
                     {this.renderFooter(event)}
                     </Tab>
                     <Tab  style={{backgroundColor: '#E9E9EF'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
-                    heading="Geusts">
+                    heading="Guests">
                         <Container style={{backgroundColor: '#E9E9EF'}}>
                         <SectionList
                             renderItem={({item, index, section}) => <Text style={{margin: 8,fontSize: 15}} key={index}>{item}</Text>}
@@ -342,7 +356,7 @@ class EventScreen extends React.Component {
                     
                     </ScrollView>
                     <Item style={{backgroundColor:'#FFF'}} rounded>
-                        <Input value={this.state.text} onChangeText={(text) => this.updateState({text})} style={{paddingTop: 0,paddingBottom: 0}} placeholder='Write your message!' />
+                        <Input value={this.state.text} onChangeText={(text) => this.updateState({text})} style={{paddingTop: 0,paddingBottom: 0}} placeholder='Write your message...' />
                         <TouchableWithoutFeedback onPress={this.sendMessage.bind(this)}>
                         <Icon name='send-o' size={20} style={{marginRight:10}}/>
                         </TouchableWithoutFeedback>
