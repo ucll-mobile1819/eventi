@@ -4,6 +4,8 @@ import { fetchFailure } from '../actions';
 
 export const isAuthenticated = async () => {
     const token = await getJWTToken();
+    console.log('checking if authenticated, token: ' + token + ', boolean = ');
+    console.log(!!token);
     return !!token;
 };
 
@@ -30,7 +32,9 @@ export const login = async (username, password) => {
 };
 
 export const logout = async () => {
-    console.log('Logging out...');
+    let token = await getJWTToken();
+    console.log('Logging out... from token ' + token);
     await setJWTToken('');
-    console.log('Logged out...');
+    token = await getJWTToken();
+    console.log('Logged out... new token: ' + token);
 };
