@@ -29,15 +29,15 @@ export const FETCH_VOTES_SUCCESS = 'FETCH_VOTES_SUCCESS';
 export const fetchEvents = () => dispatch => {
     dispatch(fetchEventsBegin());
     return eventAPI.getEvents()
-    .then(events => dispatch(fetchEventsSuccess(events)))
-    .catch(error => dispatch(fetchFailure(error)));
+        .then(events => dispatch(fetchEventsSuccess(events)))
+        .catch(error => dispatch(fetchFailure(error)));
 };
 
 export const changeStatus = (id, status) => dispatch => {
     dispatch(changeStatusEventBegin());
-    return eventAPI.postAttendance(id , status)
-    .then(() => dispatch(changeStatusEventSuccess({ id,status })))
-    .catch(error => dispatch(fetchFailure(error)));
+    return eventAPI.postAttendance(id, status)
+        .then(() => dispatch(changeStatusEventSuccess({ id, status })))
+        .catch(error => dispatch(fetchFailure(error)));
 };
 
 export const fetchEventsBegin = () => ({
@@ -46,7 +46,7 @@ export const fetchEventsBegin = () => ({
 
 export const fetchEventsSuccess = events => ({
     type: FETCH_EVENTS_SUCCESS,
-    payload:  {events} ,
+    payload: { events },
 });
 
 export const changeStatusEventBegin = () => ({
@@ -55,7 +55,7 @@ export const changeStatusEventBegin = () => ({
 
 export const changeStatusEventSuccess = data => ({
     type: CHANGE_STATUS_EVENT_SUCCESS,
-    payload: data ,
+    payload: data,
 });
 
 // Fetch events of one group
@@ -81,8 +81,8 @@ export const fetchEventsOfGroupSuccess = events => ({
 export const fetchEvent = (id) => dispatch => {
     dispatch(fetchEventBegin());
     return eventAPI.getEvent(id)
-    .then(event => dispatch(fetchEventSuccess(event)))
-    .catch(error => dispatch(fetchFailure(error)));
+        .then(event => dispatch(fetchEventSuccess(event)))
+        .catch(error => dispatch(fetchFailure(error)));
 };
 
 export const fetchEventBegin = () => ({
@@ -100,10 +100,10 @@ export const fetchEventSuccess = event => ({
 export const fetchAtt = (id) => dispatch => {
     dispatch(fetchAttBegin());
     return eventAPI.getAttendances(id)
-    .then(status => {
-        dispatch(fetchAttSuccess(status))
-    })
-    .catch(error => dispatch(fetchFailure(error)));
+        .then(status => {
+            dispatch(fetchAttSuccess(status))
+        })
+        .catch(error => dispatch(fetchFailure(error)));
 };
 
 export const fetchAttBegin = () => ({
@@ -112,7 +112,7 @@ export const fetchAttBegin = () => ({
 
 export const fetchAttSuccess = status => ({
     type: FETCH_ATT_SUCCESS,
-    payload: {status} ,
+    payload: { status },
 });
 
 //fethc comments
@@ -120,10 +120,10 @@ export const fetchAttSuccess = status => ({
 export const fetchComments = (id) => dispatch => {
     dispatch(fetchCommentBegin());
     return commentAPI.getComments(id)
-    .then(comments => {
-        dispatch(fetchCommentSuccess(comments))
-    })
-    .catch(error => dispatch(fetchFailure(error)));
+        .then(comments => {
+            dispatch(fetchCommentSuccess(comments))
+        })
+        .catch(error => dispatch(fetchFailure(error)));
 };
 
 export const fetchCommentBegin = () => ({
@@ -132,18 +132,18 @@ export const fetchCommentBegin = () => ({
 
 export const fetchCommentSuccess = comments => ({
     type: FETCH_COMMENT_SUCCESS,
-    payload: {comments} ,
+    payload: { comments },
 });
 
 //Post comments
 
-export const postComment = (id , content) => dispatch => {
+export const postComment = (id, content) => dispatch => {
     dispatch(postCommentBegin());
-    return commentAPI.postComments(id,content)
-    .then(comment => {
-        dispatch(postCommentSuccess(comment))
-    })
-    .catch(error => dispatch(fetchFailure(error)));
+    return commentAPI.postComments(id, content)
+        .then(comment => {
+            dispatch(postCommentSuccess(comment))
+        })
+        .catch(error => dispatch(fetchFailure(error)));
 };
 
 export const postCommentBegin = () => ({
@@ -152,7 +152,7 @@ export const postCommentBegin = () => ({
 
 export const postCommentSuccess = comment => ({
     type: POST_COMMENT_SUCCESS,
-    payload: {comment} ,
+    payload: { comment },
 });
 
 //Fetch votes
@@ -161,10 +161,10 @@ export const fetchVotes = (id) => dispatch => {
     console.log(id)
     dispatch(fetchVotesBegin());
     return eventAPI.getVotes(id)
-    .then(votes => {
-        dispatch(fetchVotesSuccess(votes))
-    })
-    .catch(error => dispatch(fetchFailure(error)));
+        .then(votes => {
+            dispatch(fetchVotesSuccess(votes))
+        })
+        .catch(error => dispatch(fetchFailure(error)));
 };
 
 export const fetchVotesBegin = () => ({
@@ -173,6 +173,6 @@ export const fetchVotesBegin = () => ({
 
 export const fetchVotesSuccess = votes => ({
     type: FETCH_VOTES_SUCCESS,
-    payload: {votes} ,
+    payload: { votes },
 });
 
