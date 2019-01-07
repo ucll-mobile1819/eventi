@@ -8,6 +8,8 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import { fetchGroup } from '../actions/GroupActions';
 import groupStyles from '../styles/groupStyles';
+import EventComponent from '../components/EventComponent';
+import { FlatList } from 'react-native-gesture-handler';
 
 class GroupScreen extends React.Component {
     static navigationOptions = obj => obj.navigation.state.params;
@@ -15,7 +17,8 @@ class GroupScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            showActivityIndicator: true
+            showActivityIndicator: true,
+            color: '',
         };
     }
 
@@ -27,25 +30,43 @@ class GroupScreen extends React.Component {
     onLoad() {
         this.props.fetchGroup(this.props.navigation.state.params.id)
             .then(() => {
-                this.updateState({ showActivityIndicator: false });
+                this.updateState({ showActivityIndicator: false }); 
                 if (this.props.error) return;
-                this.props.navigation.setParams({
-                    title: this.props.group.name,
-                    customHeaderBackgroundColor: this.props.group.color,
-                    headerTintColor: 'white', // Back arrow color
-                    headerTitleStyle: { color: 'white' }, // Title color
-                    headerRight: (
-                        <View>
-                            <TouchableWithoutFeedback onPress={() => this.props.navigation.push('GroupSettings', { id: this.props.group.id })}>
-                                <MaterialIcon name='settings' {...headerStyles.iconProps} />
-                            </TouchableWithoutFeedback>
-                        </View>
-                    )
-                });
+                this.updateHeader()
             });
+    }
+
+    updateHeader() {
+        setTimeout(() => {
+            this.updateState({ color: this.props.group.color });
+            this.props.navigation.setParams({
+                title: this.props.group.name,
+                customHeaderBackgroundColor: this.props.group.color,
+                headerTintColor: 'white', // Back arrow color
+                headerTitleStyle: { color: 'white' }, // Title color
+                headerRight: (
+                    <View>
+                        <TouchableWithoutFeedback onPress={() => this.props.navigation.push('GroupSettings', { id: this.props.group.id })}>
+                            <MaterialIcon name='settings' {...headerStyles.iconProps} />
+                        </TouchableWithoutFeedback>
+                    </View>
+                )
+            });
+        }, 1);
+    }
+
+    sortEventsByDate(events) {
+        return events.sort((a, b) => {
+            if (!(a.startTime instanceof Date) && !(b.startTime instanceof Date)) return a.id - b.id;
+            if (!(a.startTime instanceof Date)) return -1;
+            if (!(b.startTime instanceof Date)) return 1;
+            return a.startTime.getTime() - b.startTime.getTime();
+        });
     }
     
     render() {
+        const renderItem = ({item}) => <EventComponent event={item} nav={this.props.navigation}/>;
+        if (!this.props.error && this.state.color !== this.props.group.color) this.updateHeader();
         return (
             <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} showActivityIndicator={() => this.state.showActivityIndicator} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 <View style={{ padding: 10 }}>
@@ -57,9 +78,12 @@ class GroupScreen extends React.Component {
                         </View>
                     </View>
                     <Text style={[groupStyles.subtitle, {marginBottom: 10 }]}>Events</Text>
-                    {/* TODO: add events here */}
-                    {/* <Button onPress={() => this.props.navigation.push('Event', { id: 3 })} title='Dummy event (id: 3)' /> */}
-                    <Text>No events here yet...</Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                    <FlatList
+                    data={this.sortEventsByDate(this.props.events).filter(event => event.group.id === this.props.group.id)}
+                    renderItem={renderItem}
+                    />
                 </View>
             </AuthenticatedComponent>
         );
@@ -69,6 +93,7 @@ class GroupScreen extends React.Component {
 const mapStateToProps = state => {
     return {
         group: state.group.group,
+        events: state.event.events,
         loading: state.group.loading,
         error: state.group.error
     };

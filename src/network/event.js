@@ -92,8 +92,8 @@ export const postAttendance = async (id, state, handleErrors = false) => {
 
 // PUTS
 
-export const putEvent = async (id, name, description, startTime, endTime, locationName, address, city, zipcode, country, handleErrors = false) => {
-    return await sendAPIRequest(`event/${id}`, 'PUT', handleErrors, true, { id, name, description, startTime, endTime, locationName, address, city, zipcode, country });
+export const putEvent = async (id, name, description, startTime, endTime, locationName, address, city, zipcode, country, pollDates, handleErrors = false) => {
+    return await sendAPIRequest(`event/${id}`, 'PUT', handleErrors, true, { id, name, description, startTime, endTime, locationName, address, city, zipcode, country, pollDates });
 };
 
 // DELETES

@@ -40,9 +40,7 @@ class EventComponent extends React.Component{
     }
     goingToEvent(event){
         //Set event on going
-        // if()
-        this.props.changeStatus(event.id , "Going");
-        
+        this.props.changeStatus(event.id , this.props.event.status === 'Going' ? null : 'Going');
     }
     toEvent(event){
         //Set event on going
@@ -51,8 +49,7 @@ class EventComponent extends React.Component{
     }
     notGoingToEvent(event){
         //Set event on not going
-        this.props.changeStatus(event.id , "Not going");
-        
+        this.props.changeStatus(event.id , this.props.event.status === 'Not going' ? null : 'Not going');
     }
     render() {
         const {
@@ -92,10 +89,10 @@ class EventComponent extends React.Component{
                     </View>
                     {type === 'event' ?
                         <>
-                            <TouchableWithoutFeedback  onPress={() => this.goingToEvent(this.props.event)}><View><Right style={styles.attendanceIcon}>
+                            <TouchableWithoutFeedback onPress={() => this.goingToEvent(this.props.event)}><View><Right style={styles.attendanceIcon}>
                             <Icon name="check" size={30} color={status == 'Going'? green : grey} />
                             </Right></View></TouchableWithoutFeedback>
-                            <TouchableWithoutFeedback  onPress={() => this.notGoingToEvent(this.props.event)}><View><Right style={styles.attendanceIcon}>
+                            <TouchableWithoutFeedback onPress={() => this.notGoingToEvent(this.props.event)}><View><Right style={styles.attendanceIcon}>
                             <Icon name="close" size={30} color={status == 'Not going'? red : grey} />
                             </Right></View></TouchableWithoutFeedback>
                         </> :

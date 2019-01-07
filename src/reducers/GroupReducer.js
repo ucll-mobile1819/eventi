@@ -1,4 +1,4 @@
-import { FETCH_GROUPS_BEGIN, FETCH_GROUPS_SUCCESS, FETCH_GROUP_BEGIN, FETCH_GROUP_SUCCESS } from "../actions/GroupActions";
+import { FETCH_GROUPS_BEGIN, FETCH_GROUPS_SUCCESS, FETCH_GROUP_BEGIN, FETCH_GROUP_SUCCESS, FETCH_MEMBERS_BEGIN, FETCH_MEMBERS_SUCCESS, FETCH_BANNED_USERS_BEGIN, FETCH_BANNED_USERS_SUCCESS } from "../actions/GroupActions";
 import { FETCH_FAILURE } from "../actions";
 
 const INITIAL_GROUP = {
@@ -12,6 +12,8 @@ const INITIAL_GROUP = {
 
 const INITIAL_STATE = {
     groups: [],
+    members: [],
+    bannedUsers: [],
     group: INITIAL_GROUP
 };
 
@@ -41,6 +43,30 @@ const groupReducer = (state = INITIAL_STATE, action) => {
                 ...state,
                 loading: false,
                 group: action.payload.group
+            };
+        case FETCH_MEMBERS_BEGIN:
+            return {
+                ...state,
+                loading: true,
+                error: null,
+            };
+        case FETCH_MEMBERS_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                members: action.payload.members
+            };
+        case FETCH_BANNED_USERS_BEGIN:
+            return {
+                ...state,
+                loading: true,
+                error: null,
+            };
+        case FETCH_BANNED_USERS_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                bannedUsers: action.payload.bannedUsers
             };
         case FETCH_FAILURE:
             return {

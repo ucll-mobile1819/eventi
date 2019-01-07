@@ -287,7 +287,8 @@ class EventScreen extends React.Component {
             <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} showActivityIndicator={() => this.state.showActivityIndicator} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 <Container>
                     <Tabs tabBarUnderlineStyle={{backgroundColor:'black'}}>
-                    <Tab style={{backgroundColor: '#E9E9EF'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
+                    <Tab textStyle={{color: 'white'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
+
                     heading="Info">
                     <Container style={{backgroundColor: '#E9E9EF'}}>
                     <ScrollView>
@@ -340,8 +341,8 @@ class EventScreen extends React.Component {
                         </Container>
                     {this.renderFooter(event)}
                     </Tab>
-                    <Tab  style={{backgroundColor: '#E9E9EF'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
-                    heading="Guests">
+                    <Tab textStyle={{color: 'white'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
+                    heading="Geusts">
                         <Container style={{backgroundColor: '#E9E9EF'}}>
                         <SectionList
                             renderItem={({item, index, section}) => <Text style={{margin: 8,fontSize: 15}} key={index}>{item}</Text>}
@@ -357,6 +358,7 @@ class EventScreen extends React.Component {
                         </Container>
                     </Tab>
                     <Tab  style={{backgroundColor: '#E9E9EF'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
+
                     heading="Comments">
                     <View style={{flex: 1}}>
                     <ScrollView style={{flex: 1}}

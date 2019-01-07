@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Button, TextInput, StyleSheet } from 'react-native';
+import { View, Text, Button, TextInput } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
@@ -9,11 +9,11 @@ import ValidationComponent from '../components/ValidationComponent';
 import loginregisterStyles from '../styles/loginregister';
 import groupStyles from '../styles/groupStyles';
 import profileStyles from '../styles/profileStyles';
-import DatePicker from 'react-native-datepicker';
 import { fetchUser } from '../actions/AuthenticationActions';
 import { putUser } from '../network/user';
 import Snackbar from 'react-native-snackbar';
 import { fetchFailure } from '../actions';
+import DatePickerComponent from '../components/DatePickerComponent';
 
 class ProfileScreen extends ValidationComponent {
     static navigationOptions = obj => obj.navigation.state.params;
@@ -34,7 +34,8 @@ class ProfileScreen extends ValidationComponent {
             passwordConfirmation: '',
             firstname: '',
             lastname: '',
-            birthday: null
+            birthday: null,
+            showActivityIndicator: true
         };
     }
 
@@ -44,7 +45,7 @@ class ProfileScreen extends ValidationComponent {
         });
 
         this.props.fetchUser()
-            .then(() => this.updateState({ ...this.props.user }));
+            .then(() => this.updateState({ ...this.props.user, showActivityIndicator: false }));
     }
 
     async logout() {
@@ -130,10 +131,15 @@ class ProfileScreen extends ValidationComponent {
         return true;
     }
 
+    formatDate(date) {
+        // formats date to "DD-MM-YYYY"
+        let dbl = num => num.toString().length == 2 ? num : '0' + num;
+        return `${dbl(date.getDate())}-${dbl(date.getMonth()+1)}-${date.getFullYear()}`;
+    }
 
     render() {
         return (
-            <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
+            <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} showActivityIndicator={() => this.state.showActivityIndicator} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 <KeyboardAwareScrollView resetScrollToCoords={{ x: 0, y: 0 }} style={{ padding: 20 }}  >
                     <Text style={profileStyles.title}> Change User Info</Text>
                     {this.isFieldInError('firstname') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('firstname')[0]}</Text>}
@@ -150,21 +156,16 @@ class ProfileScreen extends ValidationComponent {
                         value={this.state.lastname}
                         placeholder='Last name'
                     />
-                    <DatePicker
+                    <DatePickerComponent
                         style={[groupStyles.inputField, { flex: 1, width: undefined }]}
-                        format="DD-MM-YYYY"
-                        minDate="01-01-1900"
                         placeholder="Birthday"
+                        format={date => this.formatDate(date)}
+                        minDate={new Date(1900, 0, 1)}
                         maxDate={new Date()}
-                        confirmBtnText="Confirm"
-                        cancelBtnText="Cancel"
-                        onDateChange={birthday => {
-                            birthday = birthday.split('-');
-                            birthday = new Date(birthday[2].substring(0, 4), birthday[1]-1, birthday[0]);
-                            this.updateState({ birthday });
-                        }}
-                        customStyles={{ dateInput: { borderWidth: 0, alignItems: 'flex-start', paddingLeft: 2 } }}
+                        onDateChange={ birthday => this.updateState({ birthday }) }
+                        customStyles={{ dateInput: { borderWidth: 0, alignItems: 'flex-start', paddingLeft: 2 }}}
                         date={this.state.birthday}
+                        mode='date'
                     />
                     <View style={profileStyles.button}>
                         <Button title="Change Info" onPress={() => this.changeInfo()}/>
