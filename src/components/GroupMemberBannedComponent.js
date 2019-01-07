@@ -29,13 +29,19 @@ export default class GroupMemberBannedComponent extends React.Component {
                     onPress: () => Snackbar.dismiss(),
                 }
             });
-            // TODO refresh banned members of group
+            this.props.updateList();
         }
     }
 
     render() {
+        let style = { flexDirection: 'row', alignItems: 'center', marginBottom: 5 };
+        if (this.props.showSeperator) {
+            style.borderBottomWidth = 1;
+            style.borderColor = 'lightgray';
+            style.paddingBottom = 5;
+        }
         return (
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
+            <View style={style}>
                 <Text>{this.props.member.firstname} {this.props.member.lastname}</Text>
                 <Text style={{ flex: 1, marginLeft: 10 }}>({this.props.member.username})</Text>
                 <Button title="Unban" onPress={() => this.askUnbanMember()} />

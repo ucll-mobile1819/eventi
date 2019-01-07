@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, Button, View, TextInput, Alert, Clipboard, FlatList } from 'react-native';
-import { Container, Tab, Tabs } from 'native-base';
+import { Container, Tab, Tabs, H3 } from 'native-base';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
@@ -30,15 +30,17 @@ class GroupSettingsScreen extends ValidationComponent {
         };
     }
 
-    onLoad() {
-        this.props.fetchGroup(this.props.navigation.state.params.id)
-            .then(() => {
-                this.props.fetchMembers(this.props.group.id);
-                if (this.isOwner()) this.props.fetchBannedUsers(this.props.group.id);
-                this.updateState({ showActivityIndicator: false });
-                if (this.props.error) return;
-                this.updateHeader();
-            });
+    onLoad(updateHeader = true) {
+        let promises = [];
+        promises.push(this.props.fetchGroup(this.props.navigation.state.params.id));
+        promises.push(this.props.fetchMembers(this.props.navigation.state.params.id));
+        if (this.isOwner()) promises.push(this.props.fetchBannedUsers(this.props.navigation.state.params.id));
+        Promise.all(promises)
+        .then(() => {
+            this.updateState({ showActivityIndicator: false });
+            if (this.props.error) return;
+            if (updateHeader) this.updateHeader();
+        });
     }
 
     updateState(obj, callback) {
@@ -97,9 +99,7 @@ class GroupSettingsScreen extends ValidationComponent {
         let response = await putGenerateInviteCode(this.props.group.id, true);
 
         if (response !== false) {
-            this.props.fetchGroup(this.props.group.id)
-                .then(() => this.updateState({ ...this.props.group }));
-
+            this.updateState({ inviteCode: response.inviteCode });
             this.showSnackBar('Invite code renewed');
         }
     }
@@ -175,6 +175,10 @@ class GroupSettingsScreen extends ValidationComponent {
         }
     }
 
+    showButtons(user) {
+        return this.isOwner() && user.username !== this.props.user.username;
+    }
+
     render() {
         return (
             <AuthenticatedComponent
@@ -186,6 +190,12 @@ class GroupSettingsScreen extends ValidationComponent {
                 <Container>
                     <Tabs>
                         <Tab heading="General">
+                            {!this.isOwner() && 
+                                <View style={{ padding: 20 }}>
+                                    <H3>{this.props.group.groupname}</H3>
+                                    <Text>{this.props.group.description}</Text>
+                                </View>
+                            }
                             {this.isOwner() &&
                                 <KeyboardAwareScrollView
                                     resetScrollToCoords={{ x: 0, y: 0 }}
@@ -194,7 +204,7 @@ class GroupSettingsScreen extends ValidationComponent {
 
                                     <Text style={groupStyles.subtitle}>Invite code</Text>
                                     <View style={{ flexDirection: 'row', marginBottom: 20, alignItems: 'center' }}>
-                                        <Text>{this.props.group.inviteCode}</Text>
+                                        <Text>{this.state.inviteCode}</Text>
                                         <View style={{ marginLeft: 20, marginRight: 20 }}>
                                             <Button title="Copy" onPress={() => this.copyToClipboard()} />
                                         </View>
@@ -218,7 +228,7 @@ class GroupSettingsScreen extends ValidationComponent {
                                     />
                                     {this.isFieldInError('color') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('color')[0]}</Text>}
                                     <ColorPalette
-                                        onChange={color => this.updateState({ color })}
+                                        onChange={color => this.updateState({ color }, () => this.updateHeader())}
                                         value={this.props.group.color}
                                         colors={['#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4', '#009688', '#4CAF50',
                                             '#8BC34A', '#CDDC39', '#FFC107', '#FF9800', '#FF5722', '#795548', '#9E9E9E', '#607D8B', '#000000']}
@@ -232,21 +242,21 @@ class GroupSettingsScreen extends ValidationComponent {
 
                                     <Text style={[groupStyles.subtitle, { marginTop: 15 }]}>Delete group</Text>
                                     <View style={{ marginBottom: 60 }}>
-                                        <Button title="Delete group" onPress={() => this.askDeleteGroup()} />
+                                        <Button title="Delete group" onPress={() => this.askDeleteGroup()} color='#f44242'/>
                                     </View>
                                 </KeyboardAwareScrollView>
                             }
                             {!this.isOwner() &&
                                 <View style={{ padding: 20 }}>
-                                    <Button title="Leave group" onPress={() => this.askLeaveGroup()}/>
+                                    <Button title="Leave group" onPress={() => this.askLeaveGroup()} color='#f44242'/>
                                 </View>
                             }
                         </Tab>
                         <Tab heading="Members">
                             <FlatList
                                 data={this.props.members}
-                                renderItem={({ item }) => <GroupMemberComponent member={item} groupId={this.props.group.id} isOwner={this.isOwner()}/>}
-                                keyExtractor={(member, index) => String(member.username)}
+                                renderItem={({ item, index }) => <GroupMemberComponent updateList={() => this.onLoad(false)} showSeperator={this.props.members.length-1 !== index} member={item} groupId={this.props.group.id} showButtons={this.showButtons(item)}/>}
+                                keyExtractor={member => String(member.username)}
                                 style={{ padding: 20 }}
                             />
                         </Tab>
@@ -254,8 +264,8 @@ class GroupSettingsScreen extends ValidationComponent {
                         <Tab heading="Banned">
                             <FlatList
                                 data={this.props.bannedUsers}
-                                renderItem={({ item }) => <GroupMemberBannedComponent member={item} groupId={this.props.group.id}/>}
-                                keyExtractor={(member, index) => String(member.username)}
+                                renderItem={({ item, index }) => <GroupMemberBannedComponent updateList={() => this.onLoad(false)} showSeperator={this.props.bannedUsers.length-1 !== index} member={item} groupId={this.props.group.id}/>}
+                                keyExtractor={member => String(member.username)}
                                 style={{ padding: 20 }}
                             />
                         </Tab>
