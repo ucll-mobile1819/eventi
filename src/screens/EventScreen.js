@@ -190,7 +190,7 @@ class EventScreen extends React.Component {
     }
     notGoingToEvent(id){
         //Set event on not going
-        this.props.changeStatus(id , this.props.event.status === 'Not going' ? null : 'Not going')
+        this.props.changeStatus(id , this.state.event.status === 'Not going' ? null : 'Not going')
         .then(() => {
             this.props.fetchAtt(id)
             .then(()=> this.setGuests())
@@ -344,7 +344,9 @@ class EventScreen extends React.Component {
                             </View>            
                             <View>
                                 <Body>
+                                    <View style={{}}>
                                     {this.renderLocation(event)}
+                                    </View>
                                 </Body>
                             </View>
                         </CardItem>
@@ -370,7 +372,7 @@ class EventScreen extends React.Component {
                             </View>            
                             <View>
                                 <Body>
-                                    <Text>
+                                    <Text style={{maxWidth: 285}}>
                                         {event.description || "No description" }
                                     </Text>
                                 </Body>
