@@ -28,7 +28,7 @@ class EventScreen extends React.Component {
         this.state = {
             showActivityIndicator: true,
             event: this.props.emptyEvent,
-            groupData: ["items", "lol"],
+            groupData: []
         };
     }
     static navigationOptions = obj => obj.navigation.state.params;
@@ -50,8 +50,8 @@ class EventScreen extends React.Component {
                     event: this.props.events.find(e => e.id === this.props.navigation.state.params.id)
                 }, () => {
                     this.setGeusts();
-                    // Callback: when the state has been updated, we will update the header with the new event data
                     if (this.props.error) return;
+                    console.log(this.props.comments);
                     this.props.navigation.setParams({
                         title: this.state.event.name,
                         customHeaderBackgroundColor: this.state.event.group.color,
@@ -67,7 +67,37 @@ class EventScreen extends React.Component {
                     });
                 });
             });
-            console.log(this.props.fetchAtt(this.props.navigation.state.params.id));
+    }
+    componentDidMount() {
+        this.interval = setInterval(() => this.setState({ setComments: this.setComments() }), 1000);
+      }
+    componentWillUnmount() {
+        clearInterval(this.interval);
+    }
+    setComments(){
+        this.props.fetchComments(this.props.navigation.state.params.id)
+        .then(()=>{
+        let comments = this.props.comments;
+        let commentList;
+        
+        commentList = comments.map(el =>{ 
+            let who = el.creator.username === this.props.user.username ? "me":"they" ;
+            return {key: el.id, who: who,what: el.content } 
+        })
+        
+        let commentsJSX = commentList.map(el =>{
+            if(el.who === "me"){
+               return(<Text style={{color: 'red'}} key={el.key}>{el.what}</Text>);
+            }else{
+               return(<Text style={{color: 'green'}} key={el.key}>{el.what}</Text>);
+            }
+        })
+
+        this.setState({
+            myComments: commentsJSX,
+            })
+        })
+        
     }
     async setGeusts(){
         let attendances = this.props.status;
@@ -183,7 +213,19 @@ class EventScreen extends React.Component {
                     </Tab>
                     <Tab  style={{backgroundColor: '#E9E9EF'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
                     heading="Comments">
-                        <Text>This is going to be great</Text>
+                    {this.state.myComments}
+                    <Container style={styles.they}>
+                        <Text>Senne: Hallo</Text>
+                    </Container>
+                    <Container style={styles.me}>
+                        <Text>Senne: Hallo</Text>
+                    </Container>
+                    <Container style={styles.they}>
+                        <Text>Senne: Hallo</Text>
+                    </Container>
+                        <Button onPress={() => {
+    this.setComments();
+  }}><Text>komop</Text></Button>
                     </Tab>
                     </Tabs>
                    </Container>
@@ -225,6 +267,12 @@ class EventScreen extends React.Component {
         flexDirection: 'row',
         height: 50
       },
+      me:{
+        backgroundColor:'grey',maxHeight:30
+      },
+      they:{
+        backgroundColor:'green',maxHeight:30
+      }
   });
 
 const mapStateToProps = state => {
@@ -234,6 +282,7 @@ const mapStateToProps = state => {
         comments: state.event.comments,
         emptyEvent: state.event.emptyEvent,
         loading: state.group.loading,
+        user: state.user.user,
         error: state.group.error
     };
 };
