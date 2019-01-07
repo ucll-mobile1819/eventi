@@ -9,6 +9,7 @@ import { View } from 'react-native';
 import ValidationComponent from '../components/ValidationComponent';
 import DatePickerComponent from '../components/DatePickerComponent';
 import { fetchGroups } from '../actions/GroupActions';
+import loginregisterStyles from '../styles/loginregister';
 
 class AddEventScreen extends ValidationComponent {
     constructor(props) {
@@ -91,11 +92,10 @@ class AddEventScreen extends ValidationComponent {
                 selectedGroupId: parseInt(groupId)
             });
         }
-
     }
 
     submit() {
-        this.validateForm
+        this.validateForm();
         console.log(this.state)
     }
 
@@ -116,6 +116,7 @@ class AddEventScreen extends ValidationComponent {
                 <Container>
                     <Content padder>
                         <Form>
+                        {this.isFieldInError('name') && <Text style={{color: 'red', marginLeft: 15}}>{this.getErrorsInField('name')[0]}</Text>}
                             <Item floatingLabel>
                                 <Label>Name</Label>
                                 <Input onChangeText={name => this.updateState({ name })} />
