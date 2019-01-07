@@ -87,22 +87,18 @@ class AddEventScreen extends ValidationComponent {
     }
 
     onGroupChange(groupId) {
-        console.log(this.state.selectedGroupId);
-        if (groupId !== null || groupId !== undefined || groupId !== "placeholder") {
+        if (groupId !== null && groupId !== undefined && groupId !== "placeholder") {
             this.updateState({
                 selectedGroupId: Number(groupId)
             });
-            console.log(groupId + "--->" + this.state.selectedGroupId)
         } else {
             this.updateState({
                 selectedGroupId: undefined
             });
         }
-        console.log(this.state.selectedGroupId);
     }
 
     submit() {
-        console.log("submit selectedGroupId" + this.state.selectedGroupId);
         if (!this.validateForm()) return;
         console.log("submit");
     }
