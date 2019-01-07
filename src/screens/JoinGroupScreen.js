@@ -5,8 +5,13 @@ import groupStyles from '../styles/groupStyles';
 import loginregisterStyles from '../styles/loginregister';
 import ValidationComponent from '../components/ValidationComponent';
 import { postJoinGroup } from '../network/group';
+import { fetchGroups } from '../actions/GroupActions';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
-export default class JoinGroupScreen extends ValidationComponent {
+class JoinGroupScreen extends ValidationComponent {
+    static navigationOptions = obj => obj.navigation.state.params;
+
     constructor(props) {
         super(props);
         this.state = this.getClearedState();
@@ -32,7 +37,9 @@ export default class JoinGroupScreen extends ValidationComponent {
                 'You succesfully joined ' + response.name + '.'
             );
             this.updateState(this.getClearedState());
-            this.props.navigation.navigate('Group', { id: response.id });
+            // TODO fetch groups again for this user?
+            this.props.fetchGroups()
+            .then(() => this.props.navigation.navigate('Group', { id: response.id }));
         }
     }
 
@@ -77,3 +84,18 @@ export default class JoinGroupScreen extends ValidationComponent {
         );
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        loading: state.group.loading,
+        error: state.group.error,
+    };
+};
+
+const mapDispatchToProps = dispatch => (
+    bindActionCreators({
+        fetchGroups
+    }, dispatch)
+);
+
+export default connect(mapStateToProps, mapDispatchToProps)(JoinGroupScreen);
