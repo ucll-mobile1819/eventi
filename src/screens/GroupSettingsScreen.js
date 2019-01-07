@@ -41,7 +41,7 @@ class GroupSettingsScreen extends ValidationComponent {
                 if (this.props.error) return;
                 if (updateHeader) this.updateHeader();
                 console.log("Banned members:");
-                console.log(this.props.group.bannedUsers);
+                // console.log(this.props.group.members);
             });
     }
 
@@ -191,12 +191,6 @@ class GroupSettingsScreen extends ValidationComponent {
                 <Container>
                     <Tabs>
                         <Tab heading="General">
-                            {!this.isOwner() &&
-                                <View style={{ padding: 20 }}>
-                                    <H3>{this.props.group.groupname}</H3>
-                                    <Text>{this.props.group.description}</Text>
-                                </View>
-                            }
                             {this.isOwner() &&
                                 <KeyboardAwareScrollView
                                     resetScrollToCoords={{ x: 0, y: 0 }}
