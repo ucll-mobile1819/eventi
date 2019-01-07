@@ -23,7 +23,7 @@ class EditEventScreen extends React.Component {
     }
 
     onLoad() {
-
+        
     }
 
     render() {

@@ -13,8 +13,9 @@ class HomeScreen extends React.Component{
         super(props);
         this.username = this.props.user.username;
         this.state = {
-            showActivityIndicator: true
-          };
+            showToast: false,
+            showActivityIndicator: true,
+        };
     }
 
     updateState(obj, callback) {

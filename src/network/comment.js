@@ -9,5 +9,5 @@ export const getComments = async (eventId, handleErrors = false) => {
 // POSTS
 
 export const postComments = async (eventId, content, handleErrors = false) => {
-    return await sendAPIRequest(`comment`, 'GET', handleErrors, true, { eventId, content });
+    return await sendAPIRequest(`comment`, 'POST', handleErrors, true, { eventId, content });
 };

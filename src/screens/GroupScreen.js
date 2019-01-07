@@ -63,7 +63,7 @@ class GroupScreen extends React.Component {
             return a.startTime.getTime() - b.startTime.getTime();
         });
     }
-
+    
     render() {
         const renderItem = ({item}) => <EventComponent event={item} nav={this.props.navigation}/>;
         if (!this.props.error && this.state.color !== this.props.group.color) this.updateHeader();
