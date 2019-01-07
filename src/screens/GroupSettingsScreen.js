@@ -40,8 +40,6 @@ class GroupSettingsScreen extends ValidationComponent {
                 this.updateState({ showActivityIndicator: false });
                 if (this.props.error) return;
                 if (updateHeader) this.updateHeader();
-                console.log("Banned members:");
-                // console.log(this.props.group.members);
             });
     }
 
@@ -181,6 +179,8 @@ class GroupSettingsScreen extends ValidationComponent {
     }
 
     render() {
+        console.log("Banned:");
+        console.log(this.props.bannedUsers);
         return (
             <AuthenticatedComponent
                 showActivityIndicator={() => this.state.showActivityIndicator}
@@ -196,7 +196,6 @@ class GroupSettingsScreen extends ValidationComponent {
                                     resetScrollToCoords={{ x: 0, y: 0 }}
                                     style={{ padding: 20 }}
                                 >
-
                                     <Text style={groupStyles.subtitle}>Invite code</Text>
                                     <View style={{ flexDirection: 'row', marginBottom: 20, alignItems: 'center' }}>
                                         <Text>{this.state.inviteCode}</Text>
@@ -250,14 +249,15 @@ class GroupSettingsScreen extends ValidationComponent {
                         <Tab heading="Members">
                             <FlatList
                                 data={this.props.members}
-                                renderItem={({ item, index }) => {
+                                renderItem={({ item, index }) => 
                                     <GroupMemberComponent
                                         updateList={() => this.onLoad(false)}
                                         showSeperator={this.props.members.length - 1 !== index}
-                                        member={item} groupId={this.props.group.id}
+                                        member={item} 
+                                        groupId={this.props.group.id}
                                         showButtons={this.showButtons(item)}
                                     />
-                                }}
+                                }
                                 keyExtractor={member => String(member.username)}
                                 style={{ padding: 20 }}
                             />
@@ -266,13 +266,14 @@ class GroupSettingsScreen extends ValidationComponent {
                             <Tab heading="Banned">
                                 <FlatList
                                     data={this.props.bannedUsers}
-                                    renderItem={({ item, index }) => {
+                                    renderItem={({ item, index }) => 
                                         <GroupMemberBannedComponent
                                             updateList={() => this.onLoad(false)}
                                             showSeperator={this.props.bannedUsers.length - 1 !== index}
-                                            member={item} groupId={this.props.group.id}
+                                            member={item} 
+                                            groupId={this.props.group.id}
                                         />
-                                    }}
+                                    }
                                     keyExtractor={member => String(member.username)}
                                     style={{ padding: 20 }}
                                 />
