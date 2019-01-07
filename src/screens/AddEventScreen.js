@@ -27,13 +27,14 @@ class AddEventScreen extends ValidationComponent {
             address: '',
             description: '',
             startTime: null,
-            endTime: null
+            endTime: null,
+            showActivityIndicator: true
         };
     }
 
     onLoad() {
         this.props.fetchGroups()
-            .then(() => this.updateState({ groups: [...this.props.groups] }))
+            .then(() => this.updateState({ groups: [...this.props.groups],  showActivityIndicator: false}))
     }
 
     updateState(obj, callback) {
@@ -156,7 +157,7 @@ class AddEventScreen extends ValidationComponent {
 
     render() {
         return (
-            <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)} >
+            <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} showActivityIndicator={() => this.state.showActivityIndicator} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)} >
                 <Container>
                     <Content padder>
                         <Form>
