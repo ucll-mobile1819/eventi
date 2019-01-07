@@ -9,7 +9,7 @@ import NavigatorStyles from './NavigatorStyles';
 const CustomTabBarBottom = props => {
     return (
         <View>
-            <View onPress={() => console.log("PRESS")} style={styles.container}>
+            <View style={styles.container}>
                 <TouchableWithoutFeedback onPress={() => {
                     props.navigation.navigate('AddEvent')
                 }}>
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
         width: 50,
         height: 50,
         borderRadius: 50/2,
-        bottom: 40,
+        bottom: 30,
         position: "absolute",
         zIndex: 999
     },

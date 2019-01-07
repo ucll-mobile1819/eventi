@@ -17,7 +17,7 @@ class EditEventScreen extends React.Component {
         event = this.props.navigation.getParam("event","No event"); 
         this.props.navigation.setParams({
             title: "Title does not work",
-            customHeaderBackgroundColor: event.group.color,
+            customHeaderBackgroundColor: 'red',
             headerTintColor: 'white', // Back arrow color
             headerTitleStyle: { color: 'white' }, // Title color
         });
