@@ -6,6 +6,7 @@ import loginregisterStyles from '../styles/loginregister';
 import ValidationComponent from '../components/ValidationComponent';
 import { postJoinGroup } from '../network/group';
 import { fetchGroups } from '../actions/GroupActions';
+import { fetchEventsOfGroup } from '../actions/EventActions';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
@@ -37,9 +38,13 @@ class JoinGroupScreen extends ValidationComponent {
                 'You succesfully joined ' + response.name + '.'
             );
             this.updateState(this.getClearedState());
-            // TODO fetch groups again for this user?
-            this.props.fetchGroups()
-            .then(() => this.props.navigation.navigate('Group', { id: response.id }));
+            // fetch groups overview and group events so they show up when first joining the group
+            let promises = [
+                this.props.fetchGroups(),
+                this.props.fetchEventsOfGroup(response.id)
+            ]
+            Promise.all(promises)
+                .then(() => this.props.navigation.navigate('Group', { id: response.id }));
         }
     }
 
@@ -62,10 +67,10 @@ class JoinGroupScreen extends ValidationComponent {
             <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} navigate={this.props.navigation.navigate}>
                 <View style={{ flex: 1, padding: 20 }} >
                     <Text style={{ marginBottom: 5 }}>Enter an invite code to join a group:</Text>
-                    {this.isFieldInError('invitecode') && <Text style={{...loginregisterStyles.inputError, marginBottom: 5, marginLeft: 3}}>{this.getErrorsInField('invitecode')[0]}</Text>}
+                    {this.isFieldInError('invitecode') && <Text style={{ ...loginregisterStyles.inputError, marginBottom: 5, marginLeft: 3 }}>{this.getErrorsInField('invitecode')[0]}</Text>}
                     <View style={{ flexDirection: 'row', marginBottom: 20 }}>
                         <TextInput
-                            style={[groupStyles.inputField, {marginBottom: -10, marginTop: -2, marginRight: 10, flex: 1}]}
+                            style={[groupStyles.inputField, { marginBottom: -10, marginTop: -2, marginRight: 10, flex: 1 }]}
                             placeholder="Invite code"
                             value={this.state.invitecode}
                             onChangeText={invitecode => this.updateState({ invitecode })}
@@ -94,7 +99,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => (
     bindActionCreators({
-        fetchGroups
+        fetchGroups, fetchEventsOfGroup
     }, dispatch)
 );
 
