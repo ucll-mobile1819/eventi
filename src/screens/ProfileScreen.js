@@ -34,7 +34,8 @@ class ProfileScreen extends ValidationComponent {
             passwordConfirmation: '',
             firstname: '',
             lastname: '',
-            birthday: null
+            birthday: null,
+            showActivityIndicator: true
         };
     }
 
@@ -44,7 +45,7 @@ class ProfileScreen extends ValidationComponent {
         });
 
         this.props.fetchUser()
-            .then(() => this.updateState({ ...this.props.user }));
+            .then(() => this.updateState({ ...this.props.user, showActivityIndicator: false }));
     }
 
     async logout() {
@@ -138,7 +139,7 @@ class ProfileScreen extends ValidationComponent {
 
     render() {
         return (
-            <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
+            <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} showActivityIndicator={() => this.state.showActivityIndicator} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
                 <KeyboardAwareScrollView resetScrollToCoords={{ x: 0, y: 0 }} style={{ padding: 20 }}  >
                     <Text style={profileStyles.title}> Change User Info</Text>
                     {this.isFieldInError('firstname') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('firstname')[0]}</Text>}
