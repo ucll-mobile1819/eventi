@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
 import { fetchGroup, fetchGroups, fetchMembers, fetchBannedUsers } from '../actions/GroupActions';
+import { fetchEvents } from '../actions/EventActions';
 import ValidationComponent from '../components/ValidationComponent';
 import loginregisterStyles from '../styles/loginregister';
 import groupStyles from '../styles/groupStyles';
@@ -84,7 +85,7 @@ class GroupSettingsScreen extends ValidationComponent {
         if (response !== false) {
             this.props.fetchGroup(response.id)
                 .then(() => this.updateState({ ...this.props.group }))
-                .then(() => this.props.fetchGroups());
+                .then(() => Promise.all([ this.props.fetchGroups(), this.props.fetchEvents() ]));
 
             this.showSnackBar('Group updated');
         }
@@ -304,7 +305,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => (
     bindActionCreators({
-        fetchGroup, fetchGroups, fetchMembers, fetchBannedUsers
+        fetchGroup, fetchGroups, fetchMembers, fetchBannedUsers, fetchEvents,
     }, dispatch)
 );
 
