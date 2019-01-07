@@ -15,7 +15,7 @@ class AddEventScreen extends ValidationComponent {
         super(props);
         this.state = {
             pollDates: [],
-            pollDateVotes: [],
+            pollDateVotes: [], //unused but necessary
             groups: [],
             selectedGroupId: '',
             type: 'event',
@@ -91,6 +91,10 @@ class AddEventScreen extends ValidationComponent {
         });
     }
 
+    submit(){
+        console.log(this.state)
+    }
+
     render() {
         return (
             <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)} >
@@ -99,17 +103,17 @@ class AddEventScreen extends ValidationComponent {
                         <Form>
                             <Item floatingLabel>
                                 <Label>Name</Label>
-                                <Input />
+                                <Input onChangeText={name => this.updateState({ name })}/>
                             </Item>
 
                             <Item floatingLabel>
                                 <Label>Location Name</Label>
-                                <Input />
+                                <Input onChangeText={locationName => this.updateState({ locationName })} />
                             </Item>
 
                             <Item floatingLabel>
                                 <Label>Address</Label>
-                                <Input />
+                                <Input onChangeText={address => this.updateState({ address })}/>
                             </Item>
 
                             <Item picker style={{ marginLeft: 15 }}>
@@ -125,17 +129,18 @@ class AddEventScreen extends ValidationComponent {
                                 >
 
                                     <Picker.Item label="Choose a group" value="placeholder" key="placeholder" />
-                                    {this.state.groups.map(
-                                        (group) => {
-                                            return <Picker.Item label={group.name} value={String(group.id)} key={String(group.id)} />
-                                        }
-                                    )
-
-                                    }
+                                    {this.state.groups.map((group) => {
+                                        return <Picker.Item label={group.name} value={String(group.id)} key={String(group.id)} />
+                                    })}
                                 </Picker>
                             </Item>
 
-                            <Textarea rowSpan={5} bordered placeholder="Description" style={{ width: undefined, marginLeft: 15 }} />
+                            <Textarea 
+                                rowSpan={5} 
+                                bordered 
+                                placeholder="Description" 
+                                style={{ width: undefined, marginLeft: 15 }} 
+                                onChangeText={description => this.updateState({ description })}/>
 
                             <View style={{ flex: 1, flexDirection: 'row', marginLeft: 15, paddingTop: 20 }}>
                                 <Text style={{ marginRight: 30 }}>Event</Text>
@@ -196,7 +201,7 @@ class AddEventScreen extends ValidationComponent {
                                 }
                             </View>
 
-                            <Button style={{ margin: 15, width: undefined, marginBottom: 40 }} block primary >
+                            <Button style={{ margin: 15, width: undefined, marginBottom: 40 }} block primary onPress={() => this.submit()}>
                                 <Text>Submit</Text>
                             </Button>
                         </Form>
