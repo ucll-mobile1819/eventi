@@ -61,7 +61,7 @@ export const fetchMembersSuccess = members => ({
 });
 
 export const fetchBannedUsers = groupId => dispatch => {
-    dispatch(fetchMembersBegin());
+    dispatch(fetchBannedUsersBegin());
 
     return groupAPI.getBannedUsers(groupId)
         .then(bannedUsers => dispatch(fetchBannedUsersSuccess(bannedUsers)))
