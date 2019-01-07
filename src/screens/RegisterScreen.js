@@ -3,13 +3,13 @@ import { View, Text, TextInput, Button } from 'react-native';
 import { KeyboardAwareScrollView } from  'react-native-keyboard-aware-scroll-view';
 import loginregisterStyles from '../styles/loginregister';
 import { NavigationEvents } from 'react-navigation';
-import DatePicker from 'react-native-datepicker';
 import { isAuthenticated } from '../auth';
 import { postUser } from '../network/user';
 import Snackbar from 'react-native-snackbar';
 import ValidationComponent from '../components/ValidationComponent';
 import { fetchFailure } from '../actions';
 import MountCheckingComponent from '../components/MountCheckingComponent';
+import DatePickerComponent from '../components/DatePickerComponent';
 
 export default class RegisterScreen extends ValidationComponent {
     constructor(props) {
@@ -68,6 +68,12 @@ export default class RegisterScreen extends ValidationComponent {
         }
     }
 
+    formatDate(date) {
+        // formats date to "DD-MM-YYYY"
+        let dbl = num => num.toString().length == 2 ? num : '0' + num;
+        return `${dbl(date.getDate())}-${dbl(date.getMonth()+1)}-${date.getFullYear()}`;
+    }
+
     validateForm() {
         if (!this.validate({
             firstname: { name: 'First name', required: true, minlength: 2, maxlength: 50 },
@@ -114,21 +120,16 @@ export default class RegisterScreen extends ValidationComponent {
                         value={this.state.username}
                     />
                     { this.isFieldInError('birthday') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('birthday')[0]}</Text> }
-                    <DatePicker
+                    <DatePickerComponent
                         style={loginregisterStyles.inputField}
                         placeholder="Birthday"
-                        format="DD-MM-YYYY"
-                        minDate="01-01-1900"
+                        format={date => this.formatDate(date)}
+                        minDate={new Date(1900, 0, 1)}
                         maxDate={new Date()}
-                        confirmBtnText="Confirm"
-                        cancelBtnText="Cancel"
-                        onDateChange={ birthday => {
-                            birthday = birthday.split('-');
-                            birthday = new Date(birthday[2].substring(0, 4), birthday[1]-1, birthday[0]);
-                            this.updateState({ birthday });
-                        }}
+                        onDateChange={ birthday => this.updateState({ birthday }) }
                         customStyles={{ dateInput: { borderWidth: 0, alignItems: 'flex-start', paddingLeft: 2 }}}
                         date={this.state.birthday}
+                        mode='date'
                     />
                     { this.isFieldInError('password') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('password')[0]}</Text> }
                     <TextInput
