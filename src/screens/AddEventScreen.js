@@ -110,7 +110,7 @@ class AddEventScreen extends ValidationComponent {
                                     placeholderStyle={{ color: "#bfc6ea" }}
                                     placeholderIconColor="#007aff"
                                     style={{ width: undefined }}
-                                //selectedValue={this.state.selected}
+                                    selectedValue={this.state.selectedGroupId}
                                 //onValueChange={this.onValueChange.bind(this)}
                                 >
                                     <Picker.Item label="Group1" value="key0" />
@@ -129,7 +129,6 @@ class AddEventScreen extends ValidationComponent {
                                     offColor='#3F51b5'
                                     size='medium'
                                     onToggle={(type) => this.changeType(type)}
-
                                 />
                                 <Text style={{ marginLeft: 30 }}>Poll</Text>
                             </View>
@@ -149,7 +148,6 @@ class AddEventScreen extends ValidationComponent {
                                             pollDateRemoved={this.pollDateRemoved.bind(this)}
                                             selectable={false}
                                         />
-
                                     </View>
                                 }
 
@@ -179,7 +177,6 @@ class AddEventScreen extends ValidationComponent {
                                             date={this.state.endTime}
                                         />
                                     </View>
-
                                 }
                             </View>
 
@@ -187,30 +184,8 @@ class AddEventScreen extends ValidationComponent {
                                 <Text>Submit</Text>
                             </Button>
                         </Form>
-
-
                     </Content>
                 </Container>
-                {/* <View style={{ margin: 20 }}>
-                    <PollTableComponent
-                        // See top of file PollTableComponent.js for prop information
-                        mode='configure'
-                        pollDates={this.state.pollDates}
-                        pollDateVotes={this.state.pollDateVotes}
-                        votesUpdated={this.updateVotes.bind(this)}
-                        showAmountOfVotes={true}
-                        newPollDateAdded={this.newPollDateAdded.bind(this)}
-                        pollDateRemoved={this.pollDateRemoved.bind(this)}
-                        selectable={true}
-                        fixed={() => this.state.pollDateFixed}
-                    />
-                </View>
-                <View style={{ margin: 20 }}>
-                    <Button
-                    onPress={() => this.updateState({ pollDateFixed: !this.state.pollDateFixed })}
-                    title={this.state.pollDateFixed ? "Deselect final time" : "Pick final time"}
-                    />
-                </View> */}
             </AuthenticatedComponent>
         );
     }
