@@ -7,7 +7,7 @@ import { Container, Content, Button, Text, Form, Item, Input, Label, Textarea, P
 import ToggleSwitch from 'toggle-switch-react-native';
 import { View } from 'react-native';
 import ValidationComponent from '../components/ValidationComponent';
-import DatePicker from 'react-native-datepicker';
+import DatePickerComponent from '../components/DatePickerComponent';
 
 // pd === pollDate
 
@@ -154,39 +154,26 @@ class AddEventScreen extends ValidationComponent {
                                 {this.state.type === 'event' &&
                                     <View>
                                         <H3 style={{ marginBottom: 20 }}>Event: Start time & end time</H3>
-                                        <DatePicker
+                                        <DatePickerComponent
                                             style={{ width: 250, marginBottom: 20 }}
                                             placeholder="Start Time"
-                                            format="DD-MM-YYYY"
                                             mode="datetime"
                                             minDate={new Date()}
                                             maxDate={new Date(Date.now() + 500 * 365 * 24 * 60 * 60 * 1000)}
-                                            confirmBtnText="Confirm"
-                                            cancelBtnText="Cancel"
                                             onDateChange={startTime => {
-                                                console.log(startTime);
-                                                startTime = startTime.split('-');
-                                                startTime = new Date(startTime[2].substring(0, 4), startTime[1] - 1, startTime[0]);
                                                 this.updateState({ startTime });
                                             }}
-                                            //customStyles={{ dateInput: { borderWidth: 0, alignItems: 'flex-start', paddingLeft: 2 } }}
                                             date={this.state.startTime}
                                         />
-                                        <DatePicker
+                                        <DatePickerComponent
                                             style={{ width: 250, marginBottom: 20 }}
                                             placeholder="End Time"
-                                            format="DD-MM-YYYY"
                                             mode="datetime"
                                             minDate={new Date()}
                                             maxDate={new Date(Date.now() + 500 * 365 * 24 * 60 * 60 * 1000)}
-                                            confirmBtnText="Confirm"
-                                            cancelBtnText="Cancel"
                                             onDateChange={endTime => {
-                                                endTime = endTime.split('-');
-                                                endTime = new Date(endTime[2].substring(0, 4), endTime[1] - 1, endTime[0]);
                                                 this.updateState({ endTime });
                                             }}
-                                            //customStyles={{ dateInput: { borderWidth: 0, alignItems: 'flex-start', paddingLeft: 2 } }}
                                             date={this.state.endTime}
                                         />
                                     </View>
