@@ -18,8 +18,8 @@ class EditEventScreen extends ValidationComponent {
 
     getClearedState() {
         return {
-            event: this.props.emptyEvent,
             showActivityIndicator: true,
+            
 
         };
     }
@@ -32,7 +32,7 @@ class EditEventScreen extends ValidationComponent {
     }
 
     validateForm() {
-
+       
     }
 
     updateState(obj, callback) {
@@ -43,13 +43,9 @@ class EditEventScreen extends ValidationComponent {
     onLoad() {
         let id = this.props.navigation.state.params.id;
         this.props.fetchEvent(id)
-            .then(() => {
-                let event = this.props.events.find(e => e.id === this.props.navigation.state.params.id);
+            .then((event) => {
+                this.updateState({ ...event, showActivityIndicator: false });
 
-                this.updateState({
-                    event: event,
-                    showActivityIndicator: false,
-                })
                 this.props.navigation.setParams({
                     title: "Edit " + this.state.event.name,
                     customHeaderBackgroundColor: this.state.event.group.color,
@@ -69,7 +65,7 @@ class EditEventScreen extends ValidationComponent {
                             <Item floatingLabel style={{ marginLeft: 0 }}>
                                 <Label>Name</Label>
                                 <Input
-                                    value={this.state.event.name}
+                                    value={this.state.name}
                                     onChangeText={name => this.updateState({ name })}
                                 />
                             </Item>
@@ -77,7 +73,7 @@ class EditEventScreen extends ValidationComponent {
                             <Item floatingLabel style={{ marginLeft: 0 }}>
                                 <Label>Location Name</Label>
                                 <Input
-                                    value={this.state.event.locationName}
+                                    value={this.state.locationName}
                                     onChangeText={locationName => this.updateState({ locationName })}
                                 />
                             </Item>
@@ -85,7 +81,7 @@ class EditEventScreen extends ValidationComponent {
                             <Item floatingLabel style={{ marginLeft: 0 }}>
                                 <Label>Address</Label>
                                 <Input
-                                    value={this.state.event.address}
+                                    value={this.state.address}
                                     onChangeText={address => this.updateState({ address })}
                                 />
                             </Item>
@@ -95,11 +91,11 @@ class EditEventScreen extends ValidationComponent {
                                 bordered
                                 placeholder="Description"
                                 style={{ width: undefined, marginTop: 20 }}
-                                value={this.state.event.description}
+                                value={this.state.description}
                                 onChangeText={description => this.updateState({ description })} />
 
                             <View style={{ paddingTop: 20 }}>
-                                {this.state.event.type === 'poll' &&
+                                {this.state.type === 'poll' &&
                                     <View style={{ marginBottom: 20 }}>
                                         <H3 style={{ marginBottom: 20 }}>Poll</H3>
 
@@ -107,7 +103,7 @@ class EditEventScreen extends ValidationComponent {
                                     </View>
                                 }
 
-                                {this.state.event.type === 'event' &&
+                                {this.state.type === 'event' &&
                                     <View>
                                         <H3 style={{ marginBottom: 20 }}>Event: Start time & end time</H3>
                                         {this.isFieldInError('startTime') && <Text style={{ color: 'red' }}>{this.getErrorsInField('startTime')[0]}</Text>}
@@ -116,23 +112,23 @@ class EditEventScreen extends ValidationComponent {
                                             placeholder="Start Time"
                                             mode="datetime"
                                             minDate={new Date()}
-                                            maxDate={this.state.event.endTime || new Date(Date.now() + 500 * 365 * 24 * 60 * 60 * 1000)}
+                                            maxDate={this.state.endTime || new Date(Date.now() + 500 * 365 * 24 * 60 * 60 * 1000)}
                                             onDateChange={startTime => {
                                                 this.updateState({ startTime });
                                             }}
-                                            date={this.state.event.startTime}
+                                            date={this.state.startTime}
                                         />
                                         {this.isFieldInError('endTime') && <Text style={{ color: 'red' }}>{this.getErrorsInField('endTime')[0]}</Text>}
                                         <DatePickerComponent
                                             style={{ width: 250, marginBottom: 20 }}
                                             placeholder="End Time"
                                             mode="datetime"
-                                            minDate={this.state.event.startTime || new Date()}
+                                            minDate={this.state.startTime || new Date()}
                                             maxDate={new Date(Date.now() + 500 * 365 * 24 * 60 * 60 * 1000)}
                                             onDateChange={endTime => {
                                                 this.updateState({ endTime });
                                             }}
-                                            date={this.state.event.endTime}
+                                            date={this.state.endTime}
                                         />
                                     </View>
                                 }
