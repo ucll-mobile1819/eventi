@@ -11,6 +11,7 @@ import MountCheckingComponent from '../components/MountCheckingComponent';
 class LoginScreen extends Component {
     constructor(props) {
         super(props);
+        this.clearingState = false;
         this.state = {
             username: '',
             password: '',
@@ -23,6 +24,9 @@ class LoginScreen extends Component {
     }
 
     async onNavWillFocus() {
+        if (this.clearingState) return;
+        this.clearingState = true;
+        this.updateState({ username: '', password: '' }, () => { setTimeout(() => { this.clearingState = false; }); });
         if (await isAuthenticated()) {
             if (this.props.user.username === '') await this.props.fetchUser();
             this.props.navigation.navigate('Home');
