@@ -82,11 +82,11 @@ class AddEventScreen extends ValidationComponent {
         }
     }
 
-    submit() {
+    async submit() {
         if (!this.validateForm()) return;
         if (this.state.type === "event") {
             let response = await postEvent(
-                this.state.groupId,
+                this.state.selectedGroupId,
                 this.state.name,
                 this.state.description,
                 this.state.startTime,
@@ -97,7 +97,7 @@ class AddEventScreen extends ValidationComponent {
             );
 
             if (response !== false) {
-                this.props.navigate
+                this.props.navigation.navigate("event", response.id);
             }
 
         }
