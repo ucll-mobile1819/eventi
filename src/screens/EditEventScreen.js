@@ -1,11 +1,14 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
-import { Content } from 'native-base';
+import { Container, Content, Item, Label, Input, Textarea, Text, H3, Button,  } from 'native-base';
+import ValidationComponent from '../components/ValidationComponent';
+import DatePickerComponent from '../components/DatePickerComponent';
+import PollTableComponent from '../components/PollTableComponent';
 
-class EditEventScreen extends React.Component {
+class EditEventScreen extends ValidationComponent {
 
     constructor(props) {
         super(props);
