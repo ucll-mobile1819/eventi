@@ -36,11 +36,13 @@ class GroupSettingsScreen extends ValidationComponent {
         promises.push(this.props.fetchMembers(this.props.navigation.state.params.id));
         if (this.isOwner()) promises.push(this.props.fetchBannedUsers(this.props.navigation.state.params.id));
         Promise.all(promises)
-        .then(() => {
-            this.updateState({ showActivityIndicator: false });
-            if (this.props.error) return;
-            if (updateHeader) this.updateHeader();
-        });
+            .then(() => {
+                this.updateState({ showActivityIndicator: false });
+                if (this.props.error) return;
+                if (updateHeader) this.updateHeader();
+                console.log("Banned members:");
+                console.log(this.props.group.bannedUsers);
+            });
     }
 
     updateState(obj, callback) {
@@ -127,7 +129,7 @@ class GroupSettingsScreen extends ValidationComponent {
                 color: ''
             });
             this.props.fetchGroups()
-            .then(() => this.props.navigation.navigate('Groups'));
+                .then(() => this.props.navigation.navigate('Groups'));
         }
     }
 
@@ -170,7 +172,7 @@ class GroupSettingsScreen extends ValidationComponent {
                 color: ''
             });
             this.props.fetchGroups()
-            .then(() => this.props.navigation.navigate('Groups'));
+                .then(() => this.props.navigation.navigate('Groups'));
         }
     }
 
@@ -189,7 +191,7 @@ class GroupSettingsScreen extends ValidationComponent {
                 <Container>
                     <Tabs>
                         <Tab heading="General">
-                            {!this.isOwner() && 
+                            {!this.isOwner() &&
                                 <View style={{ padding: 20 }}>
                                     <H3>{this.props.group.groupname}</H3>
                                     <Text>{this.props.group.description}</Text>
@@ -241,33 +243,46 @@ class GroupSettingsScreen extends ValidationComponent {
 
                                     <Text style={[groupStyles.subtitle, { marginTop: 15 }]}>Delete group</Text>
                                     <View style={{ marginBottom: 60 }}>
-                                        <Button title="Delete group" onPress={() => this.askDeleteGroup()} color='#f44242'/>
+                                        <Button title="Delete group" onPress={() => this.askDeleteGroup()} color='#f44242' />
                                     </View>
                                 </KeyboardAwareScrollView>
                             }
                             {!this.isOwner() &&
                                 <View style={{ padding: 20 }}>
-                                    <Button title="Leave group" onPress={() => this.askLeaveGroup()} color='#f44242'/>
+                                    <Button title="Leave group" onPress={() => this.askLeaveGroup()} color='#f44242' />
                                 </View>
                             }
                         </Tab>
                         <Tab heading="Members">
                             <FlatList
                                 data={this.props.members}
-                                renderItem={({ item, index }) => <GroupMemberComponent updateList={() => this.onLoad(false)} showSeperator={this.props.members.length-1 !== index} member={item} groupId={this.props.group.id} showButtons={this.showButtons(item)}/>}
+                                renderItem={({ item, index }) => {
+                                    <GroupMemberComponent
+                                        updateList={() => this.onLoad(false)}
+                                        showSeperator={this.props.members.length - 1 !== index}
+                                        member={item} groupId={this.props.group.id}
+                                        showButtons={this.showButtons(item)}
+                                    />
+                                }}
                                 keyExtractor={member => String(member.username)}
                                 style={{ padding: 20 }}
                             />
                         </Tab>
                         {this.isOwner() &&
-                        <Tab heading="Banned">
-                            <FlatList
-                                data={this.props.bannedUsers}
-                                renderItem={({ item, index }) => <GroupMemberBannedComponent updateList={() => this.onLoad(false)} showSeperator={this.props.bannedUsers.length-1 !== index} member={item} groupId={this.props.group.id}/>}
-                                keyExtractor={member => String(member.username)}
-                                style={{ padding: 20 }}
-                            />
-                        </Tab>
+                            <Tab heading="Banned">
+                                <FlatList
+                                    data={this.props.bannedUsers}
+                                    renderItem={({ item, index }) => {
+                                        <GroupMemberBannedComponent
+                                            updateList={() => this.onLoad(false)}
+                                            showSeperator={this.props.bannedUsers.length - 1 !== index}
+                                            member={item} groupId={this.props.group.id}
+                                        />
+                                    }}
+                                    keyExtractor={member => String(member.username)}
+                                    style={{ padding: 20 }}
+                                />
+                            </Tab>
                         }
                     </Tabs>
                 </Container>
