@@ -1,4 +1,4 @@
-import { FETCH_VOTES_SUCCESS,FETCH_VOTES_BEGIN, POST_COMMENT_BEGIN,POST_COMMENT_SUCCESS,FETCH_COMMENT_BEGIN,FETCH_COMMENT_SUCCESS,FETCH_ATT_BEGIN, FETCH_ATT_SUCCESS, FETCH_EVENTS_BEGIN, FETCH_EVENTS_SUCCESS, FETCH_EVENT_BEGIN, FETCH_EVENT_SUCCESS, CHANGE_STATUS_EVENT_BEGIN, CHANGE_STATUS_EVENT_SUCCESS } from "../actions/EventActions";
+import { FETCH_VOTES_SUCCESS,FETCH_VOTES_BEGIN, POST_COMMENT_BEGIN,POST_COMMENT_SUCCESS,FETCH_COMMENT_BEGIN,FETCH_COMMENT_SUCCESS,FETCH_ATT_BEGIN, FETCH_ATT_SUCCESS, FETCH_EVENTS_BEGIN, FETCH_EVENTS_SUCCESS, FETCH_EVENT_BEGIN, FETCH_EVENT_SUCCESS, CHANGE_STATUS_EVENT_BEGIN, CHANGE_STATUS_EVENT_SUCCESS, FETCH_EVENT_OF_GROUP_BEGIN, FETCH_EVENTS_OF_GROUP_BEGIN, FETCH_EVENTS_OF_GROUP_SUCCESS } from "../actions/EventActions";
 import { FETCH_FAILURE } from "../actions";
 
 
@@ -46,6 +46,18 @@ const eventReducer = (state = INITIAL_STATE, action) => {
                 error: null // Needed to reset any previous errors
             };
         case FETCH_EVENTS_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                events: action.payload.events
+            };
+        case FETCH_EVENTS_OF_GROUP_BEGIN:
+            return {
+                ...state,
+                loading: true,
+                error: null
+            }
+        case FETCH_EVENTS_OF_GROUP_SUCCESS:
             return {
                 ...state,
                 loading: false,
