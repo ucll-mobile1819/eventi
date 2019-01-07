@@ -20,6 +20,9 @@ export const FETCH_COMMENT_SUCCESS = 'FETCH_COMMENT_SUCCESS';
 export const POST_COMMENT_BEGIN = 'POST_COMMENT_BEGIN';
 export const POST_COMMENT_SUCCESS = 'POST_COMMENT_SUCCESS';
 
+export const FETCH_VOTES_BEGIN = 'FETCH_VOTES_BEGIN';
+export const FETCH_VOTES_SUCCESS = 'FETCH_VOTES_SUCCESS';
+
 export const fetchEvents = () => dispatch => {
     dispatch(fetchEventsBegin());
     return eventAPI.getEvents()
@@ -117,7 +120,7 @@ export const postComment = (id , content) => dispatch => {
     dispatch(postCommentBegin());
     return commentAPI.postComments(id,content)
     .then(comment => {
-        dispatch(postCommentSucces(comment))
+        dispatch(postCommentSuccess(comment))
     })
     .catch(error => dispatch(fetchFailure(error)));
 };
@@ -126,7 +129,28 @@ export const postCommentBegin = () => ({
     type: POST_COMMENT_BEGIN,
 });
 
-export const postCommentSucces = comment => ({
+export const postCommentSuccess = comment => ({
     type: POST_COMMENT_SUCCESS,
     payload: {comment} ,
 });
+
+//Fetch votes
+
+export const fetchVotes = (id) => dispatch => {
+    dispatch(fetchVotesBegin());
+    return eventAPI.getVotes(id)
+    .then(votes => {
+        dispatch(fetchVotesSuccess(votes))
+    })
+    .catch(error => dispatch(fetchFailure(error)));
+};
+
+export const fetchVotesBegin = () => ({
+    type: FETCH_VOTES_BEGIN,
+});
+
+export const fetchVotesSuccess = votes => ({
+    type: FETCH_VOTES_SUCCESS,
+    payload: {votes} ,
+});
+

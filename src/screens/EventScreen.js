@@ -6,7 +6,7 @@ import AuthenticatedComponent from '../components/AuthenticatedComponent';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import headerStyles from '../styles/headerStyles';
 import { Container, Tabs, Tab, Button, ActionSheet, View, Card, CardItem, Body, Footer, Left, Right, Grid, Col, Content, Item, Input } from 'native-base';
-import { fetchEvent ,fetchAtt, changeStatus , fetchComments , postComment} from '../actions/EventActions';
+import { fetchEvent ,fetchAtt, changeStatus , fetchComments , postComment ,fetchVotes} from '../actions/EventActions';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Balloon from "react-native-balloon";
 import IconEvil from 'react-native-vector-icons/EvilIcons';
@@ -14,7 +14,8 @@ import PollTableComponent from "../components/PollTableComponent"
 import IconMat from 'react-native-vector-icons/MaterialIcons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import groupStyles from '../styles/groupStyles';
-import { Table, TableWrapper, Row } from 'react-native-table-component';
+import { Table, TableWrapper, Row, Cols } from 'react-native-table-component';
+import * as eventAPI from '../network/event';
 const months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
 
 const red = '#DD1111';
@@ -47,18 +48,21 @@ class EventScreen extends React.Component {
         //Make this
         this.props.fetchEvent(this.props.navigation.state.params.id)
             .then(() => this.props.fetchAtt(this.props.navigation.state.params.id))
-                .then(() => this.props.fetchComments(this.props.navigation.state.params.id))
+            .then(() => this.props.fetchComments(this.props.navigation.state.params.id))
+                .then(() => this.props.fetchVotes(this.props.navigation.state.params.id))
                     .then(() => {
                     this.updateState({
                         showActivityIndicator: false,
+                        pollDates:[],
                         groupData: [],
+                        votes:this.props.votes,
                         event: this.props.events.find(e => e.id === this.props.navigation.state.params.id)
                     }, () => {
-
-                    console.log(this.state.event.pollDates);
+                    if(this.state.event.type === "poll"){
+                        this.setDates();
+                    }
                     this.setGeusts();
                     if (this.props.error) return;
-                    console.log(this.props.comments);
                     this.props.navigation.setParams({
                         title: this.state.event.name,
                         customHeaderBackgroundColor: this.state.event.group.color,
@@ -131,12 +135,17 @@ class EventScreen extends React.Component {
         })
         
     }
+    async setDates(){
+        let pollDates = this.state.event.pollDates.map(el =>{return {id: el.id,startTime:el.startTime,endTime:el.endTime,votes: el.votes}});
+        this.updateState({
+            pollDates:pollDates,
+            votes: this.state.votes,
+        })
+    }
     async setGeusts(){
         let attendances = this.props.status;
         going = attendances.filter(el => el.status === 'Going').map(el => {return {firstname: el.user.firstname, lastname: el.user.lastname }});
         notGoing = attendances.filter(el => el.status === 'Not going').map(el => {return {firstname: el.user.firstname, lastname: el.user.lastname }});
-        console.log(going);
-        console.log(notGoing);
         going = going.map(el => {return(el.firstname+" "+el.lastname)});
         notGoing = notGoing.map(el => {return(el.firstname+" "+el.lastname)});
         this.updateState({
@@ -170,7 +179,6 @@ class EventScreen extends React.Component {
     }
 
     goingToEvent(id){
-        console.log(id);
         //Set event on going
         // if()
         // this.props.changeStatus(id , "Going")
@@ -188,7 +196,6 @@ class EventScreen extends React.Component {
             this.props.postComment(this.props.navigation.state.params.id , content)
             .then(() =>{
                 this.updateState({text: ''});
-                console.log(this.state.text);
 
             })
         }
@@ -220,25 +227,37 @@ class EventScreen extends React.Component {
         );
         }
     }
+
+    updateVotes(votes) {
+        console.log("current votes");
+        console.log(this.state.votes);
+        console.log("Chosen votes");
+        console.log(votes);
+
+        eventAPI.postVote(this.state.event.id , [4],true)
+        .then(() =>{
+            this.updateState({
+                votes: votes, // updating votes array, needed for POST/PUT api when form is saved
+                // updating so PollTableComponent updates the amount of votes / pd
+            });
+        })
+
+        console.log("Chosen votes")
+        console.log(this.state.votes);
+    }
+
     renderTable(event){
-        console.log(event);
         if(event.type ==="poll"){
-            let pollDates = event.pollDates.map(el =>{return {id: el.id,startTime:el.startTime,endTime:el.endTime}});
-            let pollDateVotes = event.pollDates.map(el =>el.id);
-            console.log("pollDateVotes start");
-            console.log(pollDateVotes);
-            console.log("pollDateVotes end");
-        return(
-            <PollTableComponent 
-            selectable={true}
-            mode="overview" 
-            showAmountOfVotes={true} 
-            pollDateFixed={false}
-            pollDateVotes={pollDateVotes} 
-            pollDates={pollDates}>
-            
-            </PollTableComponent>
-        )}
+                return(
+                    <PollTableComponent 
+                    mode="overview" 
+                    pollDates={this.state.pollDates}
+                    pollDateVotes={this.state.votes}
+                    votesUpdated={this.updateVotes.bind(this)}
+                    showAmountOfVotes={true}>
+                    </PollTableComponent>
+                )
+        }
     }
     render() {
         
@@ -363,6 +382,7 @@ class EventScreen extends React.Component {
 const mapStateToProps = state => {
     return {
         events: state.event.events,
+        votes: state.event.votes,
         status: state.event.status,
         comments: state.event.comments,
         emptyEvent: state.event.emptyEvent,
@@ -373,7 +393,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => (
-    bindActionCreators({fetchEvent , fetchAtt, changeStatus, fetchComments, postComment}, dispatch)
+    bindActionCreators({fetchEvent , fetchAtt, changeStatus, fetchComments, postComment ,fetchVotes}, dispatch)
 );
 
 export default connect(mapStateToProps, mapDispatchToProps)(EventScreen);
