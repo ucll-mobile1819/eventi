@@ -28,13 +28,13 @@ let notGoing = [];
 class EventScreen extends React.Component {
     constructor(props) {
         super(props);
+        let sendingMessage = false;
         this.state = {
             text: '',
             showActivityIndicator: true,
             event: this.props.emptyEvent,
             groupData: [],
             pollDates:[],
-            sendingMessage:false
         };
     }
     static navigationOptions = obj => obj.navigation.state.params;
@@ -203,7 +203,7 @@ class EventScreen extends React.Component {
         })
     }
     sendMessage(){
-        if(!this.state.sendingMessage){
+        if(!this.sendingMessage){
         this.updateState({sendingMessage: true});
         let content = this.state.text.trim().length === 0 ? null : this.state.text ; 
         if(content !== null){
@@ -213,7 +213,7 @@ class EventScreen extends React.Component {
 
             })
         }
-        this.updateState({sendingMessage: false});
+        this.sendingMessage = false;
         }   
     }
     renderFooter(event){
