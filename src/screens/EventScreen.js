@@ -426,18 +426,18 @@ class EventScreen extends React.Component {
 //     row: { height: 40, backgroundColor: '#E7E6E1' }
 //   });
 
-  const styles = StyleSheet.create({
-    tabBar: {
-        flexDirection: 'row',
-        height: 50
-      },
-      me:{
-        backgroundColor:'grey',maxHeight:30
-      },
-      they:{
-        backgroundColor:'green',maxHeight:30
-      }
-  });
+//   const styles = StyleSheet.create({
+//     tabBar: {
+//         flexDirection: 'row',
+//         height: 50
+//       },
+//       me:{
+//         backgroundColor:'grey',maxHeight:30
+//       },
+//       they:{
+//         backgroundColor:'green',maxHeight:30
+//       }
+//   });
 
 const mapStateToProps = state => {
     return {
