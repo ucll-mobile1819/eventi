@@ -29,6 +29,10 @@ class AddEventScreen extends ValidationComponent {
         };
     }
 
+    onLoad() {
+
+    }
+
     updateState(obj, callback) {
         if (!this._ismounted) return;
         this.setState(obj, callback);
@@ -83,7 +87,7 @@ class AddEventScreen extends ValidationComponent {
 
     render() {
         return (
-            <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} navigate={this.props.navigation.navigate}>
+            <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)} >
                 <Container>
                     <Content padder>
                         <Form>
