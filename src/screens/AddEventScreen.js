@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
 import PollTableComponent from '../components/PollTableComponent';
-import { Container, Content, Button, Text, Form, Item, Input, Label, Textarea, Picker, Icon } from 'native-base';
+import { Container, Content, Button, Text, Form, Item, Input, Label, Textarea, Picker, Icon, H3 } from 'native-base';
 import ToggleSwitch from 'toggle-switch-react-native';
 import { View } from 'react-native';
 import ValidationComponent from '../components/ValidationComponent';
@@ -135,7 +135,7 @@ class AddEventScreen extends ValidationComponent {
                             <View style={{ paddingTop: 20, marginLeft: 15 }}>
                                 {this.state.type === 'poll' &&
                                     <View>
-                                        <Text>PollDateComponent enz hier </Text>
+                                        <H3 style={{ marginBottom: 20 }}>Poll!</H3>
 
                                         <PollTableComponent
                                             mode='configure'
@@ -153,9 +153,9 @@ class AddEventScreen extends ValidationComponent {
 
                                 {this.state.type === 'event' &&
                                     <View>
-                                        <Text>Start time & end time date pickers hier</Text>
+                                        <H3 style={{ marginBottom: 20 }}>Event: Start time & end time</H3>
                                         <DatePicker
-                                            style={{ width: 250 }}
+                                            style={{ width: 250, marginBottom: 20 }}
                                             placeholder="Start Time"
                                             format="DD-MM-YYYY"
                                             mode="datetime"
@@ -173,7 +173,7 @@ class AddEventScreen extends ValidationComponent {
                                             date={this.state.startTime}
                                         />
                                         <DatePicker
-                                            style={{ width: 250 }}
+                                            style={{ width: 250, marginBottom: 20 }}
                                             placeholder="End Time"
                                             format="DD-MM-YYYY"
                                             mode="datetime"
