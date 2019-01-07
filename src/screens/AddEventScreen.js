@@ -9,7 +9,9 @@ import { View } from 'react-native';
 import ValidationComponent from '../components/ValidationComponent';
 import DatePickerComponent from '../components/DatePickerComponent';
 import { fetchGroups } from '../actions/GroupActions';
+import { fetchEvents } from '../actions/EventActions';
 import { fetchFailure } from '../actions';
+import { postEvent, postEventWithPoll } from '../network/event'
 
 class AddEventScreen extends ValidationComponent {
     constructor(props) {
@@ -39,20 +41,6 @@ class AddEventScreen extends ValidationComponent {
         this.setState(obj, callback);
     }
 
-    updateVotes(votes) {
-        // hardcoded
-
-        let pollDates = this.state.pollDates.map(el => {
-            if (this.state.pollDateVotes.includes(el.id) && !votes.includes(el.id)) el.votes--; // Removing vote if pd is in old pdVotes list but removed from new one
-            if (!this.state.pollDateVotes.includes(el.id) && votes.includes(el.id)) el.votes++; // Adding vote if pd is in new pdVotes list and not in old one
-            return el;
-        });
-        this.updateState({
-            pollDateVotes: votes, // updating votes array, needed for POST/PUT api when form is saved
-            pollDates, // updating so PollTableComponent updates the amount of votes / pd
-        });
-    }
-
     newPollDateAdded(newPollDate) {
         // New poll dates don't have ids. But for removing them, we need to be able to identify them
         // So we add negative ids for new items and make sure to remove these ids before doing a POST/PUT to the api
@@ -67,10 +55,6 @@ class AddEventScreen extends ValidationComponent {
         this.updateState({
             pollDates: this.state.pollDates.filter(el => el.id !== id),
         });
-    }
-
-    pollDateSelected(selectedPollDateId) {
-        this.updateState({ selectedPollDateId });
     }
 
     changeType(typeBool) {
@@ -100,11 +84,26 @@ class AddEventScreen extends ValidationComponent {
 
     submit() {
         if (!this.validateForm()) return;
-        console.log("submit");
+        if (this.state.type === "event") {
+            let response = await postEvent(
+                this.state.groupId,
+                this.state.name,
+                this.state.description,
+                this.state.startTime,
+                this.state.endTime,
+                this.state.locationName,
+                this.state.address,
+                null, null, null, null, true
+            );
+
+            if (response !== false) {
+                this.props.navigate
+            }
+
+        }
     }
 
     validateForm() {
-
         if (!this.validate({
             name: { name: 'Name', required: true, minlength: 2, maxlength: 50 },
             selectedGroupId: { name: 'Group', required: true }
@@ -114,7 +113,7 @@ class AddEventScreen extends ValidationComponent {
         }
 
         if (this.state.type === "event") {
-            
+
             if (!this.validate({
                 startTime: { name: 'Start Time', required: true },
                 endTime: { name: 'End Time', required: true },
@@ -268,7 +267,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => (
     bindActionCreators({
-        fetchGroups
+        fetchGroups, fetchEvents
     }, dispatch)
 );
 
