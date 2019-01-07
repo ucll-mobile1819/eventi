@@ -3,60 +3,65 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 
 const defaultRules = {
-    numbers: /^(([0-9]*)|(([0-9]*)\.([0-9]*)))$/,
-    email: /^(\w)+(\.\w+)*@(\w)+((\.\w{2,3}){1,3})$/,
-    required: /\S+/,
-    color: /^#[0-9A-Fa-f]{6}$/,
-    invitecode: /[0-9A-Za-z]{8}/,
-    date(format="YYYY-MM-DD", value) {
-      const d = moment(value, format);
-      if(d == null || !d.isValid()) return false;
+  numbers: /^(([0-9]*)|(([0-9]*)\.([0-9]*)))$/,
+  email: /^(\w)+(\.\w+)*@(\w)+((\.\w{2,3}){1,3})$/,
+  required(required, value) {
+    if (!required) return true;
+    if (value === null || value === undefined) return false;
+    if (value instanceof String && value.trim().length === 0) return false;
+    return true;
+  },
+  color: /^#[0-9A-Fa-f]{6}$/,
+  invitecode: /[0-9A-Za-z]{8}/,
+  date(format = "YYYY-MM-DD", value) {
+    const d = moment(value, format);
+    if (d == null || !d.isValid()) return false;
+    return true;
+  },
+  minlength(length, value) {
+    if (length === void (0)) {
+      throw 'ERROR: It is not a valid length, checkout your minlength settings.';
+    } else if (value.length > length) {
       return true;
-    },
-    minlength(length, value) {
-      if (length === void(0)) {
-        throw 'ERROR: It is not a valid length, checkout your minlength settings.';
-      } else if(value.length > length) {
-        return true;
-      }
+    }
+    return false;
+  },
+  maxlength(length, value) {
+    if (length === void (0)) {
+      throw 'ERROR: It is not a valid length, checkout your maxlength settings.';
+    } else if (value.length > length) {
       return false;
-    },
-    maxlength(length, value) {
-      if (length === void(0)) {
-        throw 'ERROR: It is not a valid length, checkout your maxlength settings.';
-      } else if (value.length > length) {
-        return false;
-      }
-      return true;
     }
-  };
+    return true;
+  }
+};
 
-  const defaultMessages = {
-    // English language - Used by default
-    en: {
-      numbers: '{0} must contain a valid number.',
-      email: '{0} must contain a valid email address.',
-      required: '{0} is mandatory.',
-      date: '{0} must be a valid date ({1}).',
-      minlength: '{0} must be more than {1} characters.',
-      maxlength: '{0} must be less than {1} characters.',
-      color: '{0} must be a hexadecimal color value',
-      invitecode: '{0} must be 8 characters (0-9 and A-Z)'
-    }
+const defaultMessages = {
+  // English language - Used by default
+  en: {
+    numbers: '{0} must contain a valid number.',
+    email: '{0} must contain a valid email address.',
+    required: '{0} is mandatory.',
+    date: '{0} must be a valid date ({1}).',
+    minlength: '{0} must be more than {1} characters.',
+    maxlength: '{0} must be less than {1} characters.',
+    color: '{0} must be a hexadecimal color value',
+    invitecode: '{0} must be 8 characters (0-9 and A-Z)'
+  }
 };
 
 export default class ValidationComponent extends Component {
 
   constructor(props) {
-      super(props);
-      // array to store error on each fields
-      // ex:
-      // [{ fieldName: "name", messages: ["The field name is required."] }]
-      this.errors = [];
-      // Retrieve props
-      this.deviceLocale = props.deviceLocale || 'en'; // ex: en, fr
-      this.rules = props.rules || defaultRules; // rules for Validation
-      this.messages = props.messages || defaultMessages;
+    super(props);
+    // array to store error on each fields
+    // ex:
+    // [{ fieldName: "name", messages: ["The field name is required."] }]
+    this.errors = [];
+    // Retrieve props
+    this.deviceLocale = props.deviceLocale || 'en'; // ex: en, fr
+    this.rules = props.rules || defaultRules; // rules for Validation
+    this.messages = props.messages || defaultMessages;
   }
 
   /*
@@ -134,7 +139,7 @@ export default class ValidationComponent extends Component {
   }
 
   // Concatenate each error messages
-  getErrorMessages(separator="\n") {
+  getErrorMessages(separator = "\n") {
     return this.errors.map((err) => err.messages.join(separator)).join(separator);
   }
 
@@ -152,5 +157,5 @@ export default class ValidationComponent extends Component {
 ValidationComponent.propTypes = {
   deviceLocale: PropTypes.string, // Used for language locale
   rules: PropTypes.object, // rules for validations
-  messages : PropTypes.object // messages for validation errors
+  messages: PropTypes.object // messages for validation errors
 }
