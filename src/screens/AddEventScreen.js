@@ -30,7 +30,7 @@ class AddEventScreen extends ValidationComponent {
 
     onLoad() {
         this.props.fetchGroups()
-            .then(() => this.updateState(...this.props.groups))
+            .then(() => this.updateState({ groups: [...this.props.groups] }))
     }
 
     updateState(obj, callback) {
