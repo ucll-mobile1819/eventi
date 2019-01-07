@@ -100,7 +100,7 @@ class AddEventScreen extends ValidationComponent {
                 this.state.address,
                 null, null, null, null, true
             );
-
+            await this.props.fetchEvents();
             if (response !== false) {
                 this.props.navigation.navigate("Home");
             }
@@ -119,7 +119,7 @@ class AddEventScreen extends ValidationComponent {
                 this.state.pollDates.map(el => ({ id: el.id < 0 ? undefined : el.id, startTime: el.startTime, endTime: el.endTime, votes: el.votes })),
                 true
             );
-
+            await this.props.fetchEvents();
             if (response !== false) {
                 this.props.navigation.navigate("Home");
             }
@@ -166,30 +166,29 @@ class AddEventScreen extends ValidationComponent {
             <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} showActivityIndicator={() => this.state.showActivityIndicator} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)} >
                 <Container>
                     <Content padder>
-                        <Form>
+                        <Form style={{ marginLeft: 15, marginRight: 15 }}>
                             {this.isFieldInError('name') && <Text style={{ color: 'red', marginLeft: 15 }}>{this.getErrorsInField('name')[0]}</Text>}
-                            <Item floatingLabel>
+                            <Item floatingLabel style={{ marginLeft: 0 }}>
                                 <Label>Name</Label>
                                 <Input onChangeText={name => this.updateState({ name })} />
                             </Item>
 
-                            <Item floatingLabel>
+                            <Item floatingLabel style={{ marginLeft: 0 }}>
                                 <Label>Location Name</Label>
                                 <Input onChangeText={locationName => this.updateState({ locationName })} />
                             </Item>
 
-                            <Item floatingLabel>
+                            <Item floatingLabel style={{ marginLeft: 0 }}>
                                 <Label>Address</Label>
                                 <Input onChangeText={address => this.updateState({ address })} />
                             </Item>
 
                             {this.isFieldInError('selectedGroupId') && <Text style={{ color: 'red', marginLeft: 15, marginTop: 20 }}>{this.getErrorsInField('selectedGroupId')[0]}</Text>}
-                            <Item picker style={{ marginLeft: 15, marginTop: 20 }}>
+                            <Item picker style={{ marginTop: 20 }}>
                                 <Picker
                                     mode="dropdown"
                                     iosIcon={<Icon name="ios-arrow-down-outline" />}
                                     placeholder="Choose a group"
-                                    placeholderStyle={{ color: "#bfc6ea" }}
                                     placeholderIconColor="#007aff"
                                     style={{ width: undefined }}
                                     selectedValue={String(this.state.selectedGroupId)}
@@ -207,10 +206,10 @@ class AddEventScreen extends ValidationComponent {
                                 rowSpan={5}
                                 bordered
                                 placeholder="Description"
-                                style={{ width: undefined, marginLeft: 15, marginTop: 20 }}
+                                style={{ width: undefined, marginTop: 20 }}
                                 onChangeText={description => this.updateState({ description })} />
 
-                            <View style={{ flex: 1, flexDirection: 'row', marginLeft: 15, paddingTop: 20 }}>
+                            <View style={{ flex: 1, flexDirection: 'row', paddingTop: 20 }}>
                                 <Text style={{ marginRight: 30 }}>Event</Text>
                                 <ToggleSwitch
                                     isOn={this.state.type === 'poll'}
@@ -222,10 +221,10 @@ class AddEventScreen extends ValidationComponent {
                                 <Text style={{ marginLeft: 30 }}>Poll</Text>
                             </View>
 
-                            <View style={{ paddingTop: 20, marginLeft: 15 }}>
+                            <View style={{ paddingTop: 20 }}>
                                 {this.state.type === 'poll' &&
                                     <View style={{ marginBottom: 20 }}>
-                                        <H3 style={{ marginBottom: 20 }}>Poll!</H3>
+                                        <H3 style={{ marginBottom: 20 }}>Poll</H3>
 
                                         <PollTableComponent
                                             mode='configure'
@@ -242,7 +241,7 @@ class AddEventScreen extends ValidationComponent {
                                 {this.state.type === 'event' &&
                                     <View>
                                         <H3 style={{ marginBottom: 20 }}>Event: Start time & end time</H3>
-                                        {this.isFieldInError('startTime') && <Text style={{ color: 'red', marginLeft: 15 }}>{this.getErrorsInField('startTime')[0]}</Text>}
+                                        {this.isFieldInError('startTime') && <Text style={{ color: 'red' }}>{this.getErrorsInField('startTime')[0]}</Text>}
                                         <DatePickerComponent
                                             style={{ width: 250, marginBottom: 20 }}
                                             placeholder="Start Time"
@@ -254,7 +253,7 @@ class AddEventScreen extends ValidationComponent {
                                             }}
                                             date={this.state.startTime}
                                         />
-                                        {this.isFieldInError('endTime') && <Text style={{ color: 'red', marginLeft: 15 }}>{this.getErrorsInField('endTime')[0]}</Text>}
+                                        {this.isFieldInError('endTime') && <Text style={{ color: 'red' }}>{this.getErrorsInField('endTime')[0]}</Text>}
                                         <DatePickerComponent
                                             style={{ width: 250, marginBottom: 20 }}
                                             placeholder="End Time"
@@ -270,7 +269,7 @@ class AddEventScreen extends ValidationComponent {
                                 }
                             </View>
 
-                            <Button style={{ margin: 15, width: undefined, marginBottom: 40 }} block primary onPress={() => this.submit()}>
+                            <Button style={{ width: undefined, marginBottom: 40 }} block primary onPress={() => this.submit()}>
                                 <Text>Submit</Text>
                             </Button>
                         </Form>
