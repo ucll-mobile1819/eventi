@@ -8,8 +8,7 @@ import ToggleSwitch from 'toggle-switch-react-native';
 import { View } from 'react-native';
 import ValidationComponent from '../components/ValidationComponent';
 import DatePickerComponent from '../components/DatePickerComponent';
-
-// pd === pollDate
+import { fetchGroups } from '../actions/GroupActions';
 
 class AddEventScreen extends ValidationComponent {
     constructor(props) {
@@ -30,7 +29,8 @@ class AddEventScreen extends ValidationComponent {
     }
 
     onLoad() {
-
+        this.props.fetchGroups()
+            .then(() => this.updateState(...this.props.groups))
     }
 
     updateState(obj, callback) {
@@ -197,11 +197,13 @@ class AddEventScreen extends ValidationComponent {
 
 const mapStateToProps = state => {
     return {
+        groups: state.group.groups
     };
 };
 
 const mapDispatchToProps = dispatch => (
     bindActionCreators({
+        fetchGroups
     }, dispatch)
 );
 
