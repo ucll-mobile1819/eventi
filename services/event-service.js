@@ -182,6 +182,8 @@ function removeComments(event) {
 function getAllEvents(currentUser, type) {
     return new Promise((res, rej) => {
         const typeQuery = (type === 'event' || type === 'poll' ? { type } : null );
+        let getVotesFunc = (id) => getVotes(currentUser, id);
+        let tmpEvents;
         currentUser.getGroups()
         .then(groups => {
             let promises = [];
@@ -198,8 +200,10 @@ function getAllEvents(currentUser, type) {
         })
         .then(results => {
             results = [].concat.apply([], results);
-            return Promise.all(results.map(el => essentialisizer.essentializyEvent(el, currentUser.username)));
+            tmpEvents = results;
+            return Promise.all(results.map(el => el.type === 'poll' ? getVotesFunc(el.id) : null));
         })
+        .then(votes => Promise.all(tmpEvents.map((el, i) => essentialisizer.essentializyEvent(el, currentUser.username, votes[i]))))
         .then(res)
         .catch(rej);
     });
