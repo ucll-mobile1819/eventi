@@ -17,7 +17,7 @@ class AddEventScreen extends ValidationComponent {
             pollDates: [],
             pollDateVotes: [], //unused but necessary
             groups: [],
-            selectedGroupId: '',
+            selectedGroupId: undefined,
             type: 'event',
             name: '',
             locationName: '',
@@ -86,13 +86,28 @@ class AddEventScreen extends ValidationComponent {
     }
 
     onGroupChange(groupId) {
-        this.updateState({
-            selectedGroupId: groupId
-        });
+        if (groupId !== null || groupId !== undefined || groupId !== "placeholder ") {
+            this.updateState({
+                selectedGroupId: parseInt(groupId)
+            });
+        }
+
     }
 
-    submit(){
+    submit() {
+        this.validateForm
         console.log(this.state)
+    }
+
+    validateForm() {
+        if (!this.validate({
+            name: { name: 'Name', required: true, minlength: 2, maxlength: 50 },
+
+        })) {
+            return false;
+        }
+
+
     }
 
     render() {
@@ -103,7 +118,7 @@ class AddEventScreen extends ValidationComponent {
                         <Form>
                             <Item floatingLabel>
                                 <Label>Name</Label>
-                                <Input onChangeText={name => this.updateState({ name })}/>
+                                <Input onChangeText={name => this.updateState({ name })} />
                             </Item>
 
                             <Item floatingLabel>
@@ -113,7 +128,7 @@ class AddEventScreen extends ValidationComponent {
 
                             <Item floatingLabel>
                                 <Label>Address</Label>
-                                <Input onChangeText={address => this.updateState({ address })}/>
+                                <Input onChangeText={address => this.updateState({ address })} />
                             </Item>
 
                             <Item picker style={{ marginLeft: 15 }}>
@@ -124,7 +139,7 @@ class AddEventScreen extends ValidationComponent {
                                     placeholderStyle={{ color: "#bfc6ea" }}
                                     placeholderIconColor="#007aff"
                                     style={{ width: undefined }}
-                                    selectedValue={this.state.selectedGroupId}
+                                    selectedValue={String(this.state.selectedGroupId)}
                                     onValueChange={this.onGroupChange.bind(this)}
                                 >
 
@@ -135,12 +150,12 @@ class AddEventScreen extends ValidationComponent {
                                 </Picker>
                             </Item>
 
-                            <Textarea 
-                                rowSpan={5} 
-                                bordered 
-                                placeholder="Description" 
-                                style={{ width: undefined, marginLeft: 15 }} 
-                                onChangeText={description => this.updateState({ description })}/>
+                            <Textarea
+                                rowSpan={5}
+                                bordered
+                                placeholder="Description"
+                                style={{ width: undefined, marginLeft: 15 }}
+                                onChangeText={description => this.updateState({ description })} />
 
                             <View style={{ flex: 1, flexDirection: 'row', marginLeft: 15, paddingTop: 20 }}>
                                 <Text style={{ marginRight: 30 }}>Event</Text>
