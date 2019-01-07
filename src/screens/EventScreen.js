@@ -309,7 +309,8 @@ class EventScreen extends React.Component {
                     </Tab>
                     <Tab  style={{backgroundColor: '#E9E9EF'}} tabStyle={{backgroundColor: "#EEEEEE"}} textStyle={{color:'black'}} activeTextStyle={{color:'black'}} activeTabStyle={{backgroundColor:'#EEEEEE'}} 
                     heading="Comments">
-                    <ScrollView 
+                    <View style={{flex: 1}}>
+                    <ScrollView style={{flex: 1}}
                     ref={ref => this.scrollView = ref}
                     onContentSizeChange={(contentWidth, contentHeight)=>{        
                         this.scrollView.scrollToEnd({animated: true});
@@ -319,13 +320,15 @@ class EventScreen extends React.Component {
                     {this.state.myComments}
                     </Right>
                     
+                    
+                    </ScrollView>
                     <Item style={{backgroundColor:'#FFF'}} rounded>
                         <Input value={this.state.text} onChangeText={(text) => this.updateState({text})} style={{paddingTop: 0,paddingBottom: 0}} placeholder='Write your message!' />
                         <TouchableWithoutFeedback onPress={this.sendMessage.bind(this)}>
                         <Icon name='send-o' size={20} style={{marginRight:10}}/>
                         </TouchableWithoutFeedback>
                     </Item>
-                    </ScrollView>
+                    </View>
                     </Tab>
                     </Tabs>
                    </Container>
