@@ -107,7 +107,6 @@ class AddEventScreen extends ValidationComponent {
         }
 
         if (this.state.type === "poll") {
-            this.up
 
             let response = await postEventWithPoll(
                 this.state.selectedGroupId,
