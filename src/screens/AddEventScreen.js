@@ -15,13 +15,15 @@ class AddEventScreen extends ValidationComponent {
     constructor(props) {
         super(props);
         this.state = {
-            pollDates: [ // hardcoded, to be loaded in with redux
-                { id: 1, startTime: new Date(2019, 0, 20, 12, 30, 0), endTime: new Date(2019, 0, 20, 15, 30, 0), votes: 3 },
-                { id: 3, startTime: new Date(2019, 0, 20, 18, 0, 0), endTime: new Date(2019, 0, 20, 21, 0, 0), votes: 1 },
-                { id: 2, startTime: new Date(2019, 0, 20, 14, 30, 0), endTime: new Date(2019, 0, 20, 17, 30, 0), votes: 0 },
-            ],
-            pollDateVotes: [], // hardcoded, to be loaded in with redux
+            pollDates: [],
+            pollDateVotes: [],
+            groups: [],
+            selectedGroupId: '',
             type: 'event',
+            name: '',
+            locationName: '',
+            address: '',
+            description: '',
             startTime: null,
             endTime: null
         };
