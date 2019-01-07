@@ -56,7 +56,7 @@ class GroupSettingsScreen extends ValidationComponent {
     updateHeader() {
         let headerRight = this.isOwner() ? undefined : (
             <View {...headerStyles.iconContainer}>
-                <TouchableWithoutFeedback onPress={() => this.leaveGroup()}>
+                <TouchableWithoutFeedback onPress={() => this.askLeaveGroup()}>
                     <MaterialIcon name='exit-to-app' {...headerStyles.iconProps2} />
                 </TouchableWithoutFeedback>
             </View>
