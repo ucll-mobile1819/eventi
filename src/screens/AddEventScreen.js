@@ -207,7 +207,7 @@ class AddEventScreen extends ValidationComponent {
                                 placeholder="Description"
                                 style={{ width: undefined, marginTop: 20 }}
                                 onChangeText={description => this.updateState({ description })}
-                                maxLength={5000}
+                                maxLength={3000}
                             />
 
                             <View style={{ flex: 1, flexDirection: 'row', paddingTop: 20 }}>

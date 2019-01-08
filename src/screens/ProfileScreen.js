@@ -181,7 +181,7 @@ class ProfileScreen extends ValidationComponent {
                         onChangeText={password => this.updateState({ password })}
                         value={this.state.password}
                         placeholder='Password'
-                        maxLength={5000}
+                        maxLength={3000}
                     />
                     { this.isFieldInError('passwordConfirmation') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('passwordConfirmation')[0]}</Text> }
                     <TextInput
@@ -190,7 +190,7 @@ class ProfileScreen extends ValidationComponent {
                         onChangeText={passwordConfirmation => this.updateState({ passwordConfirmation })}
                         value={this.state.passwordConfirmation}
                         placeholder='Password confirmation'
-                        maxLength={5000}
+                        maxLength={3000}
                     />
                     <View style={profileStyles.button}>
                         <Button title="Change Password" onPress={() => this.changePassword()}/>

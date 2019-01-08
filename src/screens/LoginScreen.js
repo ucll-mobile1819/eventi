@@ -59,7 +59,7 @@ class LoginScreen extends Component {
                         placeholder="Password"
                         value={this.state.password}
                         onChangeText={password => this.updateState({ password })}
-                        maxLength={5000}
+                        maxLength={3000}
                     />
                     <Button
                         title="Login"

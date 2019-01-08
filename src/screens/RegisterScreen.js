@@ -140,7 +140,7 @@ export default class RegisterScreen extends ValidationComponent {
                         placeholder="Password"
                         onChangeText={password => this.updateState({ password })}
                         value={this.state.password}
-                        maxLength={5000}
+                        maxLength={3000}
                     />
                     { this.isFieldInError('passwordConfirmation') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('passwordConfirmation')[0]}</Text> }
                     <TextInput
@@ -149,7 +149,7 @@ export default class RegisterScreen extends ValidationComponent {
                         placeholder="Repeat password"
                         onChangeText={passwordConfirmation => this.updateState({ passwordConfirmation })}
                         value={this.state.passwordConfirmation}
-                        maxLength={5000}
+                        maxLength={3000}
                     />
                     <Button title='Register' onPress={() => this.register()} />
                     <Text 
