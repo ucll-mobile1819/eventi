@@ -42,7 +42,12 @@ export default class RegisterScreen extends ValidationComponent {
     }
 
     async register() {
-        if (!this.validateForm()) return;
+        if(this.submitting) return;
+        this.submitting = true;
+        if (!this.validateForm()) {
+            this.submitting = false;
+            return;
+        }
         let response = await postUser(
             this.state.firstname,
             this.state.lastname,
@@ -64,6 +69,9 @@ export default class RegisterScreen extends ValidationComponent {
             });
             this.updateState(this.getClearedState());
             this.props.navigation.navigate('Login');
+            setTimeout(() => { this.submitting = false; }, 1000);
+        } else {
+            this.submitting = false;
         }
     }
 

@@ -22,9 +22,13 @@ export default class JoinGroupScreen extends ValidationComponent {
     }
 
     async joinGroup() {
-        this.updateState({paste: <Text></Text>})
-        if (!this.validateForm()) return;
-
+        if (this.submitting) return;
+        this.submitting = true;
+        if (!this.validateForm()) {
+            this.submitting = false;
+            this.updateState({paste: <Text></Text>});
+            return;
+        }
         let response = await postJoinGroup(this.state.invitecode, true);
         
         if (response !== false) {
@@ -34,6 +38,10 @@ export default class JoinGroupScreen extends ValidationComponent {
             );
             this.updateState(this.getClearedState());
             this.props.navigation.navigate('Group', { id: response.id });
+            setTimeout(() => { this.submitting = false; });
+        } else {
+            this.submitting = false;
+            this.updateState({paste: <Text></Text>});
         }
     }
 

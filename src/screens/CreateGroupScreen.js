@@ -32,9 +32,14 @@ export default class CreateGroupScreen extends ValidationComponent {
         };
     }
 
-    createGroup() {
-
-        this.setState({itemPressedDisabled: true})
+    async createGroup() {
+        if (this.submitting) return;
+        this.submitting = true;
+        if (!this.validateForm()) {
+            this.submitting = false;
+            return;
+        }
+        this.setState({itemPressedDisabled: true});
         if (!this.validateForm()) return;
 
         let response = await postGroup(
@@ -42,7 +47,7 @@ export default class CreateGroupScreen extends ValidationComponent {
             this.state.description,
             this.state.color
         )
-
+        setTimeout(() => { this.submitting = false }, 1000);
         if (response !== false) {
 
         this.setState({itemPressedDisabled: false})
@@ -62,18 +67,7 @@ export default class CreateGroupScreen extends ValidationComponent {
     async createGroupDone(inviteCode) {
         if (inviteCode) {
             await Clipboard.setString(inviteCode);
-            Alert.alert('Invite code copied to clipboard!')
-
-            // TODO snackbar not showing
-            // Snackbar.show({
-            //     title: 'Link copied to clipboard',
-            //     duration: Snackbar.LENGTH_LONG,
-            //     action: {
-            //         title: 'CLOSE',
-            //         color: 'green',
-            //         onPress: () => Snackbar.dismiss(),
-            //     }
-            // });
+            Alert.alert('Invite code copied to clipboard!');
         }
         this.updateState(this.getClearedState());
         this.props.navigation.push('Groups');

@@ -17,7 +17,10 @@ export default class GroupMemberBannedComponent extends React.Component {
     }
 
     async unbanMember() {
+        if (this.submittingUnbanUser) return;
+        this.submittingUnbanUser = true;
         let response = await postUnbanUser(this.props.groupId, this.props.member.username, true);
+        this.submittingUnbanUser = false;
 
         if (response !== false) {
             Snackbar.show({

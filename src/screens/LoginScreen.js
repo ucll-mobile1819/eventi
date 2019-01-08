@@ -34,8 +34,11 @@ class LoginScreen extends Component {
     }
 
     async login() {
+        if (this.submitting) return;
+        this.submitting = true;
         this.props.fetchLogin(this.state.username, this.state.password)
         .then(() => {
+            this.submitting = false;
             if (!this.props.error) this.props.navigation.navigate('Home');
         });
     }

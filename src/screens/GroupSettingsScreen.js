@@ -78,7 +78,9 @@ class GroupSettingsScreen extends ValidationComponent {
     }
 
     async updateGroup() {
+        if (this.submittingGroup) return;
         if (!this.validateForm()) return;
+        this.submittingGroup = true;
 
         let response = await putGroup(
             this.props.group.id,
@@ -91,9 +93,10 @@ class GroupSettingsScreen extends ValidationComponent {
         if (response !== false) {
             this.props.fetchGroup(response.id)
                 .then(() => this.updateState({ ...this.props.group }))
-                .then(() => Promise.all([ this.props.fetchGroups(), this.props.fetchEvents() ]));
-
-            this.showSnackBar('Group updated');
+                .then(() => Promise.all([ this.props.fetchGroups(), this.props.fetchEvents() ]))
+                .then(() => { this.submittingGroup = false; this.showSnackBar('Group updated'); });
+        } else {
+            this.submittingGroup = false;
         }
     }
 
@@ -114,8 +117,10 @@ class GroupSettingsScreen extends ValidationComponent {
     }
 
     async renewInviteCode() {
+        if (this.submittingCode) return;
+        this.submittingCode = true;
         let response = await putGenerateInviteCode(this.props.group.id, true);
-
+        this.submittingCode = false;
         if (response !== false) {
             this.updateState({ inviteCode: response.inviteCode });
             this.showSnackBar('Invite code renewed');
@@ -135,6 +140,8 @@ class GroupSettingsScreen extends ValidationComponent {
     }
 
     async deleteGroup() {
+        if (this.submittingDeleteGroup) return;
+        this.submittingDeleteGroup = true;
         let response = await deleteGroup(this.props.group.id, true);
 
         if (response !== false) {
@@ -146,7 +153,9 @@ class GroupSettingsScreen extends ValidationComponent {
                 color: ''
             });
             this.props.fetchGroups()
-                .then(() => this.props.navigation.navigate('Groups'));
+                .then(() => { setTimeout(() => { this.submittingDeleteGroup = false; }); this.props.navigation.navigate('Groups'); });
+        } else {
+            this.submittingDeleteGroup = false;
         }
     }
 
@@ -179,6 +188,8 @@ class GroupSettingsScreen extends ValidationComponent {
     }
 
     async leaveGroup() {
+        if (this.submittingDeleteUser) return;
+        this.submittingDeleteUser = true;
         let response = await deleteUser(this.props.group.id, this.props.user.username);
 
         if (response !== false) {
@@ -189,7 +200,9 @@ class GroupSettingsScreen extends ValidationComponent {
                 color: ''
             });
             this.props.fetchGroups()
-                .then(() => this.props.navigation.navigate('Groups'));
+                .then(() => { setTimeout(() => { this.submittingDeleteUser = false; }, 1000); this.props.navigation.navigate('Groups'); });
+        } else {
+            this.submittingDeleteUser = false;
         }
     }
 

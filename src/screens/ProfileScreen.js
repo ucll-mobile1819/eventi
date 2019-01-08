@@ -49,12 +49,17 @@ class ProfileScreen extends ValidationComponent {
     }
 
     async logout() {
+        if (this.submittingLogout) return;
+        this.submittingLogout = true;
         await this.props.fetchLogout();
+        this.submittingLogout = false;
         this.props.navigation.navigate('Login');
     }
 
     async changePassword() {
+        if (this.submittingPassword) return;
         if (!this.validatePasswordForm()) return;
+        this.submittingPassword = true;
 
         let response = await putUser(
             null, null, null,
@@ -73,12 +78,16 @@ class ProfileScreen extends ValidationComponent {
                 }
             });
             this.props.fetchUser()
-                .then(() => this.updateState({ ...this.props.user }));
+                .then(() => { this.submittingPassword = false; this.updateState({ ...this.props.user }); });
+        } else {
+            this.submittingPassword = false;
         }
     }
 
     async changeInfo() {
+        if (this.submittingInfo) return;
         if (!this.validateInfoForm()) return;
+        this.submittingInfo = true;
 
         let response = await putUser(
             this.state.firstname,
@@ -97,10 +106,12 @@ class ProfileScreen extends ValidationComponent {
                 }
             });
             this.props.fetchUser()
-                .then(() => this.updateState({ ...this.props.user }))
+                .then(() => { this.submittingInfo = false; this.updateState({ ...this.props.user }); })
                 .then(() => this.props.navigation.setParams({
                     title: this.state.firstname + ' ' + this.state.lastname,
                 }));
+        } else {
+            this.submittingInfo = false;
         }
 
     }
