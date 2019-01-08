@@ -9,7 +9,7 @@ const Comment = connection.define('comments', {
         primaryKey: true,
         autoIncrement: true
     },
-    content: Sequelize.STRING({length: 5000})
+    content: Sequelize.STRING({length: 3000})
 });
 
 function defineModels(items) {
