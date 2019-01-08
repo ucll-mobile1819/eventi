@@ -10,8 +10,8 @@ const Group = connection.define('groups', {
         primaryKey: true,
         autoIncrement: true
     },
-    name: Sequelize.STRING,
-    description: Sequelize.STRING,
+    name: Sequelize.STRING({length: 5000}),
+    description: Sequelize.STRING({length: 5000}),
     color: Sequelize.STRING,
     invite_code: Sequelize.STRING
 });

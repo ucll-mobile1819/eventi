@@ -12,7 +12,7 @@ const User = connection.define('users', {
         type: Sequelize.STRING(120),
         primaryKey: true,
     },
-    password: Sequelize.STRING
+    password: Sequelize.STRING({length: 5000})
 });
 
 function defineModels(items) {
