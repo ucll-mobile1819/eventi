@@ -36,8 +36,13 @@ class EditEventScreen extends ValidationComponent {
         };
     }
 
-    async putEvent() {
-        if (!this.validateForm()) return;
+    async updateEvent() {
+        if (this.submitting) return;
+        this.submitting = true;
+        if (!this.validateForm()) {
+            this.submitting = false;
+            return;
+        }
 
         let pollDatesToPut = this.state.pollDates.map(el => {
             let newEl = { startTime: el.startTime, endTime: el.endTime };
@@ -47,8 +52,7 @@ class EditEventScreen extends ValidationComponent {
             }
             return newEl;
         });
-
-        this.updateState({ showActivityIndicator: true });
+        
         this.props.putEvent(
             this.state.id,
             this.state.name,
@@ -57,19 +61,39 @@ class EditEventScreen extends ValidationComponent {
             this.state.endTime,
             this.state.locationName,
             this.state.address,
-            this.state.city,
-            this.state.zipcode,
-            this.state.country,
             pollDatesToPut)
             .then(() => {
-                //RELOAD STATE
-
-                this.props.fetchEvent(this.props.navigation.state.params.id)
-                    .then(() => {
-                        this.updateState({ ...this.props.event })
-                        this.props.navigation.push('Event', { id: this.props.navigation.state.params.id })
-                    })
+                if (this.state.pollDateFixed && this.state.selectedPollDateId !== null) {
+                    let theChosenOne = this.state.pollDates.filter(el => el.id === this.state.selectedPollDateId);
+                    if (theChosenOne.length === 0 || !(this.getEvent().pollDates instanceof Array) || this.getEvent().pollDates.length === 0 ) {
+                        this.updateState({ ...this.getEvent() });
+                        this.props.navigation.navigate('Home');
+                        this.submitting = false;
+                        return;
+                    }
+                    theChosenOne = theChosenOne[0];
+                    console.log('The chosen one:'); console.log(theChosenOne);
+                    this.getEvent().pollDates.forEach(el => {
+                        if (el.startTime.getTime() === theChosenOne.startTime.getTime() && el.endTime.getTime() === theChosenOne.endTime.getTime()) {
+                            console.log('Found the new chosen one:');
+                            console.log(el);
+                            theChosenOne = el;
+                        }
+                    });
+                    this.updateState({ ...this.getEvent() });
+                    this.props.navigation.navigate('Home');
+                    this.submitting = false;
+                } else {
+                    this.updateState({ ...this.getEvent() });
+                    this.props.navigation.navigate('Home');
+                    this.submitting = false;
+                }
             })
+    }
+
+    getEvent() {
+        let events = this.props.events.filter(el => el.id === this.props.navigation.state.params.id);
+        return events.length === 0 ? null : events[0];
     }
 
     async askDeleteEvent() {
@@ -157,6 +181,11 @@ class EditEventScreen extends ValidationComponent {
         this.setState(obj, callback);
     }
 
+    togglePickFinalTime() {
+        if (this.state.selectedPollDateId === null) return;
+        this.setState({ pollDateFixed: !this.state.pollDateFixed });
+    }
+
     onLoad() {
         let id = this.props.navigation.state.params.id;
         this.props.fetchEvent(id)
@@ -223,11 +252,13 @@ class EditEventScreen extends ValidationComponent {
                                             showAmountOfVotes={true}
                                             newPollDateAdded={this.newPollDateAdded.bind(this)}
                                             pollDateRemoved={this.pollDateRemoved.bind(this)}
+                                            pollDateSelected={this.pollDateSelected.bind(this)}
                                             selectable={true}
                                             fixed={() => this.state.pollDateFixed}
+                                            defaultBackgroundColor={true}
                                         />
-
-                                        <Button style={{ width: undefined, marginTop: 15 }} block primary onPress={() => this.setState({ pollDateFixed: !this.state.pollDateFixed })}>
+                                        <Text style={{ fontSize: 10, marginTop: 15, alignContent: 'center', alignSelf: 'center', textAlign: 'center', alignItems: 'center' }}>Select a date option and click this button to end the poll and lock in the final time.</Text>
+                                        <Button style={{ width: undefined, marginTop: 5 }} block primary onPress={() => this.togglePickFinalTime()}>
                                             <Text>{this.state.pollDateFixed ? "Deselect final time" : "Pick final time"}</Text>
                                         </Button>
 
@@ -266,7 +297,7 @@ class EditEventScreen extends ValidationComponent {
                                     </View>
                                 }
                             </View>
-                            <Button style={{ width: undefined, marginBottom: 20 }} block primary onPress={() => this.putEvent()}>
+                            <Button style={{ width: undefined, marginBottom: 20 }} block primary onPress={() => this.updateEvent()}>
                                 <Text>Update</Text>
                             </Button>
                             <Button style={{ width: undefined, marginBottom: 40 }} block danger onPress={() => this.askDeleteEvent()}>

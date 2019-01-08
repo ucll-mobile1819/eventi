@@ -233,6 +233,7 @@ class AddEventScreen extends ValidationComponent {
                                             newPollDateAdded={this.newPollDateAdded.bind(this)}
                                             pollDateRemoved={this.pollDateRemoved.bind(this)}
                                             selectable={false}
+                                            defaultBackgroundColor={true}
                                         />
                                     </View>
                                 }

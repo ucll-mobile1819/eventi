@@ -148,10 +148,11 @@ const eventReducer = (state = INITIAL_STATE, action) => {
                 error: null // Needed to reset any previous errors
             };
         case PUT_EVENT_SUCCESS:
+            let events = state.events.map(el => el.id === action.payload.event.id ? action.payload.event : el);
             return {
                 ...state,
                 loading: false,
-                event: action.payload.event
+                events
             };
         default:
             return state;
