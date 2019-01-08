@@ -169,17 +169,17 @@ class AddEventScreen extends ValidationComponent {
                             {this.isFieldInError('name') && <Text style={{ color: 'red', marginLeft: 15 }}>{this.getErrorsInField('name')[0]}</Text>}
                             <Item floatingLabel style={{ marginLeft: 0 }}>
                                 <Label>Name</Label>
-                                <Input onChangeText={name => this.updateState({ name })} />
+                                <Input onChangeText={name => this.updateState({ name })} maxLength={50} />
                             </Item>
 
                             <Item floatingLabel style={{ marginLeft: 0 }}>
                                 <Label>Location Name</Label>
-                                <Input onChangeText={locationName => this.updateState({ locationName })} />
+                                <Input onChangeText={locationName => this.updateState({ locationName })} maxLength={200} />
                             </Item>
 
                             <Item floatingLabel style={{ marginLeft: 0 }}>
                                 <Label>Address</Label>
-                                <Input onChangeText={address => this.updateState({ address })} />
+                                <Input onChangeText={address => this.updateState({ address })} maxLength={200}/>
                             </Item>
 
                             {this.isFieldInError('selectedGroupId') && <Text style={{ color: 'red', marginLeft: 15, marginTop: 20 }}>{this.getErrorsInField('selectedGroupId')[0]}</Text>}
@@ -206,7 +206,9 @@ class AddEventScreen extends ValidationComponent {
                                 bordered
                                 placeholder="Description"
                                 style={{ width: undefined, marginTop: 20 }}
-                                onChangeText={description => this.updateState({ description })} />
+                                onChangeText={description => this.updateState({ description })}
+                                maxLength={3000}
+                            />
 
                             <View style={{ flex: 1, flexDirection: 'row', paddingTop: 20 }}>
                                 <Text style={{ marginRight: 30 }}>Event</Text>

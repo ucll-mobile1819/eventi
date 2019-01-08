@@ -12,6 +12,7 @@ import loginregisterStyles from '../styles/loginregister';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
 
 export default class CreateGroupScreen extends ValidationComponent {
+    
     constructor(props) {
         super(props);
         this.state = this.getClearedState();
@@ -26,19 +27,25 @@ export default class CreateGroupScreen extends ValidationComponent {
         return {
             groupname: '',
             description: '',
-            color: '#F44336'
+            color: '#F44336',
+            itemPressedDisabled: false,
         };
     }
 
-    async createGroup() {
+    createGroup() {
+
+        this.setState({itemPressedDisabled: true})
         if (!this.validateForm()) return;
 
-        let response = await postGroup(
+        let response =  postGroup(
             this.state.groupname,
             this.state.description,
             this.state.color
         )
+
         if (response !== false) {
+
+        this.setState({itemPressedDisabled: false})
             Alert.alert(
                 'Group succesfully created',
                 'Share the following code to invite people to your group: ' + response.inviteCode,
@@ -49,6 +56,7 @@ export default class CreateGroupScreen extends ValidationComponent {
                 { cancelable: false }
             );
         }
+
     }
 
     async createGroupDone(inviteCode) {
@@ -102,6 +110,7 @@ export default class CreateGroupScreen extends ValidationComponent {
                             placeholder="Group name"
                             value={this.state.groupname}
                             onChangeText={groupname => this.updateState({ groupname })}
+                            maxLength={50}
                         />
                         {this.isFieldInError('description') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('description')[0]}</Text>}
                         <TextInput
@@ -109,6 +118,7 @@ export default class CreateGroupScreen extends ValidationComponent {
                             placeholder="Description"
                             value={this.state.description}
                             onChangeText={description => this.updateState({ description })}
+                            maxLength={150}
                         />
                         <Text style={groupStyles.subtitle}>Pick a group color</Text>
                         {this.isFieldInError('color') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('color')[0]}</Text>}
@@ -120,6 +130,8 @@ export default class CreateGroupScreen extends ValidationComponent {
                             title={''}
                         />
                         <Button
+
+                            disabled={this.state.itemPressedDisabled}
                             title="Create group"
                             onPress={() => this.createGroup()}
                         />
