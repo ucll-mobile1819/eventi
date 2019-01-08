@@ -181,7 +181,6 @@ class EditEventScreen extends ValidationComponent {
                                             mode='configure'
                                             pollDates={this.state.pollDates}
                                             pollDateVotes={this.state.pollDateVotes}
-                                            votesUpdated={this.updateVotes.bind(this)}
                                             showAmountOfVotes={true}
                                             newPollDateAdded={this.newPollDateAdded.bind(this)}
                                             pollDateRemoved={this.pollDateRemoved.bind(this)}
