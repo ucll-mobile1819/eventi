@@ -12,6 +12,7 @@ import { fetchGroups } from '../actions/GroupActions';
 import { fetchEvents } from '../actions/EventActions';
 import { fetchFailure } from '../actions';
 import { postEvent, postEventWithPoll } from '../network/event'
+import { NavigationEvents } from 'react-navigation';
 
 class AddEventScreen extends ValidationComponent {
     constructor(props) {
@@ -39,6 +40,12 @@ class AddEventScreen extends ValidationComponent {
     onLoad() {
         this.props.fetchGroups()
             .then(() => this.updateState({ groups: [...this.props.groups],  showActivityIndicator: false}))
+    }
+
+    async onNavWillFocus() {
+        this._resetErrors();
+        this.updateState(this.getClearedState());
+        this.onLoad();
     }
 
     updateState(obj, callback) {
@@ -163,6 +170,7 @@ class AddEventScreen extends ValidationComponent {
     render() {
         return (
             <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} showActivityIndicator={() => this.state.showActivityIndicator} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)} >
+                <NavigationEvents onWillFocus={() => this.onNavWillFocus()} />
                 <Container>
                     <Content padder>
                         <Form style={{ marginLeft: 15, marginRight: 15 }}>
