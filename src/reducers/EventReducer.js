@@ -22,6 +22,7 @@ const INITIAL_STATE = {
             id: -1,
             name: '',
             color: '',
+            creator: '',
         },
         creator: {
             firstname: '',

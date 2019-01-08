@@ -76,7 +76,7 @@ class EventScreen extends React.Component {
                     }
                     this.setGuests();
                     if (this.props.error) return;
-                    if(this.state.event.creator.username === this.props.user.username){
+                    if(this.state.event.creator.username === this.props.user.username || this.state.event.group.creator === this.props.user.username){
 
                         this.props.navigation.setParams({
                             title: this.state.event.name,
@@ -85,7 +85,7 @@ class EventScreen extends React.Component {
                             headerTitleStyle: { color: 'white' }, // Title color
                             headerRight: (
                                 <View>
-                                    <TouchableWithoutFeedback onPress={() => this.props.navigation.push('EditEvent', { id: this.state.event.id , color:this.state.event.co})}>
+                                    <TouchableWithoutFeedback onPress={() => this.props.navigation.push('EditEvent', { id: this.state.event.id })}>
                                         <MaterialIcon name='settings' {...headerStyles.iconProps} />
                                     </TouchableWithoutFeedback>
                                 </View>
