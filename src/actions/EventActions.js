@@ -158,9 +158,9 @@ export const fetchVotesSuccess = votes => ({
 
 //Put 
 
-export const putEvent = (id, name, description, startTime, endTime, locationName, address, city, zipcode, country, pollDates) => dispatch => {
+export const putEvent = (id, name, description, startTime, endTime, locationName, address, pollDates) => dispatch => {
     dispatch(putEventBegin());
-    return eventAPI.putEvent(id, name, description, startTime, endTime, locationName, address, city, zipcode, country, pollDates)
+    return eventAPI.putEvent(id, name, description, startTime, endTime, locationName, address, null, null, null, pollDates)
     .then(votes => {
         dispatch(PutEventSuccess(votes))
     })

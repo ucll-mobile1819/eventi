@@ -34,9 +34,27 @@ class EditEventScreen extends ValidationComponent {
     }
 
     putEvent() {
-        this.props.putEvent(...this.state.event)
+        this.updateState({showActivityIndicator: true });
+        this.props.putEvent(
+            this.state.id,
+            this.state.name,
+            this.state.description,
+            this.state.startTime,
+            this.state.endTime,
+            this.state.locationName,
+            this.state.address,
+            this.state.city,
+            this.state.zipcode,
+            this.state.country,
+            this.state.pollDates)
             .then(() => {
                 //RELOAD STATE
+
+                this.props.fetchEvent(this.props.navigation.state.params.id)
+                .then(() =>{
+                    this.updateState({ ...this.props.event})
+                    this.props.navigation.push('Event', { id: this.props.navigation.state.params.id})
+                })
             })
     }
 
