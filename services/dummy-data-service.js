@@ -98,8 +98,8 @@ function generateDummyData() {
     })
     .then(() => {
         // CREATING EVENTS
-        let e1 = eventService.createEvent(alice, groupA.id, 'A', 'A Desc', new Date(2019, 11, 23, 20, 0, 0), new Date(2019, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium');
-        let e2 = eventService.createEvent(bob, groupA.id, 'B', 'B Desc', new Date(2019, 11, 18, 20, 0, 0), new Date(2019, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium');
+        let e1 = eventService.createEvent(alice, groupA.id, 'EventA', 'A Desc', new Date(2019, 11, 23, 20, 0, 0), new Date(2019, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium');
+        let e2 = eventService.createEvent(bob, groupA.id, 'EventB', 'B Desc', new Date(2019, 11, 18, 20, 0, 0), new Date(2019, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium');
         let pollDates = [ 
             { startTime: new Date(2019, 1, 23, 13, 00, 00), endTime: new Date(2019, 1, 23, 15, 00, 00) },
             { startTime: new Date(2019, 1, 23, 15, 00, 00), endTime: new Date(2019, 1, 23, 17, 00, 00) },
@@ -107,9 +107,9 @@ function generateDummyData() {
             { startTime: new Date(2019, 1, 23, 10, 30, 00), endTime: new Date(2019, 1, 23, 12, 30, 00) },
             { startTime: new Date(2019, 1, 23, 13, 30, 00), endTime: new Date(2019, 1, 23, 15, 30, 00) },
         ];
-        let e3 = eventService.createPoll(bob, groupB.id, 'C', 'C Desc', null, null, 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium', pollDates);
-        let e4 = eventService.createEvent(bob, groupB.id, 'D', 'D Desc', new Date(2019, 7, 23, 20, 0, 0), new Date(2019, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium');
-        let e5 = eventService.createEvent(john, groupB.id, 'E', 'E Desc', new Date(2019, 7, 23, 20, 0, 0), new Date(2019, 7, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium');
+        let e3 = eventService.createPoll(bob, groupB.id, 'EventC', 'C Desc', null, null, 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium', pollDates);
+        let e4 = eventService.createEvent(bob, groupB.id, 'EventD', 'D Desc', new Date(2019, 7, 23, 20, 0, 0), new Date(2019, 11, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium');
+        let e5 = eventService.createEvent(john, groupB.id, 'EventE', 'E Desc', new Date(2019, 7, 23, 20, 0, 0), new Date(2019, 7, 24, 4, 0, 0), 'Maximo', 'Straat', '3000', 'Leuven', 'Belgium');
         let e6 = eventService.createEvent(vogels, groupVogels.id, 'JavaScript GraphQL workshop', 'A workshop introducing us to GraphQL. We\'ll also be making an API and small front-end to implement this technology.', new Date(2019, 0, 9, 16), new Date(2019, 0, 9, 19), 'UCLL C0.01', 'UCLL Campus Proximus', '', '', '', 'event', false);
         let e7 = new Promise((res, rej) => { setTimeout(() => eventService.createPoll(vogels, groupVogels.id, 'Node.js tips and tricks', 'Things you didn\'t know about node.js and how to use them.', null, null, 'UCLL C0.02', 'UCLL Campus Proximus', '', '', '', [
             { startTime: new Date(2019, 0, 11, 13, 00, 00), endTime: new Date(2019, 0, 11, 15, 00, 00) },
@@ -152,13 +152,9 @@ function generateDummyData() {
         promises.push(eventService.setEventAttendance(bob, eventA1.id, 'Going'));
         promises.push(eventService.setEventAttendance(alice, eventA2.id, 'Going'));
         promises.push(eventService.setEventAttendance(bob, eventA2.id, 'Going'));
-        promises.push(eventService.setEventAttendance(bob, eventB1.id, 'Going'));
-        promises.push(eventService.setEventAttendance(john, eventB1.id, null));
         promises.push(eventService.setEventAttendance(john, eventB3.id, 'Going'));
         promises.push(eventService.setEventAttendance(john, eventVogels.id, 'Not going'));
         promises.push(eventService.setEventAttendance(bob, eventVogels.id, 'Going'));
-        promises.push(eventService.setEventAttendance(john, eventVogelsPoll.id, 'Going'));
-        promises.push(eventService.setEventAttendance(bob, eventVogelsPoll.id, 'Going'));
 
         return Promise.all(promises);
     })
