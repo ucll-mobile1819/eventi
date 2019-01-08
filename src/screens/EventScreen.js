@@ -372,7 +372,7 @@ class EventScreen extends React.Component {
                             </View>            
                             <View>
                                 <Body>
-                                    <Text style={{flex: 285}}>
+                                    <Text style={{maxWidth: 285}}>
                                         {event.description || "No description" }
                                     </Text>
                                 </Body>
