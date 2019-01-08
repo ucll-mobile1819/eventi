@@ -85,7 +85,7 @@ class EventComponent extends React.Component{
                             {description}
                         </Text>
                         <Text style={{color: '#444', fontSize: 12}}>
-                        {this.props.event.group.name} - {this.getTimeDisplayFormat(startTime)}
+                        {this.props.event.group.name} {this.getTimeDisplayFormat(startTime) === '' ? '' : '-'} {this.getTimeDisplayFormat(startTime)}
                         </Text>
                     </View>
                     {type === 'event' ?

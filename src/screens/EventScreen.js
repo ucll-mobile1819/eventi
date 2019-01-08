@@ -1,21 +1,16 @@
 import React from 'react';
-import { Text, TouchableWithoutFeedback, StyleSheet, ActivityIndicator, SectionList, TextInput, ScrollView } from 'react-native';
+import { Text, TouchableWithoutFeedback, StyleSheet, ActivityIndicator, SectionList, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import headerStyles from '../styles/headerStyles';
-import { Container, Tabs, Tab, Button, ActionSheet, View, Card, CardItem, Body, Footer, Left, Right, Grid, Col, Content, Item, Input } from 'native-base';
+import { Container, Tabs, Tab, Button, ActionSheet, View, Card, CardItem, Body, Footer, Right, Grid, Col, Content, Item, Input } from 'native-base';
 import { fetchEvent ,fetchAtt, changeStatus , fetchComments , postComment ,fetchVotes} from '../actions/EventActions';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Balloon from "react-native-balloon";
 import IconEvil from 'react-native-vector-icons/EvilIcons';
 import PollTableComponent from "../components/PollTableComponent";
-import IconMat from 'react-native-vector-icons/MaterialIcons';
-import IconEnc from 'react-native-vector-icons/MaterialIcons';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import groupStyles from '../styles/groupStyles';
-import { Table, TableWrapper, Row, Cols } from 'react-native-table-component';
 import * as eventAPI from '../network/event';
 import Color from 'color';
 
@@ -75,9 +70,8 @@ class EventScreen extends React.Component {
                         })
                     }
                     this.setGuests();
-                    if (this.props.error) return;
-                    if(this.state.event.creator.username === this.props.user.username){
-
+                    if (this.props.eventError) return;
+                    if(this.state.event.creator.username === this.props.user.username || this.state.event.group.creator === this.props.user.username){
                         this.props.navigation.setParams({
                             title: this.state.event.name,
                             customHeaderBackgroundColor: this.state.event.group.color,

@@ -7,7 +7,6 @@ export const FETCH_EVENTS_SUCCESS = 'FETCH_EVENTS_SUCCESS';
 export const CHANGE_STATUS_EVENT_BEGIN = 'CHANGE_STATUS_EVENT_BEGIN';
 export const CHANGE_STATUS_EVENT_SUCCESS = 'CHANGE_STATUS_EVENT_SUCCESS';
 
-
 export const FETCH_EVENT_BEGIN = 'FETCH_EVENT_BEGIN';
 export const FETCH_EVENT_SUCCESS = 'FETCH_EVENT_SUCCESS';
 
@@ -22,6 +21,12 @@ export const POST_COMMENT_SUCCESS = 'POST_COMMENT_SUCCESS';
 
 export const FETCH_VOTES_BEGIN = 'FETCH_VOTES_BEGIN';
 export const FETCH_VOTES_SUCCESS = 'FETCH_VOTES_SUCCESS';
+
+export const PUT_EVENT_BEGIN = 'PUT_EVENT_BEGIN';
+export const PUT_EVENT_SUCCESS = 'PUT_EVENT_SUCCESS';
+
+export const END_POLL_BEGIN = 'END_POLL_BEGIN';
+export const END_POLL_SUCCESS = 'END_POLL_SUCCESS';
 
 export const fetchEvents = () => dispatch => {
     dispatch(fetchEventsBegin());
@@ -102,7 +107,7 @@ export const fetchComments = (id) => dispatch => {
     .then(comments => {
         dispatch(fetchCommentSuccess(comments))
     })
-    .catch(error => dispatch(fetchFailure(error)));
+    .catch(error => dispatch(fetchFailure(error, false)));
 };
 
 export const fetchCommentBegin = () => ({
@@ -137,7 +142,6 @@ export const postCommentSuccess = comment => ({
 //Fetch votes
 
 export const fetchVotes = (id) => dispatch => {
-    console.log(id)
     dispatch(fetchVotesBegin());
     return eventAPI.getVotes(id)
     .then(votes => {
@@ -155,3 +159,39 @@ export const fetchVotesSuccess = votes => ({
     payload: {votes} ,
 });
 
+//Put 
+
+export const putEvent = (id, name, description, startTime, endTime, locationName, address, pollDates) => dispatch => {
+    dispatch(putEventBegin());
+    return eventAPI.putEvent(id, name, description, startTime, endTime, locationName, address, null, null, null, pollDates)
+    .then(event => {
+        dispatch(PutEventSuccess(event))
+    })
+    .catch(error => dispatch(fetchFailure(error)));
+};
+
+export const putEventBegin = () => ({
+    type: PUT_EVENT_BEGIN,
+});
+
+export const PutEventSuccess = event => ({
+    type: PUT_EVENT_SUCCESS,
+    payload: {event} ,
+});
+
+export const endPoll = (eventId, pollDateId) => dispatch => {
+    dispatch(endPollBegin());
+
+    return eventAPI.postEndPoll(eventId, pollDateId)
+    .then(event => dispatch(endPollSuccess(event)))
+    .catch(error => dispatch(fetchFailure(error)));
+};
+
+export const endPollBegin = () => ({
+    type: END_POLL_BEGIN,
+});
+
+export const endPollSuccess = event => ({
+    type: END_POLL_SUCCESS,
+    payload: {event} ,
+});
