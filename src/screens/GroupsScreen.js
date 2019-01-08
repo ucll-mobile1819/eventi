@@ -22,8 +22,7 @@ class GroupsScreen extends React.Component {
     }
 
     onLoad() {
-        this.props.fetchGroups()
-        .then(() => this.updateState({ showActivityIndicator: false }));
+        
 
         this.props.navigation.setParams({
             headerRight: (
@@ -37,6 +36,10 @@ class GroupsScreen extends React.Component {
                         >+</Text>
                     </TouchableWithoutFeedback>
             )
+        });
+        this.props.fetchGroups()
+        .then(() =>{
+            this.updateState({ showActivityIndicator: false })
         });
     }
 
