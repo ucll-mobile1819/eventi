@@ -103,6 +103,7 @@ export default class CreateGroupScreen extends ValidationComponent {
                             placeholder="Group name"
                             value={this.state.groupname}
                             onChangeText={groupname => this.updateState({ groupname })}
+                            maxLength={50}
                         />
                         {this.isFieldInError('description') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('description')[0]}</Text>}
                         <TextInput
@@ -110,6 +111,7 @@ export default class CreateGroupScreen extends ValidationComponent {
                             placeholder="Description"
                             value={this.state.description}
                             onChangeText={description => this.updateState({ description })}
+                            maxLength={150}
                         />
                         <Text style={groupStyles.subtitle}>Pick a group color</Text>
                         {this.isFieldInError('color') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('color')[0]}</Text>}

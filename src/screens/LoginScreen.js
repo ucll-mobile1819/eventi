@@ -51,6 +51,7 @@ class LoginScreen extends Component {
                         placeholder="Username"
                         value={this.state.username}
                         onChangeText={username => this.updateState({ username })}
+                        maxLength={15}
                     />
                     <TextInput
                         style={loginregisterStyles.inputField}
@@ -58,6 +59,7 @@ class LoginScreen extends Component {
                         placeholder="Password"
                         value={this.state.password}
                         onChangeText={password => this.updateState({ password })}
+                        maxLength={5000}
                     />
                     <Button
                         title="Login"

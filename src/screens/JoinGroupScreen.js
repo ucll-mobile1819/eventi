@@ -62,6 +62,7 @@ export default class JoinGroupScreen extends ValidationComponent {
                             placeholder="Invite code"
                             value={this.state.invitecode}
                             onChangeText={invitecode => this.updateState({ invitecode })}
+                            maxLength={8}
                         />
                         <Button
                             title="Paste"
