@@ -101,17 +101,22 @@ class EventScreen extends React.Component {
                         });
                     }
                 });
+            }).then(() => {
+                clearInterval(this.interval);
+                this.interval = setInterval(() => this.setComments(), 1000);
             });
     }
-    componentDidMount() {
-        this.interval = setInterval(() => this.updateState({ setComments: this.setComments() }), 1000);
-      }
     componentWillUnmount() {
         clearInterval(this.interval);
     }
     setComments(){
         this.props.fetchComments(this.props.navigation.state.params.id)
         .then(()=>{
+        if (this.props.eventError) {
+            this.props.navigation.navigate('Home');
+            clearInterval(this.interval);
+            return;
+        }
         let comments = this.props.comments;
         let commentList;
         
@@ -158,9 +163,8 @@ class EventScreen extends React.Component {
         })
         this.updateState({
             myComments: commentsJSX,
-            })
-        })
-        
+            });
+        });
     }
     async setGuests(){
         let attendances = this.props.status;
@@ -450,7 +454,8 @@ const mapStateToProps = state => {
         emptyEvent: state.event.emptyEvent,
         loading: state.group.loading,
         user: state.user.user,
-        error: state.group.error
+        error: state.group.error,
+        eventError: state.event.error,
     };
 };
 
