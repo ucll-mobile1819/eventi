@@ -80,7 +80,7 @@ export const postVote = async (id, pollDateIds, handleErrors = false) => {
 };
 
 export const postEndPoll = async (id, finalPollDateId, handleErrors = false) => {
-    return await sendAPIRequest(`event/${id}/end-poll`, 'POST', handleErrors, { pollDateId: finalPollDateId });
+    return await sendAPIRequest(`event/${id}/end-poll`, 'POST', handleErrors, true, { pollDateId: finalPollDateId });
 };
 
 /**

@@ -25,6 +25,9 @@ export const FETCH_VOTES_SUCCESS = 'FETCH_VOTES_SUCCESS';
 export const PUT_EVENT_BEGIN = 'PUT_EVENT_BEGIN';
 export const PUT_EVENT_SUCCESS = 'PUT_EVENT_SUCCESS';
 
+export const END_POLL_BEGIN = 'END_POLL_BEGIN';
+export const END_POLL_SUCCESS = 'END_POLL_SUCCESS';
+
 export const fetchEvents = () => dispatch => {
     dispatch(fetchEventsBegin());
     return eventAPI.getEvents()
@@ -173,5 +176,22 @@ export const putEventBegin = () => ({
 
 export const PutEventSuccess = event => ({
     type: PUT_EVENT_SUCCESS,
+    payload: {event} ,
+});
+
+export const endPoll = (eventId, pollDateId) => dispatch => {
+    dispatch(endPollBegin());
+
+    return eventAPI.postEndPoll(eventId, pollDateId)
+    .then(event => dispatch(endPollSuccess(event)))
+    .catch(error => dispatch(fetchFailure(error)));
+};
+
+export const endPollBegin = () => ({
+    type: END_POLL_BEGIN,
+});
+
+export const endPollSuccess = event => ({
+    type: END_POLL_SUCCESS,
     payload: {event} ,
 });

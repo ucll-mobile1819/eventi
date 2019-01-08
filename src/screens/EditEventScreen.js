@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
-import { fetchEvent, putEvent, fetchEvents } from '../actions/EventActions';
+import { fetchEvent, putEvent, fetchEvents, endPoll } from '../actions/EventActions';
 import { Container, Content, Item, Label, Input, Textarea, Text, H3, Button, Form } from 'native-base';
 import ValidationComponent from '../components/ValidationComponent';
 import DatePickerComponent from '../components/DatePickerComponent';
@@ -72,17 +72,24 @@ class EditEventScreen extends ValidationComponent {
                         return;
                     }
                     theChosenOne = theChosenOne[0];
-                    console.log('The chosen one:'); console.log(theChosenOne);
                     this.getEvent().pollDates.forEach(el => {
                         if (el.startTime.getTime() === theChosenOne.startTime.getTime() && el.endTime.getTime() === theChosenOne.endTime.getTime()) {
-                            console.log('Found the new chosen one:');
-                            console.log(el);
                             theChosenOne = el;
                         }
                     });
-                    this.updateState({ ...this.getEvent() });
-                    this.props.navigation.navigate('Home');
-                    this.submitting = false;
+                    if (theChosenOne.id < 0 || theChosenOne.id === null) {
+                        console.log('The chosen one pollDate to convert into event could not be found, this shouldnt\'ve happened...');
+                        this.updateState({ ...this.getEvent() });
+                        this.props.navigation.navigate('Home');
+                        this.submitting = false;
+                    } else {
+                        this.props.endPoll(this.getEvent().id, theChosenOne.id)
+                        .then(() => {
+                            this.updateState({ ...this.getEvent() });
+                            this.props.navigation.navigate('Home');
+                            this.submitting = false;
+                        });
+                    }
                 } else {
                     this.updateState({ ...this.getEvent() });
                     this.props.navigation.navigate('Home');
@@ -298,7 +305,7 @@ class EditEventScreen extends ValidationComponent {
                                 }
                             </View>
                             <Button style={{ width: undefined, marginBottom: 20 }} block primary onPress={() => this.updateEvent()}>
-                                <Text>Update</Text>
+                                <Text>Save</Text>
                             </Button>
                             <Button style={{ width: undefined, marginBottom: 40 }} block danger onPress={() => this.askDeleteEvent()}>
                                 <Text>delete</Text>
@@ -321,7 +328,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => (
     bindActionCreators({
-        fetchEvent, putEvent, fetchEvents
+        fetchEvent, putEvent, fetchEvents, endPoll
     }, dispatch)
 );
 
