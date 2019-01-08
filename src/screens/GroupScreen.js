@@ -7,10 +7,11 @@ import headerStyles from '../styles/headerStyles';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import { fetchGroup } from '../actions/GroupActions';
+import {fetchEvents} from '../actions/EventActions';
 import groupStyles from '../styles/groupStyles';
 import EventComponent from '../components/EventComponent';
-import { FlatList } from 'react-native-gesture-handler';
-
+import { FlatList, ScrollView } from 'react-native-gesture-handler';
+import { fetchGroups } from '../actions/GroupActions';
 class GroupScreen extends React.Component {
     static navigationOptions = obj => obj.navigation.state.params;
 
@@ -28,8 +29,15 @@ class GroupScreen extends React.Component {
     }
 
     onLoad() {
-        this.props.fetchGroup(this.props.navigation.state.params.id)
+        Promise.all([
+            this.props.fetchGroup(this.props.navigation.state.params.id),
+            this.props.fetchEvents(),
+            this.props.fetchGroups()
+        ])
             .then(() => {
+                console.log("JOINED GROUP");
+                console.log(this.props.events);
+                console.log("JOINED GROUP");
                 this.updateState({ showActivityIndicator: false }); 
                 if (this.props.error) return;
                 this.updateHeader()
@@ -69,6 +77,7 @@ class GroupScreen extends React.Component {
         if (!this.props.error && this.state.color !== this.props.group.color) this.updateHeader();
         return (
             <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} showActivityIndicator={() => this.state.showActivityIndicator} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)}>
+                <ScrollView>
                 <View style={{ padding: 10 }}>
                     <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: 'lightgrey', paddingBottom: 20, marginBottom: 20 }}>
                         <Text style={{ flex: 1 }}>{this.props.group.description || "No description was provided for this group."}</Text>
@@ -85,6 +94,7 @@ class GroupScreen extends React.Component {
                     renderItem={renderItem}
                     />
                 </View>
+                </ScrollView>
             </AuthenticatedComponent>
         );
     }
@@ -101,7 +111,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => (
     bindActionCreators({
-        fetchGroup
+        fetchGroup,fetchEvents,fetchGroups
     }, dispatch)
 );
 
