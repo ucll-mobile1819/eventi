@@ -12,6 +12,7 @@ import loginregisterStyles from '../styles/loginregister';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
 
 export default class CreateGroupScreen extends ValidationComponent {
+    
     constructor(props) {
         super(props);
         this.state = this.getClearedState();
@@ -26,18 +27,22 @@ export default class CreateGroupScreen extends ValidationComponent {
         return {
             groupname: '',
             description: '',
-            color: '#F44336'
+            color: '#F44336',
+            itemPressedDisabled: false,
         };
     }
 
-    async createGroup() {
+    createGroup() {
+
+        this.setState({itemPressedDisabled: true})
         if (!this.validateForm()) return;
 
-        let response = await postGroup(
+        let response =  postGroup(
             this.state.groupname,
             this.state.description,
             this.state.color
         )
+
         if (response !== false) {
             Alert.alert(
                 'Group succesfully created',
@@ -49,6 +54,7 @@ export default class CreateGroupScreen extends ValidationComponent {
                 { cancelable: false }
             );
         }
+
     }
 
     async createGroupDone(inviteCode) {
@@ -120,6 +126,8 @@ export default class CreateGroupScreen extends ValidationComponent {
                             title={''}
                         />
                         <Button
+
+                            disabled={this.state.itemPressedDisabled}
                             title="Create group"
                             onPress={() => this.createGroup()}
                         />
