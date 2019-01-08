@@ -68,7 +68,10 @@ let GroupsTab = StackNavigator({
     CreateGroup: {
         screen: CreateGroupScreen,
         navigationOptions: {
-            headerTitle: 'Create group',
+            title: "Create group",
+            // customHeaderBackgroundColor: this.state.group.color,
+            headerTintColor: 'white', // Back arrow color
+            headerTitleStyle: { color: 'white' }, // Title color
         }
     },
     Group: {
