@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
-import { fetchEvent, putEvent } from '../actions/EventActions';
+import { fetchEvent, putEvent, fetchEvents } from '../actions/EventActions';
 import { Container, Content, Item, Label, Input, Textarea, Text, H3, Button, Form } from 'native-base';
 import ValidationComponent from '../components/ValidationComponent';
 import DatePickerComponent from '../components/DatePickerComponent';
@@ -47,7 +47,6 @@ class EditEventScreen extends ValidationComponent {
             }
             return newEl;
         });
-        console.log(pollDatesToPut);
 
         this.updateState({ showActivityIndicator: true });
         this.props.putEvent(
@@ -73,6 +72,18 @@ class EditEventScreen extends ValidationComponent {
             })
     }
 
+    async askDeleteEvent() {
+        Alert.alert(
+            'Delete event',
+            'Are you sure you want to delete this event?',
+            [
+                { text: 'Delete', onPress: () => this.deleteEvent() },
+                { text: 'Cancel', style: 'cancel' }
+            ],
+            { cancelable: false }
+        );
+    }
+
     async deleteEvent() {
         let response = await deleteEvent(
             this.state.id,
@@ -80,11 +91,10 @@ class EditEventScreen extends ValidationComponent {
         );
 
         if (response !== false) {
+            await this.props.fetchEvents();
             Alert.alert('Event deleted', 'The event was successfully deleted.');
             this.updateState(this.getClearedState());
-            await this.props.fetchEvents();
             this.props.navigation.navigate("Home");
-            
         }
     }
 
@@ -125,9 +135,6 @@ class EditEventScreen extends ValidationComponent {
         // New poll dates don't have ids. But for removing them, we need to be able to identify them
         // So we add negative ids for new items and make sure to remove these ids before doing a POST/PUT to the api
         let id = Math.min(...this.state.pollDates.map(el => el.id), 0) - 1;
-        if (id > 0) {
-            id = -1
-        }
         newPollDate.id = id;
 
         this.updateState({
@@ -262,7 +269,7 @@ class EditEventScreen extends ValidationComponent {
                             <Button style={{ width: undefined, marginBottom: 20 }} block primary onPress={() => this.putEvent()}>
                                 <Text>Update</Text>
                             </Button>
-                            <Button style={{ width: undefined, marginBottom: 40 }} block danger onPress={() => this.deleteEvent()}>
+                            <Button style={{ width: undefined, marginBottom: 40 }} block danger onPress={() => this.askDeleteEvent()}>
                                 <Text>delete</Text>
                             </Button>
                         </Form>
@@ -283,7 +290,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => (
     bindActionCreators({
-        fetchEvent, putEvent
+        fetchEvent, putEvent, fetchEvents
     }, dispatch)
 );
 

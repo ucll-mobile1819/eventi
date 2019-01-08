@@ -35,9 +35,6 @@ class GroupScreen extends React.Component {
             this.props.fetchGroups()
         ])
             .then(() => {
-                console.log("JOINED GROUP");
-                console.log(this.props.events);
-                console.log("JOINED GROUP");
                 this.updateState({ showActivityIndicator: false }); 
                 if (this.props.error) return;
                 this.updateHeader()

@@ -104,7 +104,7 @@ export const fetchComments = (id) => dispatch => {
     .then(comments => {
         dispatch(fetchCommentSuccess(comments))
     })
-    .catch(error => dispatch(fetchFailure(error)));
+    .catch(error => dispatch(fetchFailure(error, false)));
 };
 
 export const fetchCommentBegin = () => ({
