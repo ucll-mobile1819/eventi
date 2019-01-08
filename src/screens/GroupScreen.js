@@ -10,7 +10,11 @@ import { fetchGroup } from '../actions/GroupActions';
 import {fetchEvents} from '../actions/EventActions';
 import groupStyles from '../styles/groupStyles';
 import EventComponent from '../components/EventComponent';
+<<<<<<< HEAD
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
+=======
+import { FlatList } from 'react-native-gesture-handler';
+>>>>>>> master-react-native
 import { fetchGroups } from '../actions/GroupActions';
 class GroupScreen extends React.Component {
     static navigationOptions = obj => obj.navigation.state.params;
