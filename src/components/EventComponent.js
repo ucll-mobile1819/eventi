@@ -45,12 +45,13 @@ class EventComponent extends React.Component{
     toEvent(event){
         //Set event on going
         //Redirect to event info page
-        this.props.nav.navigate('Event', {id: event.id}  );
+        this.props.nav.push('Event', {id: event.id}  );
     }
     notGoingToEvent(event){
         //Set event on not going
         this.props.changeStatus(event.id , this.props.event.status === 'Not going' ? null : 'Not going');
     }
+    
     render() {
         const {
             name,
@@ -84,7 +85,7 @@ class EventComponent extends React.Component{
                             {description}
                         </Text>
                         <Text style={{color: '#444', fontSize: 12}}>
-                            {this.getTimeDisplayFormat(startTime)}
+                        {this.props.event.group.name} {this.getTimeDisplayFormat(startTime) === '' ? '' : '-'} {this.getTimeDisplayFormat(startTime)}
                         </Text>
                     </View>
                     {type === 'event' ?

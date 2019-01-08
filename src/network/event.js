@@ -80,7 +80,7 @@ export const postVote = async (id, pollDateIds, handleErrors = false) => {
 };
 
 export const postEndPoll = async (id, finalPollDateId, handleErrors = false) => {
-    return await sendAPIRequest(`event/${id}/end-poll`, 'POST', handleErrors, { pollDateId: finalPollDateId });
+    return await sendAPIRequest(`event/${id}/end-poll`, 'POST', handleErrors, true, { pollDateId: finalPollDateId });
 };
 
 /**
@@ -92,7 +92,18 @@ export const postAttendance = async (id, state, handleErrors = false) => {
 
 // PUTS
 
-export const putEvent = async (id, name, description, startTime, endTime, locationName, address, city, zipcode, country, pollDates, handleErrors = false) => {
+export const putEvent = async (
+    id, 
+    name, 
+    description, 
+    startTime, 
+    endTime, 
+    locationName, 
+    address, 
+    city, 
+    zipcode, 
+    country, 
+    pollDates, handleErrors = false) => {
     return await sendAPIRequest(`event/${id}`, 'PUT', handleErrors, true, { id, name, description, startTime, endTime, locationName, address, city, zipcode, country, pollDates });
 };
 

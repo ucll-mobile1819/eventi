@@ -18,7 +18,7 @@ export default class JoinGroupScreen extends ValidationComponent {
     }
 
     getClearedState() {
-        return { invitecode: '' };
+        return { invitecode: '' , paste:false};
     }
 
     async joinGroup() {
@@ -26,11 +26,11 @@ export default class JoinGroupScreen extends ValidationComponent {
         this.submitting = true;
         if (!this.validateForm()) {
             this.submitting = false;
+            this.updateState({paste: <Text></Text>});
             return;
         }
-
         let response = await postJoinGroup(this.state.invitecode, true);
-
+        
         if (response !== false) {
             Alert.alert(
                 'Group joined',
@@ -41,6 +41,7 @@ export default class JoinGroupScreen extends ValidationComponent {
             setTimeout(() => { this.submitting = false; });
         } else {
             this.submitting = false;
+            this.updateState({paste: <Text></Text>});
         }
     }
 
@@ -55,7 +56,13 @@ export default class JoinGroupScreen extends ValidationComponent {
 
     async pasteFromClipboard() {
         const invitecode = await Clipboard.getString();
-        this.updateState({ invitecode });
+        if(invitecode.length < 100){
+            this.updateState({ invitecode });
+        }else{
+            this.updateState({
+                paste: <Text style={{...loginregisterStyles.inputError, marginBottom: 5, marginLeft: 3}}>Join group code is too long to paste</Text>
+            })
+        }
     }
 
     render() {
@@ -64,8 +71,10 @@ export default class JoinGroupScreen extends ValidationComponent {
                 <View style={{ flex: 1, padding: 20 }} >
                     <Text style={{ marginBottom: 5 }}>Enter an invite code to join a group:</Text>
                     {this.isFieldInError('invitecode') && <Text style={{...loginregisterStyles.inputError, marginBottom: 5, marginLeft: 3}}>{this.getErrorsInField('invitecode')[0]}</Text>}
+                    {this.state.paste}
                     <View style={{ flexDirection: 'row', marginBottom: 20 }}>
                         <TextInput
+                            maxLength={100}
                             style={[groupStyles.inputField, {marginBottom: -10, marginTop: -2, marginRight: 10, flex: 1}]}
                             placeholder="Invite code"
                             value={this.state.invitecode}

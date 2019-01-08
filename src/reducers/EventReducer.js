@@ -1,4 +1,4 @@
-import { FETCH_VOTES_SUCCESS,FETCH_VOTES_BEGIN, POST_COMMENT_BEGIN,POST_COMMENT_SUCCESS,FETCH_COMMENT_BEGIN,FETCH_COMMENT_SUCCESS,FETCH_ATT_BEGIN, FETCH_ATT_SUCCESS, FETCH_EVENTS_BEGIN, FETCH_EVENTS_SUCCESS, FETCH_EVENT_BEGIN, FETCH_EVENT_SUCCESS, CHANGE_STATUS_EVENT_BEGIN, CHANGE_STATUS_EVENT_SUCCESS } from "../actions/EventActions";
+import { PUT_EVENT_BEGIN,PUT_EVENT_SUCCESS,FETCH_VOTES_SUCCESS,FETCH_VOTES_BEGIN, POST_COMMENT_BEGIN,POST_COMMENT_SUCCESS,FETCH_COMMENT_BEGIN,FETCH_COMMENT_SUCCESS,FETCH_ATT_BEGIN, FETCH_ATT_SUCCESS, FETCH_EVENTS_BEGIN, FETCH_EVENTS_SUCCESS, FETCH_EVENT_BEGIN, FETCH_EVENT_SUCCESS, CHANGE_STATUS_EVENT_BEGIN, CHANGE_STATUS_EVENT_SUCCESS, END_POLL_BEGIN, END_POLL_SUCCESS } from "../actions/EventActions";
 import { FETCH_FAILURE } from "../actions";
 
 
@@ -22,6 +22,7 @@ const INITIAL_STATE = {
             id: -1,
             name: '',
             color: '',
+            creator: '',
         },
         creator: {
             firstname: '',
@@ -74,7 +75,8 @@ const eventReducer = (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 loading: false,
-                events
+                events,
+                event: action.payload.event
             };
         case FETCH_FAILURE:
             return {
@@ -138,6 +140,32 @@ const eventReducer = (state = INITIAL_STATE, action) => {
                 ...state,
                 loading: false,
                 votes: action.payload.votes
+            };
+        case PUT_EVENT_BEGIN:
+            return {
+                ...state,
+                loading: true,
+                error: null // Needed to reset any previous errors
+            };
+        case PUT_EVENT_SUCCESS:
+            events = state.events.map(el => el.id === action.payload.event.id ? action.payload.event : el);
+            return {
+                ...state,
+                loading: false,
+                events
+            };
+        case END_POLL_BEGIN:
+            return {
+                ...state,
+                loading: true,
+                error: null,
+            };
+        case END_POLL_SUCCESS:
+            events = state.events.map(el => el.id === action.payload.event.id ? action.payload.event : el);
+            return {
+                ...state,
+                loading: false,
+                events
             };
         default:
             return state;

@@ -1,21 +1,16 @@
 import React from 'react';
-import { Text, TouchableWithoutFeedback, StyleSheet, ActivityIndicator, SectionList, TextInput, ScrollView } from 'react-native';
+import { Text, TouchableWithoutFeedback, StyleSheet, ActivityIndicator, SectionList, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import AuthenticatedComponent from '../components/AuthenticatedComponent';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import headerStyles from '../styles/headerStyles';
-import { Container, Tabs, Tab, Button, ActionSheet, View, Card, CardItem, Body, Footer, Left, Right, Grid, Col, Content, Item, Input } from 'native-base';
+import { Container, Tabs, Tab, Button, ActionSheet, View, Card, CardItem, Body, Footer, Right, Grid, Col, Content, Item, Input } from 'native-base';
 import { fetchEvent ,fetchAtt, changeStatus , fetchComments , postComment ,fetchVotes} from '../actions/EventActions';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Balloon from "react-native-balloon";
 import IconEvil from 'react-native-vector-icons/EvilIcons';
 import PollTableComponent from "../components/PollTableComponent";
-import IconMat from 'react-native-vector-icons/MaterialIcons';
-import IconEnc from 'react-native-vector-icons/MaterialIcons';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import groupStyles from '../styles/groupStyles';
-import { Table, TableWrapper, Row, Cols } from 'react-native-table-component';
 import * as eventAPI from '../network/event';
 import Color from 'color';
 
@@ -75,9 +70,8 @@ class EventScreen extends React.Component {
                         })
                     }
                     this.setGuests();
-                    if (this.props.error) return;
-                    if(this.state.event.creator.username === this.props.user.username){
-
+                    if (this.props.eventError) return;
+                    if(this.state.event.creator.username === this.props.user.username || this.state.event.group.creator === this.props.user.username){
                         this.props.navigation.setParams({
                             title: this.state.event.name,
                             customHeaderBackgroundColor: this.state.event.group.color,
@@ -101,17 +95,22 @@ class EventScreen extends React.Component {
                         });
                     }
                 });
+            }).then(() => {
+                clearInterval(this.interval);
+                this.interval = setInterval(() => this.setComments(), 1000);
             });
     }
-    componentDidMount() {
-        this.interval = setInterval(() => this.updateState({ setComments: this.setComments() }), 1000);
-      }
     componentWillUnmount() {
         clearInterval(this.interval);
     }
     setComments(){
         this.props.fetchComments(this.props.navigation.state.params.id)
         .then(()=>{
+        if (this.props.eventError) {
+            this.props.navigation.navigate('Home');
+            clearInterval(this.interval);
+            return;
+        }
         let comments = this.props.comments;
         let commentList;
         
@@ -158,9 +157,8 @@ class EventScreen extends React.Component {
         })
         this.updateState({
             myComments: commentsJSX,
-            })
-        })
-        
+            });
+        });
     }
     async setGuests(){
         let attendances = this.props.status;
@@ -337,6 +335,20 @@ class EventScreen extends React.Component {
                     <Tab {...tabStyles} heading="Info">
                     <Container style={{backgroundColor: '#E9E9EF'}}>
                     <ScrollView>
+                    <Card style={{ backgroundColor: "transparent",elevation: 0,borderColor:"transparent"}}>
+                        <CardItem style={{ backgroundColor: "transparent",elevation: 0 ,borderColor:"transparent"}}>
+                            <View>
+                            <IconEvil name="user" size={30}/> 
+                            </View>            
+                            <View>
+                                <Body>
+                                    <View style={{}}>
+                                        <Text>{this.state.event.creator.username}</Text>
+                                    </View>
+                                </Body>
+                            </View>
+                        </CardItem>
+                        </Card>
                         <Card style={{ backgroundColor: "transparent",elevation: 0,borderColor:"transparent"}}>
                         <CardItem style={{ backgroundColor: "transparent",elevation: 0 ,borderColor:"transparent"}}>
                             <View>
@@ -372,7 +384,7 @@ class EventScreen extends React.Component {
                             </View>            
                             <View>
                                 <Body>
-                                    <Text style={{flex: 285}}>
+                                    <Text style={{maxWidth: 285}}>
                                         {event.description || "No description" }
                                     </Text>
                                 </Body>
@@ -450,7 +462,8 @@ const mapStateToProps = state => {
         emptyEvent: state.event.emptyEvent,
         loading: state.group.loading,
         user: state.user.user,
-        error: state.group.error
+        error: state.group.error,
+        eventError: state.event.error,
     };
 };
 

@@ -12,6 +12,7 @@ import { fetchGroups } from '../actions/GroupActions';
 import { fetchEvents } from '../actions/EventActions';
 import { fetchFailure } from '../actions';
 import { postEvent, postEventWithPoll } from '../network/event'
+import { NavigationEvents } from 'react-navigation';
 
 class AddEventScreen extends ValidationComponent {
     constructor(props) {
@@ -39,6 +40,12 @@ class AddEventScreen extends ValidationComponent {
     onLoad() {
         this.props.fetchGroups()
             .then(() => this.updateState({ groups: [...this.props.groups],  showActivityIndicator: false}))
+    }
+
+    async onNavWillFocus() {
+        this._resetErrors();
+        this.updateState(this.getClearedState());
+        this.onLoad();
     }
 
     updateState(obj, callback) {
@@ -170,23 +177,24 @@ class AddEventScreen extends ValidationComponent {
     render() {
         return (
             <AuthenticatedComponent setMounted={val => { this._ismounted = val; }} showActivityIndicator={() => this.state.showActivityIndicator} navigate={this.props.navigation.navigate} onLoad={this.onLoad.bind(this)} >
+                <NavigationEvents onWillFocus={() => this.onNavWillFocus()} />
                 <Container>
                     <Content padder>
                         <Form style={{ marginLeft: 15, marginRight: 15 }}>
                             {this.isFieldInError('name') && <Text style={{ color: 'red', marginLeft: 15 }}>{this.getErrorsInField('name')[0]}</Text>}
                             <Item floatingLabel style={{ marginLeft: 0 }}>
                                 <Label>Name</Label>
-                                <Input onChangeText={name => this.updateState({ name })} />
+                                <Input onChangeText={name => this.updateState({ name })} maxLength={50} />
                             </Item>
 
                             <Item floatingLabel style={{ marginLeft: 0 }}>
                                 <Label>Location Name</Label>
-                                <Input onChangeText={locationName => this.updateState({ locationName })} />
+                                <Input onChangeText={locationName => this.updateState({ locationName })} maxLength={200} />
                             </Item>
 
                             <Item floatingLabel style={{ marginLeft: 0 }}>
                                 <Label>Address</Label>
-                                <Input onChangeText={address => this.updateState({ address })} />
+                                <Input onChangeText={address => this.updateState({ address })} maxLength={200}/>
                             </Item>
 
                             {this.isFieldInError('selectedGroupId') && <Text style={{ color: 'red', marginLeft: 15, marginTop: 20 }}>{this.getErrorsInField('selectedGroupId')[0]}</Text>}
@@ -213,7 +221,9 @@ class AddEventScreen extends ValidationComponent {
                                 bordered
                                 placeholder="Description"
                                 style={{ width: undefined, marginTop: 20 }}
-                                onChangeText={description => this.updateState({ description })} />
+                                onChangeText={description => this.updateState({ description })}
+                                maxLength={3000}
+                            />
 
                             <View style={{ flex: 1, flexDirection: 'row', paddingTop: 20 }}>
                                 <Text style={{ marginRight: 30 }}>Event</Text>
@@ -240,6 +250,7 @@ class AddEventScreen extends ValidationComponent {
                                             newPollDateAdded={this.newPollDateAdded.bind(this)}
                                             pollDateRemoved={this.pollDateRemoved.bind(this)}
                                             selectable={false}
+                                            defaultBackgroundColor={true}
                                         />
                                     </View>
                                 }

@@ -26,6 +26,7 @@ PROPS:
     newPollDateAdded: function, i.e.: (newPollDate) => { ... }
     pollDateRemoved: function, i.e.: (pollDateId) => { ... }
     pollDateSelected: function, i.e.: (id) => { ... } (id can be null for deselecting)
+    defaultBackgroundColor: boolean, default false (aka gray)
 */
 
 export default class PollTableComponent extends Component {
@@ -164,7 +165,7 @@ export default class PollTableComponent extends Component {
         let { mode, showAmountOfVotes } = this.props;
         return (
             <MountCheckingComponent setMounted={val => { this._ismounted = val; }}>
-                <View style={styles.container}>
+                <View style={this.props.defaultBackgroundColor ? {} : styles.container}>
                     <Table borderStyle={styles.border}>
                         <Row data={this.state.tableHead} flexArr={mode == 'overview' ? [3, 3, 1, 2] : showAmountOfVotes ? [7, 7, 2, 2] : [4, 4, 1] } style={styles.head} textStyle={styles.textHeader}/>
                         {mode === 'overview' ? this.renderRowsOverview() : this.renderRowsConfigure()}

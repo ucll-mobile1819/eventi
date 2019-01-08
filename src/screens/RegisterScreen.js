@@ -111,6 +111,7 @@ export default class RegisterScreen extends ValidationComponent {
                         placeholder="First name"
                         onChangeText={firstname => this.updateState({ firstname })}
                         value={this.state.firstname}
+                        maxLength={50}
                     />
                     { this.isFieldInError('lastname') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('lastname')[0]}</Text> }
                     <TextInput
@@ -118,6 +119,7 @@ export default class RegisterScreen extends ValidationComponent {
                         placeholder="Last name"
                         onChangeText={lastname => this.updateState({ lastname })}
                         value={this.state.lastname}
+                        maxLength={50}
                     />
                     { this.isFieldInError('username') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('username')[0]}</Text> }
                     <TextInput
@@ -125,6 +127,7 @@ export default class RegisterScreen extends ValidationComponent {
                         placeholder="Username"
                         onChangeText={username => this.updateState({ username })}
                         value={this.state.username}
+                        maxLength={15}
                     />
                     { this.isFieldInError('birthday') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('birthday')[0]}</Text> }
                     <DatePickerComponent
@@ -145,6 +148,7 @@ export default class RegisterScreen extends ValidationComponent {
                         placeholder="Password"
                         onChangeText={password => this.updateState({ password })}
                         value={this.state.password}
+                        maxLength={3000}
                     />
                     { this.isFieldInError('passwordConfirmation') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('passwordConfirmation')[0]}</Text> }
                     <TextInput
@@ -153,6 +157,7 @@ export default class RegisterScreen extends ValidationComponent {
                         placeholder="Repeat password"
                         onChangeText={passwordConfirmation => this.updateState({ passwordConfirmation })}
                         value={this.state.passwordConfirmation}
+                        maxLength={3000}
                     />
                     <Button title='Register' onPress={() => this.register()} />
                     <Text 
