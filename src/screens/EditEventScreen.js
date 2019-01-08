@@ -36,6 +36,18 @@ class EditEventScreen extends ValidationComponent {
     }
 
     putEvent() {
+        if (!this.validateForm()) return;
+
+        let pollDatesToPut = this.state.pollDates.map(el => {
+            let newEl = { startTime: el.startTime, endTime: el.endTime };
+            if (el.id >= 0) {
+                newEl.id = el.id;
+                newEl.votes = el.votes;
+            }
+            return newEl;
+        });
+        console.log(pollDatesToPut);
+
         this.updateState({ showActivityIndicator: true });
         this.props.putEvent(
             this.state.id,
@@ -48,7 +60,7 @@ class EditEventScreen extends ValidationComponent {
             this.state.city,
             this.state.zipcode,
             this.state.country,
-            this.state.pollDates)
+            pollDatesToPut)
             .then(() => {
                 //RELOAD STATE
 
@@ -96,21 +108,25 @@ class EditEventScreen extends ValidationComponent {
     newPollDateAdded(newPollDate) {
         // New poll dates don't have ids. But for removing them, we need to be able to identify them
         // So we add negative ids for new items and make sure to remove these ids before doing a POST/PUT to the api
-        let id = Math.min(...this.state.pollDates.map(el => el.id)) - 1;
+        let id = Math.min(...this.state.pollDates.map(el => el.id), 0) - 1;
+        if (id > 0) {
+            id = -1
+        }
         newPollDate.id = id;
-        this.setState({
-            pollDates: [ ...this.state.pollDates, newPollDate ],
+
+        this.updateState({
+            pollDates: [...this.state.pollDates, newPollDate],
         });
     }
 
     pollDateRemoved(id) {
-        this.setState({
+        this.updateState({
             pollDates: this.state.pollDates.filter(el => el.id !== id),
         });
     }
 
     pollDateSelected(selectedPollDateId) {
-        this.setState({ selectedPollDateId });
+        this.updateState({ selectedPollDateId });
     }
 
     updateState(obj, callback) {
