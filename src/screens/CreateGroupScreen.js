@@ -31,14 +31,19 @@ export default class CreateGroupScreen extends ValidationComponent {
     }
 
     async createGroup() {
-        if (!this.validateForm()) return;
+        if (this.submitting) return;
+        this.submitting = true;
+        if (!this.validateForm()) {
+            this.submitting = false;
+            return;
+        }
 
         let response = await postGroup(
             this.state.groupname,
             this.state.description,
             this.state.color
         )
-
+        setTimeout(() => { this.submitting = false }, 1000);
         if (response !== false) {
             Alert.alert(
                 'Group succesfully created',
@@ -55,18 +60,7 @@ export default class CreateGroupScreen extends ValidationComponent {
     async createGroupDone(inviteCode) {
         if (inviteCode) {
             await Clipboard.setString(inviteCode);
-            Alert.alert('Invite code copied to clipboard!')
-
-            // TODO snackbar not showing
-            // Snackbar.show({
-            //     title: 'Link copied to clipboard',
-            //     duration: Snackbar.LENGTH_LONG,
-            //     action: {
-            //         title: 'CLOSE',
-            //         color: 'green',
-            //         onPress: () => Snackbar.dismiss(),
-            //     }
-            // });
+            Alert.alert('Invite code copied to clipboard!');
         }
         this.updateState(this.getClearedState());
         this.props.navigation.push('Groups');

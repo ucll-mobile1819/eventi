@@ -30,7 +30,10 @@ export default class GroupMemberComponent extends React.Component {
     }
 
     async banMember() {
+        if (this.submittingBanUser) return;
+        this.submittingBanUser = true;
         let response = await postBanUser(this.props.groupId, this.props.member.username, true);
+        this.submittingBanUser = false;
 
         if (response !== false) {
             Snackbar.show({
@@ -47,7 +50,10 @@ export default class GroupMemberComponent extends React.Component {
     }
 
     async kickMember() {
+        if (this.submittingKickUser) return;
+        this.submittingKickUser = true;
         let response = await deleteUser(this.props.groupId, this.props.member.username, true);
+        this.submittingKickUser = false;
 
         if (response !== false) {
             Snackbar.show({
