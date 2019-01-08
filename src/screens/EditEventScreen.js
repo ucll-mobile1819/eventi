@@ -7,7 +7,8 @@ import { Container, Content, Item, Label, Input, Textarea, Text, H3, Button, For
 import ValidationComponent from '../components/ValidationComponent';
 import DatePickerComponent from '../components/DatePickerComponent';
 import PollTableComponent from '../components/PollTableComponent';
-import { View } from 'react-native';
+import { deleteEvent } from '../network/event';
+import { View, Alert } from 'react-native';
 
 class EditEventScreen extends ValidationComponent {
 
@@ -35,7 +36,7 @@ class EditEventScreen extends ValidationComponent {
         };
     }
 
-    putEvent() {
+    async putEvent() {
         if (!this.validateForm()) return;
 
         let pollDatesToPut = this.state.pollDates.map(el => {
@@ -70,6 +71,21 @@ class EditEventScreen extends ValidationComponent {
                         this.props.navigation.push('Event', { id: this.props.navigation.state.params.id })
                     })
             })
+    }
+
+    async deleteEvent() {
+        let response = await deleteEvent(
+            this.state.id,
+            true
+        );
+
+        if (response !== false) {
+            Alert.alert('Event deleted', 'The event was successfully deleted.');
+            this.updateState(this.getClearedState());
+            await this.props.fetchEvents();
+            this.props.navigation.navigate("Home");
+            
+        }
     }
 
     validateForm() {
@@ -203,6 +219,13 @@ class EditEventScreen extends ValidationComponent {
                                             selectable={true}
                                             fixed={() => this.state.pollDateFixed}
                                         />
+
+                                        <Button style={{ width: undefined, marginTop: 15 }} block primary onPress={() => this.setState({ pollDateFixed: !this.state.pollDateFixed })}>
+                                            <Text>{this.state.pollDateFixed ? "Deselect final time" : "Pick final time"}</Text>
+                                        </Button>
+
+
+
                                     </View>
                                 }
 
@@ -236,8 +259,11 @@ class EditEventScreen extends ValidationComponent {
                                     </View>
                                 }
                             </View>
-                            <Button style={{ width: undefined, marginBottom: 40 }} block primary onPress={() => this.putEvent()}>
+                            <Button style={{ width: undefined, marginBottom: 20 }} block primary onPress={() => this.putEvent()}>
                                 <Text>Update</Text>
+                            </Button>
+                            <Button style={{ width: undefined, marginBottom: 40 }} block danger onPress={() => this.deleteEvent()}>
+                                <Text>delete</Text>
                             </Button>
                         </Form>
                     </Content>
