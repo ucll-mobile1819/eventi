@@ -38,7 +38,6 @@ export default class CreateGroupScreen extends ValidationComponent {
             this.state.description,
             this.state.color
         )
-
         if (response !== false) {
             Alert.alert(
                 'Group succesfully created',
