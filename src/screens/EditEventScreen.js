@@ -155,8 +155,7 @@ class EditEventScreen extends ValidationComponent {
                                 {this.state.type === 'poll' &&
                                     <View style={{ marginBottom: 20 }}>
                                         <H3 style={{ marginBottom: 20 }}>Poll</H3>
-
-                                        {/* <PollTableComponent/> */}
+                                            
                                     </View>
                                 }
 
@@ -190,7 +189,9 @@ class EditEventScreen extends ValidationComponent {
                                     </View>
                                 }
                             </View>
-                            <Button onPress={() => this.putEvent()}><Text>testing</Text></Button>
+                            <Button style={{ width: undefined, marginBottom: 40 }} block primary onPress={() => this.putEvent()}>
+                                <Text>Submit</Text>
+                            </Button>
                         </Form>
                     </Content>
                 </Container>
