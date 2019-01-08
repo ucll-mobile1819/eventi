@@ -11,7 +11,7 @@ import {fetchEvents} from '../actions/EventActions';
 import groupStyles from '../styles/groupStyles';
 import EventComponent from '../components/EventComponent';
 import { FlatList } from 'react-native-gesture-handler';
-
+import { fetchGroups } from '../actions/GroupActions';
 class GroupScreen extends React.Component {
     static navigationOptions = obj => obj.navigation.state.params;
 
@@ -31,7 +31,8 @@ class GroupScreen extends React.Component {
     onLoad() {
         Promise.all([
             this.props.fetchGroup(this.props.navigation.state.params.id),
-            this.props.fetchEvents()
+            this.props.fetchEvents(),
+            this.props.fetchGroups()
         ])
             .then(() => {
                 console.log("JOINED GROUP");
@@ -108,7 +109,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => (
     bindActionCreators({
-        fetchGroup,fetchEvents
+        fetchGroup,fetchEvents,fetchGroups
     }, dispatch)
 );
 
