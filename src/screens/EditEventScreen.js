@@ -19,7 +19,17 @@ class EditEventScreen extends ValidationComponent {
     getClearedState() {
         return {
             showActivityIndicator: true,
-            
+            id: undefined,
+            type: '',
+            name: '',
+            locationName: '',
+            address: '',
+            description: '',
+            startTime: null,
+            endTime: null,
+            pollDates:[],
+            pollDateVotes: [],
+            showActivityIndicator: true
         };
     }
 
