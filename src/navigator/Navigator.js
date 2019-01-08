@@ -33,7 +33,10 @@ let HomeTab = StackNavigator({
     EditEvent: {
         screen: EditEventScreen,
         navigationOptions: {
-            headerTitle: 'Edit event', 
+            title: "Edit event",
+            // customHeaderBackgroundColor: this.state.group.color,
+            headerTintColor: 'white', // Back arrow color
+            headerTitleStyle: { color: 'white' }, // Title color
         }
     },
     Event: {
@@ -42,7 +45,10 @@ let HomeTab = StackNavigator({
     AddEvent: {
         screen: AddEventScreen,
         navigationOptions: {
-            headerTitle: 'Add event',
+            title: "Add event",
+            // customHeaderBackgroundColor: this.state.group.color,
+            headerTintColor: 'white', // Back arrow color
+            headerTitleStyle: { color: 'white' }, // Title color
         }
     },
 },{
