@@ -341,6 +341,20 @@ class EventScreen extends React.Component {
                     <Tab {...tabStyles} heading="Info">
                     <Container style={{backgroundColor: '#E9E9EF'}}>
                     <ScrollView>
+                    <Card style={{ backgroundColor: "transparent",elevation: 0,borderColor:"transparent"}}>
+                        <CardItem style={{ backgroundColor: "transparent",elevation: 0 ,borderColor:"transparent"}}>
+                            <View>
+                            <IconEvil name="user" size={30}/> 
+                            </View>            
+                            <View>
+                                <Body>
+                                    <View style={{}}>
+                                        <Text>{this.state.event.creator.username}</Text>
+                                    </View>
+                                </Body>
+                            </View>
+                        </CardItem>
+                        </Card>
                         <Card style={{ backgroundColor: "transparent",elevation: 0,borderColor:"transparent"}}>
                         <CardItem style={{ backgroundColor: "transparent",elevation: 0 ,borderColor:"transparent"}}>
                             <View>
