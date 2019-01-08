@@ -7,6 +7,7 @@ import headerStyles from '../styles/headerStyles';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import { fetchGroup } from '../actions/GroupActions';
+import {fetchEvents} from '../actions/EventActions';
 import groupStyles from '../styles/groupStyles';
 import EventComponent from '../components/EventComponent';
 import { FlatList } from 'react-native-gesture-handler';
@@ -28,8 +29,14 @@ class GroupScreen extends React.Component {
     }
 
     onLoad() {
-        this.props.fetchGroup(this.props.navigation.state.params.id)
+        Promise.all([
+            this.props.fetchGroup(this.props.navigation.state.params.id),
+            this.props.fetchEvents()
+        ])
             .then(() => {
+                console.log("JOINED GROUP");
+                console.log(this.props.events);
+                console.log("JOINED GROUP");
                 this.updateState({ showActivityIndicator: false }); 
                 if (this.props.error) return;
                 this.updateHeader()
@@ -101,7 +108,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => (
     bindActionCreators({
-        fetchGroup
+        fetchGroup,fetchEvents
     }, dispatch)
 );
 
