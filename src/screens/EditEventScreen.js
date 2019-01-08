@@ -29,12 +29,14 @@ class EditEventScreen extends ValidationComponent {
             endTime: null,
             pollDates: [],
             pollDateVotes: [],
+            selectedPollDateId: null,
+            pollDateFixed: false,
             showActivityIndicator: true
         };
     }
 
     putEvent() {
-        this.updateState({showActivityIndicator: true });
+        this.updateState({ showActivityIndicator: true });
         this.props.putEvent(
             this.state.id,
             this.state.name,
@@ -51,15 +53,14 @@ class EditEventScreen extends ValidationComponent {
                 //RELOAD STATE
 
                 this.props.fetchEvent(this.props.navigation.state.params.id)
-                .then(() =>{
-                    this.updateState({ ...this.props.event})
-                    this.props.navigation.push('Event', { id: this.props.navigation.state.params.id})
-                })
+                    .then(() => {
+                        this.updateState({ ...this.props.event })
+                        this.props.navigation.push('Event', { id: this.props.navigation.state.params.id })
+                    })
             })
     }
 
     validateForm() {
-
         if (!this.validate({
             name: { name: 'Name', required: true, minlength: 2, maxlength: 50 }
         })) {
@@ -90,6 +91,26 @@ class EditEventScreen extends ValidationComponent {
         }
 
         return true
+    }
+
+    newPollDateAdded(newPollDate) {
+        // New poll dates don't have ids. But for removing them, we need to be able to identify them
+        // So we add negative ids for new items and make sure to remove these ids before doing a POST/PUT to the api
+        let id = Math.min(...this.state.pollDates.map(el => el.id)) - 1;
+        newPollDate.id = id;
+        this.setState({
+            pollDates: [ ...this.state.pollDates, newPollDate ],
+        });
+    }
+
+    pollDateRemoved(id) {
+        this.setState({
+            pollDates: this.state.pollDates.filter(el => el.id !== id),
+        });
+    }
+
+    pollDateSelected(selectedPollDateId) {
+        this.setState({ selectedPollDateId });
     }
 
     updateState(obj, callback) {
@@ -155,7 +176,17 @@ class EditEventScreen extends ValidationComponent {
                                 {this.state.type === 'poll' &&
                                     <View style={{ marginBottom: 20 }}>
                                         <H3 style={{ marginBottom: 20 }}>Poll</H3>
-                                            
+
+                                        <PollTableComponent
+                                            mode='configure'
+                                            pollDates={this.state.pollDates}
+                                            pollDateVotes={this.state.pollDateVotes}
+                                            showAmountOfVotes={true}
+                                            newPollDateAdded={this.newPollDateAdded.bind(this)}
+                                            pollDateRemoved={this.pollDateRemoved.bind(this)}
+                                            selectable={true}
+                                            fixed={() => this.state.pollDateFixed}
+                                        />
                                     </View>
                                 }
 
@@ -190,7 +221,7 @@ class EditEventScreen extends ValidationComponent {
                                 }
                             </View>
                             <Button style={{ width: undefined, marginBottom: 40 }} block primary onPress={() => this.putEvent()}>
-                                <Text>Submit</Text>
+                                <Text>Update</Text>
                             </Button>
                         </Form>
                     </Content>
