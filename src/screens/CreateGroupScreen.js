@@ -37,7 +37,7 @@ export default class CreateGroupScreen extends ValidationComponent {
         this.setState({itemPressedDisabled: true})
         if (!this.validateForm()) return;
 
-        let response =  postGroup(
+        let response = await postGroup(
             this.state.groupname,
             this.state.description,
             this.state.color
