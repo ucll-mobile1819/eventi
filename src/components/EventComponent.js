@@ -45,7 +45,7 @@ class EventComponent extends React.Component{
     toEvent(event){
         //Set event on going
         //Redirect to event info page
-        this.props.nav.navigate('Event', {id: event.id}  );
+        this.props.nav.push('Event', {id: event.id}  );
     }
     notGoingToEvent(event){
         //Set event on not going
