@@ -148,6 +148,7 @@ class ProfileScreen extends ValidationComponent {
                         onChangeText={firstname => this.updateState({ firstname })}
                         value={this.state.firstname}
                         placeholder='First name'
+                        maxLength={50}
                     />
                     {this.isFieldInError('lastname') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('lastname')[0]}</Text>}
                     <TextInput
@@ -155,6 +156,7 @@ class ProfileScreen extends ValidationComponent {
                         onChangeText={lastname => this.updateState({ lastname })}
                         value={this.state.lastname}
                         placeholder='Last name'
+                        maxLength={50}
                     />
                     <DatePickerComponent
                         style={[groupStyles.inputField, { flex: 1, width: undefined }]}
@@ -179,6 +181,7 @@ class ProfileScreen extends ValidationComponent {
                         onChangeText={password => this.updateState({ password })}
                         value={this.state.password}
                         placeholder='Password'
+                        maxLength={3000}
                     />
                     { this.isFieldInError('passwordConfirmation') && <Text style={loginregisterStyles.inputError}>{this.getErrorsInField('passwordConfirmation')[0]}</Text> }
                     <TextInput
@@ -187,6 +190,7 @@ class ProfileScreen extends ValidationComponent {
                         onChangeText={passwordConfirmation => this.updateState({ passwordConfirmation })}
                         value={this.state.passwordConfirmation}
                         placeholder='Password confirmation'
+                        maxLength={3000}
                     />
                     <View style={profileStyles.button}>
                         <Button title="Change Password" onPress={() => this.changePassword()}/>
