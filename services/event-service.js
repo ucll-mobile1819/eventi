@@ -49,6 +49,7 @@ function createEvent(currentUser, groupId, name, description, startTime, endTime
 function createPoll(currentUser, groupId, name, description, startTime, endTime, locationName, address, zipcode, city, country, pollDates) {
     return new Promise((resolve, reject) => {
         let correct = true;
+        if (!(pollDates instanceof Array)) return Promise.reject(new Error('A poll must have at least one poll date to choose from.'));
         pollDates.forEach(item => {
             if (!item || !item.startTime || !item.endTime) correct = false;
         });
