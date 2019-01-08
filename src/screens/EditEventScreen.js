@@ -20,7 +20,6 @@ class EditEventScreen extends ValidationComponent {
         return {
             showActivityIndicator: true,
             
-
         };
     }
 
@@ -43,12 +42,12 @@ class EditEventScreen extends ValidationComponent {
     onLoad() {
         let id = this.props.navigation.state.params.id;
         this.props.fetchEvent(id)
-            .then((event) => {
-                this.updateState({ ...event, showActivityIndicator: false });
+            .then(() => {
+                this.updateState({ ...this.props.event, showActivityIndicator: false });
 
                 this.props.navigation.setParams({
-                    title: "Edit " + this.state.event.name,
-                    customHeaderBackgroundColor: this.state.event.group.color,
+                    title: "Edit " + this.state.name,
+                    customHeaderBackgroundColor: this.state.group.color,
                     headerTintColor: 'white', // Back arrow color
                     headerTitleStyle: { color: 'white' }, // Title color
                 });
@@ -145,6 +144,7 @@ class EditEventScreen extends ValidationComponent {
 const mapStateToProps = state => {
     return {
         events: state.event.events,
+        event: state.event.event,
         emptyEvent: state.event.emptyEvent,
     };
 };
